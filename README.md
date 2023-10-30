@@ -6,3 +6,14 @@ Educatronicapp is a multiplatform mobile application (Android and IOS) developed
 <p align="center">
 <img src="https://github.com/EdgarHdz17/Educatronicapp/assets/47467891/e2fccb1e-1696-499c-bec3-c32e3958f51d">
 </p>
+
+Developer: Edgar Hernández Hernández
+Deployment: November 2023
+Educatronica project managers:
+Dr.Enrique Ruiz Velasco Sánchez
+Dra. Josefina Bárcenas López
+M. en C. Víctor Hugo García Ortega 
+
+
+Universidad Nacional Autonoma de México(UNAM)
+Instituto de Ciencias Aplicadas y Tecnologia(ICAT)
