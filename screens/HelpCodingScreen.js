@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { View, Text, StyleSheet, ScrollView,Platform } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Svg, { Path } from "react-native-svg";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -372,10 +372,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#56D0F6",
     textAlign: "center",
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   infoText: {
     fontSize: 15,
     textAlign: "justify",
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   exampleCoding: {
     marginTop: "1%",
@@ -385,6 +387,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 5,
     width:'95%',
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   cell:{
     flex: 1,
@@ -394,11 +397,13 @@ const styles = StyleSheet.create({
   cellText:{
     marginBottom:5,
     marginTop:5,
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   cellHeaderText:{
     marginBottom:5,
     marginTop:5,
     color: "#56D0F6",
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
 });
 

@@ -1,5 +1,5 @@
 import React, { useState, Component} from "react";
-import {View,Text,StyleSheet,Image,Modal,Pressable,ScrollView,TouchableOpacity,Alert} from "react-native";
+import {View,Text,StyleSheet,Image,Modal,Pressable,ScrollView,TouchableOpacity,Alert,Platform} from "react-native";
 import { FontAwesome5, AntDesign} from "@expo/vector-icons";
 import Svg, { Path, Ellipse } from "react-native-svg";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -238,7 +238,7 @@ const HomeScreen = () => {
       const response = await axios.post("https://api.openai.com/v1/audio/transcriptions",formData,{
         headers: { 
           "Content-Type": "multipart/form-data",
-          "Authorization":"Bearer APIKEY",
+          "Authorization":"Bearer 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",
         },
       });
 
@@ -424,13 +424,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   headerText: {
-    fontSize: 25,
+    fontSize: Platform.OS === 'android' ? 20 : 30,
     color: "white",
     fontStyle: "normal",
   },
   IconInfoApp: {
     position:'absolute',
-    right:25,
+    right:10,
   },
   touchableContainer: {
     position: 'absolute',
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   modalText: {
-    fontSize: 15,
+    fontSize: Platform.OS === 'android' ? 10 : 15,
     marginBottom: 35,
     textAlign: "center",
   },

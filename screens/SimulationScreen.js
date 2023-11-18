@@ -1,5 +1,5 @@
 import React,{useState} from "react";
-import { View,Text, StyleSheet,Dimensions,Alert,TouchableOpacity} from "react-native";
+import { View,Text, StyleSheet,Dimensions,Alert,TouchableOpacity,Platform} from "react-native";
 import Svg, { Path } from "react-native-svg";
 import {FontAwesome5,AntDesign,FontAwesome} from "@expo/vector-icons";
 import { Audio } from "expo-av";
@@ -207,7 +207,7 @@ export default function SimulationScreen () {
       const response = await axios.post('https://api.openai.com/v1/audio/transcriptions', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': 'Bearer APIKEY',
+          'Authorization': 'Bearer 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',
         },
       });
 
@@ -501,12 +501,12 @@ export default function SimulationScreen () {
 
         <View style={{flex: 1,  alignItems:"center", justifyContent:"center"}}>
           <AntDesign name="caretup" size={30} color="black" onPress={upNextLevelElevator} />
-          <Text>Subir</Text>
+          <Text style={styles.textScreen}>Subir</Text>
         </View>
         
         <View style={{flex: 1,  alignItems:"center", justifyContent:"center"}}>
           <AntDesign name="caretdown" size={30} color="black" onPress={downNextLevelElevator}/>
-          <Text>Bajar</Text>
+          <Text style={styles.textScreen}>Bajar</Text>
         </View>
 
         <TouchableOpacity style={{flex: 1,  flexDirection: 'column', alignItems: 'center'}} onPress={openDoor}>
@@ -514,7 +514,7 @@ export default function SimulationScreen () {
             <AntDesign name="stepbackward" size={30} color="black" />
             <AntDesign name="stepforward" size={30} color="black" />
           </View>
-          <Text>Abrir</Text>
+          <Text style={styles.textScreen}>Abrir</Text>
         </TouchableOpacity>
 
 
@@ -523,12 +523,12 @@ export default function SimulationScreen () {
             <AntDesign name="stepforward" size={30} color="black" />
             <AntDesign name="stepbackward" size={30} color="black" />
           </View>
-          <Text>Cerrar</Text>
+          <Text style={styles.textScreen}>Cerrar</Text>
         </TouchableOpacity>
 
         <View style={{flex: 1,  alignItems:"center", justifyContent:"center"}}>
           <FontAwesome name="stop" size={30} color="black" onPress={stopSound} />
-          <Text>Detener</Text>
+          <Text style={styles.textScreen}>Detener</Text>
         </View>
         
       </View>
@@ -584,4 +584,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  textScreen:{
+    fontSize: Platform.OS === 'android' ? 10 : 15,
+  }
 });

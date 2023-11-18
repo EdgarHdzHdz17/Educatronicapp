@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {View, Text, StyleSheet, TextInput, Modal, Pressable, Alert,TouchableOpacity,Dimensions} from "react-native";
+import {View, Text, StyleSheet, TextInput, Modal, Pressable, Alert,TouchableOpacity,Dimensions,Platform} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import {FontAwesome,FontAwesome5,MaterialIcons,MaterialCommunityIcons,AntDesign} from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -290,7 +290,7 @@ export default function CodingScreen () {
       const response = await axios.post("https://api.openai.com/v1/audio/transcriptions",formData,{
         headers: { 
           "Content-Type": "multipart/form-data",
-          "Authorization":"Bearer APIKEY",
+          "Authorization":"Bearer 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",
         },
       });
 
@@ -1092,7 +1092,7 @@ export default function CodingScreen () {
               style={styles.picker}
               selectedValue={selectedFloor}
               mode="dropdown" // Opcion desplegable para android
-              itemStyle={{ height: 50, fontSize: 10, textAlign: "center",justifyContent: "center" }}
+              itemStyle={{ height: 50, fontSize: Platform.OS === 'android' ? 10 : 10, textAlign: "center",justifyContent: "center" }}
               onValueChange={(itemValue) => {
                 setSelectedFloor(itemValue);
                 const selectedLevel = levelsElevator[itemValue - 1]; // Resta 1 porque los valores de Picker comienzan desde 1
@@ -1107,38 +1107,38 @@ export default function CodingScreen () {
               <Picker.Item label="6" value={6} />
               <Picker.Item label="7" value={7} />
             </Picker>
-            <Text>Piso: {selectedFloor}</Text>
+            <Text style={styles.textComand}>Piso: {selectedFloor}</Text>
           </View>
 
           <View style={[styles.Icons, { flex: 1 }]}>
             <FontAwesome
               name= {iconCompile}
-              size={30}
+              size={Platform.OS === 'android' ? 40 : 35}
               color="black"
               onPress={() => usedElevator(selectedFloor)}disabled={isButtonDisabled}           
             />
-            <Text>Compilar</Text>
+            <Text style={styles.textComand}>Compilar</Text>
           </View>
 
           <TouchableOpacity style={[styles.Icons, { flex: 1 }]}>
             <MaterialCommunityIcons
               name="usb-port"
-              size={30}
+              size={Platform.OS === 'android' ? 40 : 35}
               color="black"
               onPress={saveProgram}
             />
-            <Text>Guardar</Text>
+            <Text style={styles.textComand}>Guardar</Text>
           </TouchableOpacity>
 
           <View style={[styles.Icons, { flex: 1 }]}>
             <FontAwesome5
               name="file-upload"
-              size={30}
+              size={Platform.OS === 'android' ? 40 : 35}
               color="black"
               onPress={() => setModalVisible(true)}
             />
-            <Text>Cargar</Text>
-            <Text>Programa</Text>
+            <Text style={styles.textComand}>Cargar</Text>
+            <Text style={styles.textComand}>Programa</Text>
           </View>
 
           <Modal
@@ -1149,7 +1149,7 @@ export default function CodingScreen () {
             onDismiss={() => setModalVisible(false)}
           >
             <View style={styles.modalView}>
-              <Text style={{ fontSize: 20, marginBottom: 10 }}>
+              <Text style={{ fontSize: Platform.OS === 'android' ? 10 : 15, marginBottom: 10 }}>
                 Tus Programas:
               </Text>
               {programsSaveds.map((program, index) => (
@@ -1176,26 +1176,26 @@ export default function CodingScreen () {
           <View style={[styles.Icons, { flex: 1 }]}>
             <MaterialIcons
               name="delete"
-              size={30}
+              size={Platform.OS === 'android' ? 40 : 35}
               color="black"
               onPress={() => {
                 deletedProgram();
               }}
             />
-            <Text>Borrar</Text>
+            <Text style={styles.textComand}>Borrar</Text>
           </View>
 
           <View style={[styles.Icons, { flex: 1 }]}>
             <MaterialCommunityIcons
               name="gamepad-variant"
-              size={30}
+              size={Platform.OS === 'android' ? 40 : 35}
               color="black"
               onPress={() => {
                 setModalVisibleSimulation(true)
               }}
             />
-            <Text>Ver </Text>
-            <Text>Simulacion</Text>
+            <Text style={styles.textComand}>Ver</Text>
+            <Text style={styles.textComand}>Simulacion</Text>
           </View>
 
           <Modal
@@ -1254,11 +1254,11 @@ export default function CodingScreen () {
           <View style={[styles.Icons, { flex: 1 }]}>
             <MaterialIcons
               name="help"
-              size={30}
+              size={Platform.OS === 'android' ? 40 : 35}
               color="black"
               onPress={() => navigation.navigate("HelpCodingScreen")} 
             />
-            <Text>Ayuda</Text>
+            <Text style={styles.textComand}>Ayuda</Text>
           </View>
         </View>
 
@@ -1328,6 +1328,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     padding: 8,
     borderRadius: 5,
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   sectionOfPrograms: {
     width: "100%",
@@ -1343,6 +1344,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     width: "90%",
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   pickerSimulation: {
     width: "90%",
@@ -1351,6 +1353,9 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     justifyContent: "center",
+  },
+  textComand:{
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   sectiontextProgram: {
     width: "100%",
@@ -1365,16 +1370,19 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: "3%",
     borderRadius: 10,
-    fontSize: 15,
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   message: {
     margin: 8,
     textAlign: "center",
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   resultCommand: {
     textAlign: "center",
+    fontSize: Platform.OS === 'android' ? 10 : 15,
   },
   resultCheck: {
+    fontSize: Platform.OS === 'android' ? 10 : 15,
     textAlign: "center",
   },
   modalView: {
