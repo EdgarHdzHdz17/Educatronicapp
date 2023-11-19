@@ -238,7 +238,7 @@ const HomeScreen = () => {
       const response = await axios.post("https://api.openai.com/v1/audio/transcriptions",formData,{
         headers: { 
           "Content-Type": "multipart/form-data",
-          "Authorization":"Bearer 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",
+          "Authorization":"Bearer APIKEY",
         },
       });
 
@@ -290,19 +290,19 @@ const HomeScreen = () => {
         await playSound(require("../assets/audio/incorrectSound.mp3"),1);
         Speech.speak(`Comando'${resultSpeech}'no valido o posiblemente no lo detecte bien`);
       }
-
-      //Eliminamos el archivo del App
-      try {
-        await FileSystem.deleteAsync(fileUri);
-        console.log(`El archivo ${fileUri} se ha eliminado correctamente.`);
-      } catch (error) {
-        console.error(`Error al eliminar el archivo ${fileUri}: ${error.message}`);
-      }
-      
     } catch (error) {
       console.error('Fallo de transcripcion', {...error});
       Alert.alert("Error", "El reconocimiento de voz no es posible en Android o hubo un error externo.");
     }
+
+    //Eliminamos el archivo del App
+    try {
+      await FileSystem.deleteAsync(fileUri);
+      console.log(`El archivo ${fileUri} se ha eliminado correctamente.`);
+    } catch (error) {
+      console.error(`Error al eliminar el archivo ${fileUri}: ${error.message}`);
+    }
+
   }
 
   //Reproducir sonido con un delay de 1 seg
