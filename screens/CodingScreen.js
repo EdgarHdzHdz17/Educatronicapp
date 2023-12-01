@@ -569,7 +569,7 @@ export default function CodingScreen () {
       setModalVisible(false);
       setProgramSelect(selectProgram); // Establecer el programa seleccionado
       setResult("Necesito verificar tus comandos");
-      setResultVerific("Da un espacio para que verifique");
+      setResultVerific("Da un espacio para verificar");
       setIsValidCoding(false);
       setSelectedFloor(1);
       setCurrentLevelXElevator(levelsElevator[0]);
@@ -1014,7 +1014,7 @@ export default function CodingScreen () {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             console.log("Comando Abrir detectado, abriendo puertas");
             playSound(require("../assets/audio/dtmf_8.wav"), 1);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 800));
             console.log("Deteniendo puertas");
             openDoor();
             playSound(require("../assets/audio/dtmf_3.wav"), 1);
@@ -1040,7 +1040,7 @@ export default function CodingScreen () {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             console.log("Cerrando puertas");
             playSound(require("../assets/audio/dtmf_4.wav"), 1);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 800));
             console.log("Deteniendo puertas");
             closeDoor();
             playSound(require("../assets/audio/dtmf_3.wav"), 1);
