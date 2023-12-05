@@ -22,6 +22,23 @@ const DataRow = ({ instruction, abbreviated, interval, description }) => (
   </View>
 );
 
+const DataRow = ({ instruction, abbreviated, interval, description }) => (
+  <View style={{ flexDirection: 'row' }}>
+    <View style={styles.cell}>
+      <Text style={styles.cellText}>{instruction}</Text>
+    </View>
+    <View style={styles.cell}>
+      <Text style={styles.cellText}>{abbreviated}</Text>
+    </View>
+    <View style={styles.cell}>
+      <Text style={styles.cellText}>{interval}</Text>
+    </View>
+    <View style={styles.cell}>
+      <Text style={styles.cellText}>{description}</Text>
+    </View>
+  </View>
+);
+
 //Componente principal
 export default function HelpCodingScreen () {
 
