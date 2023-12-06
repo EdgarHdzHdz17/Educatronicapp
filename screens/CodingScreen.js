@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useRef } from "react";
 import {View, Text,TextInput, Modal, Pressable, Alert,TouchableOpacity,Dimensions,Platform} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import {FontAwesome,FontAwesome5,MaterialIcons,MaterialCommunityIcons,AntDesign} from "@expo/vector-icons";
@@ -24,10 +24,10 @@ export default function CodingScreen () {
   const navigation = useNavigation(); //Permite hacer la navegacion para los iconos
   const [modalVisible, setModalVisible] = useState(false); //Variable para ver modal
   const [programsSaveds, setProgramsSaveds] = useState([]); //Variable para programas guardados
-  const [recording, setRecording] = React.useState(); //Variable y funcion para grabacion de un audio
-  const [recordings, setRecordings] = React.useState([]); //Variable y funcion para grabaciones de audios
-  const inputRefCoding = React.useRef(); //Varible que apunta al inputTextCoding
-  const inputRefName = React.useRef(); //Varible que apunta al inputTextName
+  const [recording, setRecording] = useState(); //Variable y funcion para grabacion de un audio
+  const [recordings, setRecordings] = useState([]); //Variable y funcion para grabaciones de audios
+  const inputRefCoding = useRef(); //Varible que apunta al inputTextCoding
+  const inputRefName = useRef(); //Varible que apunta al inputTextName
   const [programSelect, setProgramSelect] = useState(null); //Varible de programa seleccionado en el modal
   const [selectedFloor, setSelectedFloor] = useState(1);//Variable de piso seleccionado
   const [modalVisibleSimulation, setModalVisibleSimulation] = useState(false); //Variable para ver modal
@@ -53,13 +53,13 @@ export default function CodingScreen () {
   //Funcion para recorrer el elevador de 1 en 1 para subir
   function upNextLevelElevator() {
     setCurrentLevelXElevator(prevLevel => {
-      const currentIndex = levelsElevator.indexOf(prevLevel);
-      if (currentIndex < levelsElevator.length - 1) {
-        const nextLevel = levelsElevator[currentIndex + 1];
-        return nextLevel;
+      const currentIndex = levelsElevator.indexOf(prevLevel); // Obtiene el índice del nivel actual en el arreglo de niveles del elevador
+      if (currentIndex < levelsElevator.length - 1) {// Verificamos si no estamos en el último nivel
+        const nextLevel = levelsElevator[currentIndex + 1]; //Recorre el siguiene nivel
+        return nextLevel;// Devolvemos el siguiente nivel
       } else {
         Alert.alert("Nivel Máximo", "Ya no se puede subir más");
-        return prevLevel;
+        return prevLevel; //Devuelve el nivel 7
       }
     });
   }
@@ -67,13 +67,13 @@ export default function CodingScreen () {
   //Funcion para recorrer el elevador de 1 en 1 para bajar
   function downNextLevelElevator () {
     setCurrentLevelXElevator(prevLevel => {
-      const currentIndex = levelsElevator.indexOf(prevLevel);
-      if (currentIndex > 0) {
-        const nextLevel = levelsElevator[currentIndex - 1];
-        return nextLevel;
+      const currentIndex = levelsElevator.indexOf(prevLevel); // Obtiene el índice del nivel actual en el arreglo de niveles del elevador
+      if (currentIndex > 0) {// Verificamos si no estamos en el último nivel
+        const nextLevel = levelsElevator[currentIndex - 1];//Recorre el siguiene nivel
+        return nextLevel;// Devolvemos el siguiente nivel
       } else {
         Alert.alert("Nivel Minimo","Ya no se puede bajar más");
-        return prevLevel;
+        return prevLevel; //Devuelve el nivel 1
       }
     });
   };
@@ -184,8 +184,8 @@ export default function CodingScreen () {
 
         .replace(/\./g, "") // Reemplazar "." por ""
 
-        .replace(/Código|código|CÓDIGO/g, "") //Reemplaza el comando "Programar" por ""
-        .replace(/Nombre|nombre|NOMBRE/g, "") //Reemplaza el comando "Programar" por ""
+        .replace(/Código|código|CÓDIGO/g, "") //Reemplaza el comando "Codigo" por ""
+        .replace(/Nombre|nombre|NOMBRE/g, "") //Reemplaza el comando "Nombre" por ""
 
         .replace(/Uno|uno|UNO/g, "1") // Reemplazar alguna opcion de Subir por "1"
         .replace(/Dos|dos|DOS/g, "2") // Reemplazar alguna opcion de Subir por "2"
@@ -424,7 +424,7 @@ export default function CodingScreen () {
       } else {
         const programfind = {
           nameProgram: nameProgram,
-          inputTextCoing: inputTextCoding,
+          inputTextCoding: inputTextCoding,
         };
         setProgramsSaveds([...programsSaveds, programfind]);
         Alert.alert("Programa guardado","El programa ha sido guardado exitosamente");
@@ -437,7 +437,7 @@ export default function CodingScreen () {
     const selectProgram = programsSaveds.find((program) => program.nameProgram === nameProgramSelect);
     if (selectProgram) {
       setNameProgram(selectProgram.nameProgram);
-      setInputTextCoding(selectProgram.inputTextCoing);
+      setInputTextCoding(selectProgram.inputTextCoding);
       setModalVisible(false);
       setProgramSelect(selectProgram); // Establecer el programa seleccionado
       setResult("Necesito verificar tus comandos");
@@ -449,13 +449,12 @@ export default function CodingScreen () {
     }
   };
 
-  //Funcion para borrar el programa cargado desde del modal
+  //Funcion para borrar el programa cargado desde el modal
   function deletedProgram() {
     if (!inputTextCoding && !nameProgram) {
       Alert.alert("Campos vacios", "Ingrese texto en los campos");
       return; // Salir de la función sin hacer el borrado
     }
-  
     if (compilationInProgress === false) {
       if (programSelect === null) {
         Alert.alert("Campos restablecidos");
@@ -497,8 +496,6 @@ export default function CodingScreen () {
     } else {
       Alert.alert("Compilacion en curso", "NO es posible borrar")
     }
-      
-     
   }
 
   //Automata para comando indivudual
@@ -686,7 +683,7 @@ export default function CodingScreen () {
         case 7: // Estado 7
           if (char === "\n") {
             setSoundCongratulations(false); // Marcar el sonido exitoso como no reproducido
-            currentState = 8; // Si char es un enter pasa al estado 2 si es que continua ingresando comandos
+            currentState = 8; // Si char es un enter pasa al estado 8 si es que continua ingresando comandos
           } else if (char === " ") {
             setSoundCongratulations(false); // Marcar el sonido exitoso como no reproducido
             continue; //Continua en el estado si hay espacios antes de dar enter
@@ -707,7 +704,7 @@ export default function CodingScreen () {
           } else if (char === " ") {
             continue; //Continua en el estado 8 si hay espacios antes de F
           } else if (char === "S" || char === "s" || char === "B" ||char === "b") {
-            currentState = 3; //Si char es A,a o P,p pasa al estado 4
+            currentState = 3; //Si char es A,a o P,p pasa al estado 3
           } else if (char === "P" || char === "p" || char === "A" ||char === "a") {
             currentState = 4; //Si char es A,a o P,p pasa al estado 4
           } else if (char === "I" || char === "i") {
@@ -729,7 +726,7 @@ export default function CodingScreen () {
           break;
       }
     }
-    return currentState === 9; // El input es válido si se llegó al estado 6 al final
+    return currentState === 9; // El input es válido si se llegó al estado 9 al final
   }
 
   //Funcion para validar automata de comandos
@@ -738,7 +735,7 @@ export default function CodingScreen () {
     setIsValid(isValid);
   }
 
-  //Fncion para validar automata de estructura de codigo
+  //Funcion para validar automata de estructura de codigo
   function checkAutomatonCoding(text) {
     const isValidCoding = automatonCoding(text);
     setIsValidCoding(isValidCoding);
@@ -1022,7 +1019,6 @@ export default function CodingScreen () {
                   }}
                 >
                   {program.nameProgram}
-                  
                 </Text>
               ))}
 

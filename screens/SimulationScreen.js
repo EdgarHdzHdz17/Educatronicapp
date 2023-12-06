@@ -93,7 +93,7 @@ export default function SimulationScreen () {
     });
     
     setRecordings(updatedRecordings);//Actualizamos la lista de grabacione
-    translateSpeechToText(fileUri);
+    translateSpeechToText(fileUri);//Mandamos a llamar a translateSpeechToText
     setRecordings([]);//Limpiamos la lista de grabaciones
   }
 
