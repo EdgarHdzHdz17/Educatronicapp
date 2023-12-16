@@ -80,8 +80,7 @@ export default function CodingScreen () {
 
   //Funcion para iniciar grabacion
   async function startRecording() {
-    try {
-      //Permisos de microfono
+    try {//Permisos de microfono
       const permission = await Audio.requestPermissionsAsync();
       if (permission.status === "granted") {
         await Audio.setAudioModeAsync({
@@ -135,13 +134,11 @@ export default function CodingScreen () {
       from: recording.getURI(),
       to: fileUri,
     });
-
     const { sound } = await recording.createNewLoadedSoundAsync();
     updatedRecordings.push({
       sound: sound,
       file: fileUri,
     });
-    
     setRecordings(updatedRecordings);//Actualizamos la lista de grabacione
     translateSpeechToText(fileUri);
     setRecordings([]);//Limpiamos la lista de grabaciones

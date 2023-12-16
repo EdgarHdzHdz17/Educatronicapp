@@ -41,9 +41,7 @@ export default function HelpCodingScreen () {
         <ScrollView contentContainerStyle={styles.infoElements}>
         <Text style={styles.headerText}>¿COMO CREAR MI PRIMER PROGRAMA?{"\n"}</Text>
         <Text style={styles.infoText}>
-          El lenguaje LCS es un lenguaje compuesto por instrucciones basicas y
-          palabras reservadas, para crear tu primer programa debes tener en
-          cuenta las siguientes intrucciones:{"\n"}
+        Para crear tu primer programa debes tener en cuenta las siguientes intrucciones basicas:{"\n"}
         </Text>
         
         <Text style={styles.infoText}>Comandos:{"\n"}</Text>
