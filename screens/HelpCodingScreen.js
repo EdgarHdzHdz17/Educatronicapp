@@ -49,7 +49,7 @@ export default function HelpCodingScreen () {
         <View style={{ width: '95%'}}>
           <View style={{ flexDirection: 'row'}}>
             <View style={styles.cell}>
-              <Text style={styles.cellHeaderText}>Instruccion:</Text>
+              <Text style={styles.cellHeaderText}>Instrucción:</Text>
             </View>
             <View style={styles.cell}>
               <Text style={styles.cellHeaderText}>Comando Abreviado:</Text>
@@ -58,7 +58,7 @@ export default function HelpCodingScreen () {
               <Text style={styles.cellHeaderText}>Intervalo valido:</Text>
             </View>
             <View style={styles.cell}>
-              <Text style={styles.cellHeaderText}>Descripcion:</Text>
+              <Text style={styles.cellHeaderText}>Descripción:</Text>
             </View>
           </View>
         </View>
