@@ -7,29 +7,29 @@ export default function HelpAppScreen ( ) {
   
   //Tabla de comandos de voz para navegacion
   const voiceCommandsNavegation = [
-    { id: '1', command: 'Comandos de voz Navegacion:\n' },
-    { id: '2', command: '"Oye Edu Programar": Edu navegara a la seccion Programar.\n' },
-    { id: '3', command: '"Oye Edu Simular": Edu navegara a la seccion Simular.\n' },
-    { id: '4', command: '"Oye Edu Casa": Edu navegara a la seccion Inicio.\n' },
-    { id: '5', command: '"Oye Edu Tutorial": Edu navegara a la seccion tutorial de ayuda del App.\n' },
+    { id: '1', command: 'Comandos de voz Navegación:\n' },
+    { id: '2', command: '"Oye Edu Programar": Edu navegará a la sección Programar.\n' },
+    { id: '3', command: '"Oye Edu Simular": Edu navegará a la sección Simular.\n' },
+    { id: '4', command: '"Oye Edu Casa": Edu navegará a la sección Inicio.\n' },
+    { id: '5', command: '"Oye Edu Tutorial": Edu navegará a la sección tutorial de ayuda del App.\n' },
   ];
 
   //Tabla de comandos de voz en la seccion coding
   const voiceCommandsCoding = [
-    { id: '1', command: 'Comandos de voz seccion Coding:\n' },
-    { id: '2', command: '"Oye Edu Nombre": Edu escribira un nombre a la seccion nombre.\n' },
-    { id: '3', command: '"Oye Edu Codigo": Edu escribira tus comandos en la seccion de codigo.\n' },
-    { id: '4', command: '"Oye Edu Compilar": Edu compilara tu programa.\n' },
-    { id: '5', command: '"Oye Edu Guardar": Edu guardara tu programa.\n' },
-    { id: '6', command: '"Oye Edu Simulacion": Edu simulara tu programa.\n' },
-    { id: '7', command: '"Oye Edu Piso [1-7]": Edu colocara tu elevador en el piso indicado.\n' },
-    { id: '8', command: '"Oye Edu Borrar": Edu reestablecera todos los elementos.\n' },
-    { id: '9', command: '"Oye Edu Ayuda": Edu navegara a una seccion de ayuda.\n' },
+    { id: '1', command: 'Comandos de voz sección Coding:\n' },
+    { id: '2', command: '"Oye Edu Nombre": Edu escribirá un nombre a la seccion nombre.\n' },
+    { id: '3', command: '"Oye Edu Código": Edu escribirá tus comandos en la seccion de código.\n' },
+    { id: '4', command: '"Oye Edu Compilar": Edu compilará tu programa.\n' },
+    { id: '5', command: '"Oye Edu Guardar": Edu guardará tu programa.\n' },
+    { id: '6', command: '"Oye Edu Simulación": Edu simulará tu programa.\n' },
+    { id: '7', command: '"Oye Edu Piso [1-7]": Edu colocará tu elevador en el piso indicado.\n' },
+    { id: '8', command: '"Oye Edu Borrar": Edu reestablecerá todos los elementos.\n' },
+    { id: '9', command: '"Oye Edu Ayuda": Edu navegará a una sección de ayuda.\n' },
   ];
 
   //Tabla de comandos de voz en la seccion simulations
   const voiceCommandsSimulations = [
-    { id: '1', command: 'Comandos de voz seccion Simulations:\n' },
+    { id: '1', command: 'Comandos de voz sección Simulations:\n' },
     { id: '2', command: '"Sube"\n' },
     { id: '3', command: '"Baja"\n' },
     { id: '4', command: '"Abrir"\n' },
@@ -46,7 +46,7 @@ export default function HelpAppScreen ( ) {
           pages={[
             {
               title: 'BIENVENIDO A EDUCATRONICAPP',
-              subtitle: 'Es una aplicacion movil para que inicies en el mundo de la programación.',
+              subtitle: 'Es una aplicación móvil para que inicies en el mundo de la programación.',
               backgroundColor: '#ffe4e1',
               image: (
                 <View style={styles.lottie}>
@@ -55,8 +55,8 @@ export default function HelpAppScreen ( ) {
               ),
             },
             {
-              title: 'Navegacion',
-              subtitle: 'Podras navegar por las diferentes ventanas de Educatronicapp con distintas funcionalidades.',
+              title: 'Navegación',
+              subtitle: 'Podrás navegar por las diferentes ventanas de Educatronicapp con distintas funcionalidades.',
               backgroundColor: '#f8f8ff',
               image: (
                 <View style={styles.lottie}>
@@ -65,8 +65,8 @@ export default function HelpAppScreen ( ) {
               ),
             },
             {
-              title: '¿Que hacer en la seccion Coding?',
-              subtitle: 'En esta seccion podras crear programas para manipular tu robot y ver la simulacion de tus programas.Utiliza la ayuda que hay en esta seccion.',
+              title: '¿Que hacer en la sección Coding?',
+              subtitle: 'En esta sección podrás crear programas para manipular tu robot y ver la simulación de tus programas.Utiliza la ayuda que hay en esta sección.',
               backgroundColor: '#f0f8ff',
               image: (
                 <View style={styles.lottie}>
@@ -75,8 +75,8 @@ export default function HelpAppScreen ( ) {
               ),
             },
             {
-              title: '¿Que hacer en la seccion Simulations?',
-              subtitle: 'En esta seccion podras controlar tu robot sin necesidad de programar.',
+              title: '¿Que hacer en la sección Simulations?',
+              subtitle: 'En esta sección podrás controlar tu robot sin necesidad de programar.',
               backgroundColor: '#ffb6c1',
               image: (
                 <View style={styles.lottie}>
@@ -86,7 +86,7 @@ export default function HelpAppScreen ( ) {
             },
             {
               title: 'Interfaz de voz',
-              subtitle: 'Para activar la interfaz de voz necesitaras presionar un boton similar a este.',
+              subtitle: 'Para activar la interfaz de voz necesitaras presionar un botón similar a este.',
               backgroundColor: '#dcdcdc',
               image: (
                 <View style={styles.lottie}>
@@ -97,7 +97,7 @@ export default function HelpAppScreen ( ) {
             },
             { 
               title: 'Reconocimiento de voz',
-              subtitle: 'Ahora solo tienes que decir un comando de voz valido y presionar de nuevo el boton.',
+              subtitle: 'Ahora solo tienes que decir un comando de voz válido y presionar de nuevo el botón.',
               backgroundColor: '#fafad2',
               image: (
                 <View style={styles.lottie}>
@@ -106,7 +106,7 @@ export default function HelpAppScreen ( ) {
               ),
             },
             { 
-              title: 'Comandos de voz validos de Navegacion',
+              title: 'Comandos de voz validos de Navegación',
               subtitle: 'Solo di las siguiente frases',
               backgroundColor: '#deb887',
               image: (
@@ -122,7 +122,7 @@ export default function HelpAppScreen ( ) {
               ),
             },
             { 
-              title: 'Comandos de voz validos para la seccion Codign',
+              title: 'Comandos de voz validos para la sección Codign',
               subtitle: 'Solo di las siguiente frases',
               backgroundColor: '#deb887',
               image: (
@@ -138,7 +138,7 @@ export default function HelpAppScreen ( ) {
               ),
             },
             { 
-              title: 'Comandos de voz validos para la seccion Simulations',
+              title: 'Comandos de voz validos para la sección Simulations',
               subtitle: 'Solo di las siguiente frases',
               backgroundColor: '#deb887',
               image: (
@@ -154,7 +154,7 @@ export default function HelpAppScreen ( ) {
               ),
             },
             { 
-              title: 'Estas listo para la aventura!',
+              title: '¡Estas listo para la aventura!',
               subtitle: 'Diviertete',
               backgroundColor: '#191970',
               image: (

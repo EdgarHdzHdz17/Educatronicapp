@@ -41,7 +41,7 @@ export default function HelpCodingScreen () {
         <ScrollView contentContainerStyle={styles.infoElements}>
         <Text style={styles.headerText}>¿COMO CREAR MI PRIMER PROGRAMA?{"\n"}</Text>
         <Text style={styles.infoText}>
-        Para crear tu primer programa debes tener en cuenta las siguientes intrucciones basicas:{"\n"}
+        Para crear tu primer programa debes tener en cuenta las siguientes intrucciones básicas:{"\n"}
         </Text>
         
         <Text style={styles.infoText}>Comandos:{"\n"}</Text>
@@ -74,21 +74,21 @@ export default function HelpCodingScreen () {
 
         <Text style={styles.infoText}>
             {"\n"}Notas importantes:{"\n"}
-            {"\n"}La estrutura basica para un programa valido corresponde de un
-            comando Inicio, seguido por comandos de instrucciones validas y
-            para terminar un comando Fin.{"\n"}
+            {"\n"}La estrutura básica para un programa válido corresponde de un
+            comando Inicio, seguido por comandos de instrucciones válidas y
+            para finalizar un comando Fin.{"\n"}
             {"\n"}Debes iniciar tu programa con el comando I o i.{"\n"}
             {"\n"}Debes terminar tu programa con el comando F o f{"\n"}
-            {"\n"}La sintaxis del lenguaje no hace diferencia entre mayusculas y
-            minusculas.{"\n"}
-            {"\n"}Un intervalo valida para los comandos corresponde a:{"\n"}
+            {"\n"}La sintaxis del lenguaje no hace diferencia entre mayúsculas y
+            minúsculas.{"\n"}
+            {"\n"}Un intervalo válido para los comandos corresponde a:{"\n"}
             Pisos/Tiempo.{"\n"}
-            {"\n"}Un comando indica la accion a llevar acabo.{"\n"}
-            {"\n"}En la parte superior de nuestro programa habra un status sobre
-            si es correcto la sintaxis o si tenemos un error.{"\n"}
+            {"\n"}Un comando indica la acción a llevar acabo.{"\n"}
+            {"\n"}En la parte superior de nuestro programa habrá un texto sobre
+            si es correcto la sintaxis o si hay un error.{"\n"}
           </Text>
 
-          <Text style={styles.infoText}>Ejemplo Basico:{"\n"}</Text>
+          <Text style={styles.infoText}>Ejemplo Básico:{"\n"}</Text>
 
           <Text style={styles.exampleCoding}>
             I{"\n"}S 3{"\n"}B 1{"\n"}F
@@ -105,23 +105,23 @@ export default function HelpCodingScreen () {
           <View style={{ width: '95%'}}>
             <View style={{ flexDirection: 'row'}}>
               <View style={styles.cell}>
-              <Text style={styles.cellHeaderText}>Instruccion:</Text>
+              <Text style={styles.cellHeaderText}>Instrucción:</Text>
               </View>
               <View style={styles.cell}>
                 <Text style={styles.cellHeaderText}>Comando de Voz:</Text>
               </View>
               <View style={styles.cell}>
-                <Text style={styles.cellHeaderText}>Intervalo valido:</Text>
+                <Text style={styles.cellHeaderText}>Intervalo válido:</Text>
               </View>
               <View style={styles.cell}>
-                <Text style={styles.cellHeaderText}>Descripcion:</Text>
+                <Text style={styles.cellHeaderText}>Descripción:</Text>
               </View>
             </View>
           </View>
 
           <View style={{ width: '95%' }}>
             <DataRow instruction="Nombre" abbreviated="Nombre" interval="[No aplica]" description="Dictado de nombre" />
-            <DataRow instruction="Codigo" abbreviated="Codigo" interval="[No aplica]" description="Dictado de codigo" />
+            <DataRow instruction="Código" abbreviated="Código" interval="[No aplica]" description="Dictado de código" />
             <DataRow instruction="Enter" abbreviated="Enter" interval="[No aplica]" description="Se da un enter" />
             <DataRow instruction="Inicio" abbreviated="Inicio" interval="[No aplica]" description="Inicia el programa" />
             <DataRow instruction="Subir" abbreviated="Sube" interval="[1-6]" description="Sube piso" />
@@ -133,27 +133,27 @@ export default function HelpCodingScreen () {
 
           <Text style={styles.infoText}>
             {"\n"}Notas importantes:{"\n"}
-            {"\n"}Para el uso de comandos de voz es necesario un comando en especifico para su activacion.{"\n"}
+            {"\n"}Para el uso de comandos de voz es necesario un comando en especifico para su activación.{"\n"}
             {"\n"}Para nombrar tu programa di "Nombre" seguido del nombre.{"\n"}
-            {"\n"}Para comenzar a dictar tu programa di "Codigo" seguido de tus instrucciones.{"\n"}
-            {"\n"}La sintaxis del lenguaje de voz no hace diferencia entre mayusculas y minusculas.{"\n"}
-            {"\n"}Un comando de voz indica la accion a llevar acabo.{"\n"}
-            {"\n"}La estrutura basica para un programa valido con el uso de la voz corresponde de un comando de activacion por voz "Codigo" seguido por comandos de instrucciones.{"\n"}
+            {"\n"}Para comenzar a dictar tu programa di "Código" seguido de tus instrucciones.{"\n"}
+            {"\n"}La sintaxis del lenguaje de voz no hace diferencia entre mayúsculas y minúsculas.{"\n"}
+            {"\n"}Un comando de voz indica la acción a llevar acabo.{"\n"}
+            {"\n"}La estrutura básica para un programa válido con el uso de la voz corresponde de un comando de activacion por voz "Código" seguido por comandos de instrucciones.{"\n"}
             {"\n"}Para dar un enter debes decir "Enter".{"\n"}
             {"\n"}Para terminar de dictar tu programa debes decir "Fin".{"\n"}
             {"\n"}Es muy importante que despues de terminar tu programa des 1 espacio en blanco".{"\n"}
           </Text>
 
-          <Text style={styles.infoText}>Ejemplo Basico:{"\n"}</Text>
+          <Text style={styles.infoText}>Ejemplo Básico:{"\n"}</Text>
 
           <Text style={styles.exampleCoding}>
-            Codigo Inicio Enter{"\n"}Sube Dos Enter{"\n"}Baja Uno Enter{"\n"}Fin
+            Código Inicio Enter{"\n"}Sube Dos Enter{"\n"}Baja Uno Enter{"\n"}Fin
           </Text>
 
           <Text style={styles.infoText}>{"\n"}Ejemplo Avanzado:{"\n"}</Text>
 
           <Text style={styles.exampleCoding}>
-            Codigo Inicio Enter{"\n"}Sube Cinco Enter{"\n"}Para Siete Enter{"\n"}Abrir Cinco Enter{"\n"}Baja Tres Enter{"\n"}Fin
+            Código Inicio Enter{"\n"}Sube Cinco Enter{"\n"}Para Siete Enter{"\n"}Abrir Cinco Enter{"\n"}Baja Tres Enter{"\n"}Fin
           </Text>
         </ScrollView>
       </View>

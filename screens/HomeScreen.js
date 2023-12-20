@@ -188,7 +188,7 @@ const HomeScreen = () => {
             <View style={styles.modalView}>
               <ScrollView>
                 <Text style={styles.modalText}>
-                {"\n"}APLICACION DESARROLLADA EN:{"\n"}EXPO REACT NATIVE
+                {"\n"}APLICACIÓN DESARROLLADA EN:{"\n"}EXPO REACT NATIVE
                 </Text>
                 <View style={{flexDirection: "row",justifyContent: "center",alignItems: "center", width: "100%",}}>
                   <Icon name="logo-apple-appstore" size={40} color="black"></Icon>
@@ -200,8 +200,8 @@ const HomeScreen = () => {
                 {"\n"}DESARROLLADOR:{"\n"}Edgar Hernández Hernández{"\n"}email:edgarhdzhdz17@hotmail.com
                 </Text>
                 <Text style={styles.modalText}>
-                RESPONSABLES DEL PROYECTO EDUCATRONICA:{"\n"}Dr.Enrique Ruiz Velazco Sánchez
-                {"\n"}Dra.Josefina Barcenas López{"\n"}M. en C.Victor Hugo Garcia Ortega
+                RESPONSABLES DEL PROYECTO EDUCATRÓNICA:{"\n"}Dr.Enrique Ruiz Velazco Sánchez
+                {"\n"}Dra.Josefina Barcenas López{"\n"}M. en C.Victor Hugo García Ortega
                 </Text>
 
                 <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -209,7 +209,7 @@ const HomeScreen = () => {
                 </View>
 
                 <Text style={styles.modalText}>
-                {"\n"}UNIVERSIDAD NACIONAL AUTONOMA DE MEXICO
+                {"\n"}UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO
                 </Text>
                 <Text style={styles.modalText}>{"\n"}Version: 2.5.5</Text>
 
