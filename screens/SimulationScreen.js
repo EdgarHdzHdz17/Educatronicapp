@@ -20,8 +20,8 @@ import { levelsElevator, doorElevator,} from '../functions/elevatorConstants';
 //Componente principal
 export default function SimulationScreen () {
 
-  const [recording, setRecording] = React.useState();//Variable y funcion para grabacion de un audio
-  const [recordings, setRecordings] = React.useState([]);//Variable y funcion para grabaciones de audios
+  const [recording, setRecording] = useState();//Variable y funcion para grabacion de un audio
+  const [recordings, setRecordings] = useState([]);//Variable y funcion para grabaciones de audios
   const navigation = useNavigation(); //Permite hacer la navegacion para los iconos
   const sectionBuildWidth = Dimensions.get('window').width;
   const sectionBuildHeight = Dimensions.get('window').height * 0.7;

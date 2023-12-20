@@ -15,8 +15,8 @@ import playSound from "../functions/playSound";
 //Hooks, variables o constantes 
 const HomeScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);//Controlar la visibilidad de un componente modal
-  const [recording, setRecording] = React.useState();//Variable y funcion para grabacion de un audio
-  const [recordings, setRecordings] = React.useState([]);//Variable y funcion para grabaciones de audios
+  const [recording, setRecording] = useState();//Variable y funcion para grabacion de un audio
+  const [recordings, setRecordings] = useState([]);//Variable y funcion para grabaciones de audios
   const navigation = useNavigation(); //Permite hacer la navegacion para los iconos
 
   //Funcion para iniciar grabacion
