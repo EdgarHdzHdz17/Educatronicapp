@@ -32,7 +32,6 @@ export default function SimulationScreen () {
   async function startRecording() {
     try {//Permisos de microfono
       const permission = await Audio.requestPermissionsAsync();
-
       if (permission.status === "granted") {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
@@ -85,13 +84,11 @@ export default function SimulationScreen () {
       from: recording.getURI(),
       to: fileUri,
     });
-
     const { sound } = await recording.createNewLoadedSoundAsync();
     updatedRecordings.push({
       sound: sound,
       file: fileUri,
     });
-    
     setRecordings(updatedRecordings);//Actualizamos la lista de grabacione
     translateSpeechToText(fileUri);//Mandamos a llamar a translateSpeechToText
     setRecordings([]);//Limpiamos la lista de grabaciones

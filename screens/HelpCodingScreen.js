@@ -41,9 +41,7 @@ export default function HelpCodingScreen () {
         <ScrollView contentContainerStyle={styles.infoElements}>
         <Text style={styles.headerText}>¿COMO CREAR MI PRIMER PROGRAMA?{"\n"}</Text>
         <Text style={styles.infoText}>
-          El lenguaje LCS es un lenguaje compuesto por instrucciones basicas y
-          palabras reservadas, para crear tu primer programa debes tener en
-          cuenta las siguientes intrucciones:{"\n"}
+        Para crear tu primer programa debes tener en cuenta las siguientes intrucciones basicas:{"\n"}
         </Text>
         
         <Text style={styles.infoText}>Comandos:{"\n"}</Text>
@@ -51,7 +49,7 @@ export default function HelpCodingScreen () {
         <View style={{ width: '95%'}}>
           <View style={{ flexDirection: 'row'}}>
             <View style={styles.cell}>
-              <Text style={styles.cellHeaderText}>Instruccion:</Text>
+              <Text style={styles.cellHeaderText}>Instrucción:</Text>
             </View>
             <View style={styles.cell}>
               <Text style={styles.cellHeaderText}>Comando Abreviado:</Text>
@@ -60,7 +58,7 @@ export default function HelpCodingScreen () {
               <Text style={styles.cellHeaderText}>Intervalo valido:</Text>
             </View>
             <View style={styles.cell}>
-              <Text style={styles.cellHeaderText}>Descripcion:</Text>
+              <Text style={styles.cellHeaderText}>Descripción:</Text>
             </View>
           </View>
         </View>

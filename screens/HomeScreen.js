@@ -23,7 +23,6 @@ const HomeScreen = () => {
   async function startRecording() {
     try {//Permisos de microfono
       const permission = await Audio.requestPermissionsAsync();
-
       if (permission.status === "granted") {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
@@ -73,18 +72,15 @@ const HomeScreen = () => {
     let updatedRecordings = [...recordings];
     //Nueva localizacion del archivo de audio
     const fileUri = `${FileSystem.documentDirectory}recording${Date.now()}.wav`;
-
     await FileSystem.copyAsync({
       from: recording.getURI(),
       to: fileUri,
     });
-
     const { sound} = await recording.createNewLoadedSoundAsync();
     updatedRecordings.push({
       sound: sound,
       file: fileUri,
     });
-    
     setRecordings(updatedRecordings);//Actualizamos la lista de grabaciones
     translateSpeechToText(fileUri);//Una vez que se termina de grabar se manda a llamar el API
     setRecordings([]);//Limpiamos la lista de grabaciones
