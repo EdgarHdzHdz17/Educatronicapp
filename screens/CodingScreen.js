@@ -520,6 +520,9 @@ export default function CodingScreen () {
           } else if (char === "F" || char === "f") {
             currentState = 6; //Si char es F o f pasa al estado 6
             setResult("Comando Fin detectado");
+          } else if (char === "\n") {
+            setResult("Comando Enter detectado");
+            continue; //Continua en el estado si hay espacios antes de cualquier caracter
           } else if (char === " ") {
             continue; //Continua en el estado si hay espacios antes de cualquier caracter
           } else {
@@ -624,9 +627,11 @@ export default function CodingScreen () {
           }
           break;
         case 2: // Estado 2
-          if (char === "S" || char === "s" || char === "B" || char === "b") {
-            currentState = 3; // Si char es S,s o B,b pasa al estado 3
-            setResultVerific("Tu código va por buen camino");
+          if (char === "\n") {
+          continue; // Permite más saltos de línea sin cambiar de estado
+          } else if (char === "S" || char === "s" || char === "B" || char === "b") {
+          currentState = 3; // Si char es S,s o B,b pasa al estado 3
+          setResultVerific("Tu código va por buen camino");
           } else if (char === "P" || char === "p" || char === "A" ||char === "a") {
             currentState = 4; //Si char es A,a o P,p pasa al estado 4
           } else if (char === "I" || char === "i") {
@@ -687,7 +692,9 @@ export default function CodingScreen () {
           }
           break;
         case 8: // Estado 8
-          if (char === "F" || char === "f") {
+        if (char === "\n") {
+          continue; // Permite más saltos de línea sin cambiar de estado
+          } else if (char === "F" || char === "f") {
           currentState = 9; // Si char es un enter pasa al estado 9
           setResultVerific("La estructura de tu código es correcta");
           } else if (char === " ") {
