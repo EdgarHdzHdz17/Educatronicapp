@@ -143,7 +143,7 @@ export default function SimulationScreen () {
         Speech.speak("Comando Tutorial detectado");
       }
 
-      //Comando para activar ir Inicio por voz
+      //Comandos para control de elevador
       if (resultSpeech.includes("Sube")||resultSpeech.includes("sube")) {
         await playSound(require("../assets/audio/soundCorrect.mp3"),1);
         upNextLevelElevator();

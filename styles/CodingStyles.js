@@ -51,6 +51,7 @@ const styles = StyleSheet.create({
     },
     textComand:{
       fontSize: Platform.OS === 'android' ? 10 : 15,
+      marginTop:1,
     },
     sectiontextProgram: {
       width: "100%",

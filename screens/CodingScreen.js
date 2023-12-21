@@ -34,7 +34,6 @@ export default function CodingScreen () {
   const [iconCompile, setIconCompile] = useState('play-circle');//Icono que cambia cuando esta compilando
   const [isButtonDisabled, setButtonDisabled] = useState(false);//Se desabilita el boton compilar durante la compilacion
   const [compilationInProgress, setCompilationInProgress] = useState(false);//Estado de compilacion
-  const [soundPlayedCongratulations, setSoundCongratulations] = useState(false);//Variables para reproducir sonido
   const sectionBuildWidth = Dimensions.get("window").width // Ancho del area para los elementos
   const sectionBuildHeight = Dimensions.get("window").height * 0.7 // Alto del area para los elementos  
   const [currentLevelXElevator, setCurrentLevelXElevator] = useState(levelsElevator[0]);//Nivel inicial del elevador
@@ -605,7 +604,7 @@ export default function CodingScreen () {
         case 0: // Estado 0
           if (char === "I" || char === "i") {
             currentState = 1; // Forzamos a que nuestro primer estado sea I o i, si es asi va al estado 1
-            setResultVerific("Tu codigo va por buen camino");
+            setResultVerific("Tu código va por buen camino");
           } else if (char === " ") {
             continue; //Continua en el estado si hay espacios antes de I o i
           } else {
@@ -616,18 +615,18 @@ export default function CodingScreen () {
         case 1: // Estado 1
           if (char === "\n") {
             currentState = 2; // Si hay un espacio o mas, pasa al estado 2
-            setResultVerific("Tu codigo va por buen camino");
+            setResultVerific("Tu código va por buen camino");
           } else if (char === " ") {
             continue; //Continua en el estado si hay espacios antes de un enter
           } else {
-            setResultVerific("Tu codigo tiene errores");
+            setResultVerific("Tu código tiene errores");
             return false; // Si no hay un enter, el input es inválido y mencina el error del Automata para los comandos
           }
           break;
         case 2: // Estado 2
           if (char === "S" || char === "s" || char === "B" || char === "b") {
             currentState = 3; // Si char es S,s o B,b pasa al estado 3
-            setResultVerific("Tu codigo va por buen camino");
+            setResultVerific("Tu código va por buen camino");
           } else if (char === "P" || char === "p" || char === "A" ||char === "a") {
             currentState = 4; //Si char es A,a o P,p pasa al estado 4
           } else if (char === "I" || char === "i") {
@@ -635,7 +634,7 @@ export default function CodingScreen () {
           } else if (char === " ") {
             continue; //Continua en el estado si hay espacios antes de S,s,B,b,P,p,A,a
           } else {
-            setResultVerific("Tu codigo tiene errores");
+            setResultVerific("Tu código tiene errores");
             return false; // Si no es invalido
           }
           break;
@@ -643,7 +642,7 @@ export default function CodingScreen () {
           if (char === " ") {
             currentState = 5; // Si hay un espacio o mas, pasa al estado 5
           } else {
-            setResultVerific("Tu codigo tiene errores");
+            setResultVerific("Tu código tiene errores");
             return false; // Si no hay un espacio, el input es inválido
           }
           break;
@@ -651,18 +650,18 @@ export default function CodingScreen () {
           if (char === " ") {
             currentState = 6; // Si hay un espacio o mas, pasa al estado 6
           } else {
-            setResultVerific("Tu codigo tiene errores");
+            setResultVerific("Tu código tiene errores");
             return false; // Si no hay un espacio, el input es inválido
           }
           break;
         case 5: // Estado 5
           if (char > 0 && char < 7) {
             currentState = 7; // Si char es mayor a 0 y menor 8, pasar al estado 7
-            setResultVerific("Tu codigo va por buen camino");
+            setResultVerific("Tu código va por buen camino");
           } else if (char === " ") {
             continue; //Continua en el estado si hay espacios antes de elegir piso
           } else {
-            setResultVerific("Tu codigo tiene errores");
+            setResultVerific("Tu código tiene errores");
             return false; // Si no hay un numero mayor y menor  de 0 a 8 regresa un invalido
           }
           break;
@@ -673,29 +672,22 @@ export default function CodingScreen () {
           } else if (char === " ") {
             continue; //Continua en el estado si hay espacios antesde elegir el tiempo
           } else {
-            setResultVerific("Tu codigo tiene errores");
+            setResultVerific("Tu código tiene errores");
             return false; // Si no hay un numero mayor y menor  de 0 a 8 regresa un invalido
           }
           break;
         case 7: // Estado 7
           if (char === "\n") {
-            setSoundCongratulations(false); // Marcar el sonido exitoso como no reproducido
             currentState = 8; // Si char es un enter pasa al estado 8 si es que continua ingresando comandos
           } else if (char === " ") {
-            setSoundCongratulations(false); // Marcar el sonido exitoso como no reproducido
             continue; //Continua en el estado si hay espacios antes de dar enter
           } else {
-            setResultVerific("Tu codigo tiene errores");
+            setResultVerific("Tu código tiene errores");
             return false; // Si no hay salto de linea el input es invalido
           }
           break;
         case 8: // Estado 8
           if (char === "F" || char === "f") {
-            //if (!soundPlayed) {
-            //playSound(require("../assets/audio/soundCorrect.mp3"), 1);
-            //setSoundCongratulations(true); // Marcar el sonido como reproducido
-            //}
-          setSoundCongratulations(true); // Marcar el sonido como reproducido
           currentState = 9; // Si char es un enter pasa al estado 9
           setResultVerific("La estructura de tu código es correcta");
           } else if (char === " ") {
@@ -1047,7 +1039,7 @@ export default function CodingScreen () {
               }}
             />
             <Text style={styles.textComand}>Ver</Text>
-            <Text style={styles.textComand}>Simulacion</Text>
+            <Text style={styles.textComand}>Simulación</Text>
           </View>
 
           <Modal
@@ -1122,8 +1114,8 @@ export default function CodingScreen () {
           <Text style={styles.resultCommand}>{result}</Text>
           <Text style={styles.message}>
             {isValidCoding
-              ? "La compilacion es posible "
-              : "La compilacion aun es imposible"}
+              ? "La compilación es posible "
+              : "La compilación aun es imposible"}
           </Text>
 
           <TextInput
