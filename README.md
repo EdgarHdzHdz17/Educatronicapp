@@ -1,6 +1,7 @@
 # Educatronicapp
-Educatronicapp is a multiplatform mobile application (Android and IOS) developed at Expo React Native, this application is called “Educatronicapp”, its objective is to enable its users to learn to program the basic concepts of programming using a defined natural language. In addition, this mobile application is part of the “Educatronica” project led by Dr. Enrique Ruiz Velasco, Dr. Josefina Bárcenas and the M. in C. Víctor Hugo García Ortega, a project in which different educational aspects are mixed such as programming, electronics and pedagogical robotics, so the “Educatronicapp” application has communication using DTMF sounds to interact with an electronic interface and a pedagogical robot (elevator).
-“Educatronicapp” has the premise of being oriented towards inclusivity to be used by users with some type of motor disability, which is why artificial intelligence technologies such as voice recognition were included using a RESTAPI called Speech to Text belonging to Open AI.
+The development of this document focuses on the creation of a multi-platform mobile application (Android and IOS) developed in Expo React Native, this application is called “Educatrónicapp”, its objective is to introduce its users to the basic concepts of programming using a defined natural language. In addition, this mobile application is part of the “Educatrónica Laboratory” project led by Doctor Enrique Ruiz Velasco Sánchez, Doctor Josefina Bárcenas López and Master of Science Víctor Hugo García Ortega; project in which different educational aspects are mixed such as programming, electronics and pedagogical robotics, so the “Educatrónicapp” application has communication using DTMF tones to interact with an electronic interface and a pedagogical robot (elevator).
+“Educatrónicapp” has the premise of being oriented towards inclusivity to be used by users with some type of motor disability, which is why artificial intelligence technologies such as voice recognition are included using a REST API called Speech to Text belonging to Open AI.
+
 
 <br>
 <p align="center">
@@ -8,7 +9,7 @@ Educatronicapp is a multiplatform mobile application (Android and IOS) developed
 </p>
 
 Developer: Edgar Hernández Hernández<br>
-Deployment: November 2023<br>
+Deployment: December 2023<br>
 Educatronica project managers:<br>
 Dr.Enrique Ruiz Velasco Sánchez<br>
 Dra. Josefina Bárcenas López<br>
