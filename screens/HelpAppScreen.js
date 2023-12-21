@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet,FlatList} from "react-native";
+import { View, Text,FlatList} from "react-native";
 import LottieView from 'lottie-react-native';
 import Onboarding from 'react-native-onboarding-swiper';
 import styles from "../styles/HelpAppStyles";

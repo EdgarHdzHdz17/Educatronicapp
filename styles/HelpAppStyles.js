@@ -1,7 +1,6 @@
-import { StyleSheet,Platform} from "react-native";
+import { StyleSheet} from "react-native";
 
 //Estilos
-
 const styles = StyleSheet.create({
     maincontainer: {
       flex: 1,
