@@ -46,7 +46,7 @@ export default function HelpAppScreen ( ) {
           showPagination={false}
           pages={[
             {
-              title: 'BIENVENIDO A EDUCATRONICAPP',
+              title: 'BIENVENIDO A EDUCATRÓNICAPP',
               subtitle: 'Es una aplicación móvil para que inicies en el mundo de la programación.',
               backgroundColor: '#ffe4e1',
               image: (
@@ -57,7 +57,7 @@ export default function HelpAppScreen ( ) {
             },
             {
               title: 'Navegación',
-              subtitle: 'Podrás navegar por las diferentes ventanas de Educatronicapp con distintas funcionalidades.',
+              subtitle: 'Podrás navegar por las diferentes ventanas de Educatrónicapp con distintas funcionalidades.',
               backgroundColor: '#f8f8ff',
               image: (
                 <View style={styles.lottie}>
@@ -76,7 +76,7 @@ export default function HelpAppScreen ( ) {
               ),
             },
             {
-              title: '¿Que hacer en la sección Simulations?',
+              title: '¿Qué hacer en la sección Simulations?',
               subtitle: 'En esta sección podrás controlar tu robot sin necesidad de programar.',
               backgroundColor: '#ffb6c1',
               image: (
