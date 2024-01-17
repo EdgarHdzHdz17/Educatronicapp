@@ -66,7 +66,7 @@ export default function HelpAppScreen ( ) {
               ),
             },
             {
-              title: '¿Que hacer en la sección Coding?',
+              title: '¿Qué hacer en la sección Coding?',
               subtitle: 'En esta sección podrás crear programas para manipular tu robot y ver la simulación de tus programas.Utiliza la ayuda que hay en esta sección.',
               backgroundColor: '#f0f8ff',
               image: (
@@ -155,8 +155,8 @@ export default function HelpAppScreen ( ) {
               ),
             },
             { 
-              title: '¡Estas listo para la aventura!',
-              subtitle: 'Diviertete',
+              title: '¡Estás listo para la aventura!',
+              subtitle: 'Diviértete',
               backgroundColor: '#191970',
               image: (
                 <View style={styles.lottie3}>

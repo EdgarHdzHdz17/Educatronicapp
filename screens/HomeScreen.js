@@ -200,8 +200,8 @@ const HomeScreen = () => {
                 {"\n"}DESARROLLADOR:{"\n"}Edgar Hernández Hernández{"\n"}email:edgarhdzhdz17@hotmail.com
                 </Text>
                 <Text style={styles.modalText}>
-                RESPONSABLES DEL PROYECTO EDUCATRÓNICA:{"\n"}Dr.Enrique Ruiz Velazco Sánchez
-                {"\n"}Dra.Josefina Barcenas López{"\n"}M. en C.Victor Hugo García Ortega
+                RESPONSABLES DEL PROYECTO EDUCATRÓNICA:{"\n"}Dr. Enrique Ruiz Velazco Sánchez
+                {"\n"}Dra. Josefina Bárcenas López{"\n"}M. en C. Victor Hugo García Ortega
                 </Text>
 
                 <View style={{ justifyContent: "center", alignItems: "center" }}>
@@ -211,7 +211,7 @@ const HomeScreen = () => {
                 <Text style={styles.modalText}>
                 {"\n"}UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO
                 </Text>
-                <Text style={styles.modalText}>{"\n"}Version: 2.5.5</Text>
+                <Text style={styles.modalText}>{"\n"}Versión: 2.5.5</Text>
 
                 <Pressable style={styles.buttonCloseModal} onPress={() => setModalVisible(!modalVisible)}>
                   <AntDesign name="closecircle" size={30} color="black" />

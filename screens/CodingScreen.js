@@ -673,7 +673,7 @@ export default function CodingScreen () {
         case 6: // Estado 6
           if (char > 0 && char < 10) {
             currentState = 7; // Si char es mayor a 0 y menor a 10, pasar al estado 7
-            setResultVerific("Tu codigo va por buen camino");
+            setResultVerific("Tu código va por buen camino");
           } else if (char === " ") {
             continue; //Continua en el estado si hay espacios antesde elegir el tiempo
           } else {
