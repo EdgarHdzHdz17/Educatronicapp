@@ -23,10 +23,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/Images/iconEdu.png",
         "backgroundColor": "#f0f8ff"
-      }
+      },
+      "package": "com.edgarhdz17.Educatronicapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a9ba1ef1-463d-4707-bcb5-324ae088a57a"
+      }
     }
   }
 }
