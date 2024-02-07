@@ -15,6 +15,7 @@ Dr.Enrique Ruiz Velasco Sánchez<br>
 Dra. Josefina Bárcenas López<br>
 M. en C. Víctor Hugo García Ortega<br>
 
+Copyright reserved. This project is protected by copyright and is only permitted for educational use. Any reproduction, distribution or modification is prohibited without the express consent of the copyright holder.
 
 Universidad Nacional Autonoma de México(UNAM)<br>
 Instituto de Ciencias Aplicadas y Tecnologia(ICAT)
