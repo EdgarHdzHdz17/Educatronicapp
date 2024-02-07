@@ -8,7 +8,7 @@ The development of this document focuses on the creation of a multi-platform mob
 <img src="https://github.com/EdgarHdz17/Educatronicapp/assets/47467891/e2fccb1e-1696-499c-bec3-c32e3958f51d">
 </p>
 
-Developer: Edgar Hernández Hernández<br>
+Developer: Ing. Edgar Hernández Hernández<br>
 Deployment: December 2023<br>
 Educatronica project managers:<br>
 Dr.Enrique Ruiz Velasco Sánchez<br>
