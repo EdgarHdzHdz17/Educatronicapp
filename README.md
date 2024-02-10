@@ -8,12 +8,17 @@ The development of this document focuses on the creation of a multi-platform mob
 <img src="https://github.com/EdgarHdz17/Educatronicapp/assets/47467891/e2fccb1e-1696-499c-bec3-c32e3958f51d">
 </p>
 
+<br>
+<p align="center">
+<img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/e483e7e1-446e-469e-97bc-0d6150a2fb81">
+</p>
+
 Developer: Ing. Edgar Hernández Hernández<br>
 Deployment: December 2023<br>
 Educatronica project managers:<br>
 Dr.Enrique Ruiz Velasco Sánchez<br>
 Dra. Josefina Bárcenas López<br>
-M. en C. Víctor Hugo García Ortega<br>
+M. in C. Víctor Hugo García Ortega<br>
 
 Copyright reserved. This project is protected by copyright and is only permitted for educational use. Any reproduction, distribution or modification is prohibited without the express consent of the copyright holder.
 
