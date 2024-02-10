@@ -7,7 +7,7 @@ The development of this document focuses on the creation of a multi-platform mob
 </p>
 <br>
 <p align="center">
-<img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/e483e7e1-446e-469e-97bc-0d6150a2fb81">
+<img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/e483e7e1-446e-469e-97bc-0d6150a2fb81](https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/e9a81085-26b7-4164-8d02-6a3c28316949)">
 </p>
 Developer: Ing. Edgar Hernández Hernández<br>
 Deployment: December 2023<br>
