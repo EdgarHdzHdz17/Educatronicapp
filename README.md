@@ -23,7 +23,7 @@ Dra. Josefina Bárcenas López<br>
 
 M. in C. Víctor Hugo García Ortega<br>
 
-Copyright reserved. This project is protected by copyright and is only permitted for educational use. Any reproduction, distribution or modification is prohibited without the express consent of the copyright holder.
+Copyright reserved. This project is protected by copyright and is only permitted for educational use. Any reproduction, distribution or modification is prohibited without the express consent of the copyright holder.<br>
 LICENCE: CC BY-NC-ND 4.0
 
 
