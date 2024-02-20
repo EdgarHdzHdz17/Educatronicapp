@@ -24,7 +24,6 @@ Dra. Josefina Bárcenas López<br>
 M. in C. Víctor Hugo García Ortega<br>
 
 Copyright reserved. This project is protected by copyright and is only permitted for educational use. Any reproduction, distribution or modification is prohibited without the express consent of the copyright holder.
+LICENCE: CC BY-NC-ND 4.0
 
-Universidad Nacional Autonoma de México(UNAM)<br>
 
-Instituto de Ciencias Aplicadas y Tecnologia(ICAT)
