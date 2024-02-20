@@ -1,6 +1,8 @@
 # Educatronicapp
+<p align="justify">
 The development of this document focuses on the creation of a multi-platform mobile application (Android and IOS) developed in Expo React Native, this application is called “Educatrónicapp”, its objective is to introduce its users to the basic concepts of programming using a defined natural language. In addition, this mobile application is part of the “Educatrónica Laboratory” project led by Doctor Enrique Ruiz Velasco Sánchez, Doctor Josefina Bárcenas López and Master of Science Víctor Hugo García Ortega; project in which different educational aspects are mixed such as programming, electronics and pedagogical robotics, so the “Educatrónicapp” application has communication using DTMF tones to interact with an electronic interface and a pedagogical robot (elevator).
 “Educatrónicapp” has the premise of being oriented towards inclusivity to be used by users with some type of motor disability, which is why artificial intelligence technologies such as voice recognition are included using a REST API called Speech to Text belonging to Open AI.
+</p>
 <br>
 <p align="center">
 <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/e9a81085-26b7-4164-8d02-6a3c28316949">
