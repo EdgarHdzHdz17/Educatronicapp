@@ -1,20 +1,37 @@
-import React, { useState,useRef } from "react";
-import {View, Text,TextInput, Modal, Pressable, Alert,TouchableOpacity,Dimensions,Platform} from "react-native";
+import React, { useState, useRef } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Modal,
+  Pressable,
+  Alert,
+  TouchableOpacity,
+  Dimensions,
+  Platform,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import {FontAwesome,FontAwesome5,MaterialIcons,MaterialCommunityIcons,AntDesign} from "@expo/vector-icons";
+import {
+  FontAwesome,
+  FontAwesome5,
+  MaterialIcons,
+  MaterialCommunityIcons,
+  AntDesign,
+} from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import * as Speech from "expo-speech";
-import SVGTop from '../components/SVGTop';
+import SVGTop from "../components/SVGTop";
 import SVGSimulation from "../components/SVGSimulation";
 import styles from "../styles/CodingStyles";
 import playSound from "../functions/playSound";
-import { levelsElevator, doorElevator,} from '../functions/elevatorConstants';
+import { levelsElevator, doorElevator } from "../functions/elevatorConstants";
+import { SafeAreaView } from "react-native";
 
 //Componente principal
-export default function CodingScreen () {
+export default function CodingScreen() {
   const [nameProgram, setNameProgram] = useState(""); //Variables para ingresar texto en el ProgramName
   const [inputTextCoding, setInputTextCoding] = useState(""); //Variables para ingresar texto
   const [isValid, setIsValid] = useState(false); //Variables para saber si el comando es correcto
@@ -29,33 +46,38 @@ export default function CodingScreen () {
   const inputRefCoding = useRef(); //Varible que apunta al inputTextCoding
   const inputRefName = useRef(); //Varible que apunta al inputTextName
   const [programSelect, setProgramSelect] = useState(null); //Varible de programa seleccionado en el modal
-  const [selectedFloor, setSelectedFloor] = useState(1);//Variable de piso seleccionado
+  const [selectedFloor, setSelectedFloor] = useState(1); //Variable de piso seleccionado
   const [modalVisibleSimulation, setModalVisibleSimulation] = useState(false); //Variable para ver modal
-  const [iconCompile, setIconCompile] = useState('play-circle');//Icono que cambia cuando esta compilando
-  const [isButtonDisabled, setButtonDisabled] = useState(false);//Se desabilita el boton compilar durante la compilacion
-  const [compilationInProgress, setCompilationInProgress] = useState(false);//Estado de compilacion
-  const sectionBuildWidth = Dimensions.get("window").width // Ancho del area para los elementos
-  const sectionBuildHeight = Dimensions.get("window").height * 0.7 // Alto del area para los elementos  
-  const [currentLevelXElevator, setCurrentLevelXElevator] = useState(levelsElevator[0]);//Nivel inicial del elevador
-  const [currentDoorElevator, setCurrentDoorElevator] = useState(doorElevator[1]);//Posicion inicial de la puerta
+  const [iconCompile, setIconCompile] = useState("play-circle"); //Icono que cambia cuando esta compilando
+  const [isButtonDisabled, setButtonDisabled] = useState(false); //Se desabilita el boton compilar durante la compilacion
+  const [compilationInProgress, setCompilationInProgress] = useState(false); //Estado de compilacion
+  const sectionBuildWidth = Dimensions.get("window").width; // Ancho del area para los elementos
+  const sectionBuildHeight = Dimensions.get("window").height * 0.7; // Alto del area para los elementos
+  const [currentLevelXElevator, setCurrentLevelXElevator] = useState(
+    levelsElevator[0]
+  ); //Nivel inicial del elevador
+  const [currentDoorElevator, setCurrentDoorElevator] = useState(
+    doorElevator[1]
+  ); //Posicion inicial de la puerta
 
   //Funcion para cerrar puerta
-  function closeDoor () {
-    setCurrentDoorElevator(doorElevator[1])
-  };
+  function closeDoor() {
+    setCurrentDoorElevator(doorElevator[1]);
+  }
 
   //Funcion para abrir puerta
-  function openDoor (){
-    setCurrentDoorElevator(doorElevator[0])
+  function openDoor() {
+    setCurrentDoorElevator(doorElevator[0]);
   }
 
   //Funcion para recorrer el elevador de 1 en 1 para subir
   function upNextLevelElevator() {
-    setCurrentLevelXElevator(prevLevel => {
+    setCurrentLevelXElevator((prevLevel) => {
       const currentIndex = levelsElevator.indexOf(prevLevel); // Obtiene el índice del nivel actual en el arreglo de niveles del elevador
-      if (currentIndex < levelsElevator.length - 1) {// Verificamos si no estamos en el último nivel
+      if (currentIndex < levelsElevator.length - 1) {
+        // Verificamos si no estamos en el último nivel
         const nextLevel = levelsElevator[currentIndex + 1]; //Recorre el siguiene nivel
-        return nextLevel;// Devolvemos el siguiente nivel
+        return nextLevel; // Devolvemos el siguiente nivel
       } else {
         Alert.alert("Nivel Máximo", "Ya no se puede subir más");
         return prevLevel; //Devuelve el nivel 7
@@ -64,22 +86,24 @@ export default function CodingScreen () {
   }
 
   //Funcion para recorrer el elevador de 1 en 1 para bajar
-  function downNextLevelElevator () {
-    setCurrentLevelXElevator(prevLevel => {
+  function downNextLevelElevator() {
+    setCurrentLevelXElevator((prevLevel) => {
       const currentIndex = levelsElevator.indexOf(prevLevel); // Obtiene el índice del nivel actual en el arreglo de niveles del elevador
-      if (currentIndex > 0) {// Verificamos si no estamos en el último nivel
-        const nextLevel = levelsElevator[currentIndex - 1];//Recorre el siguiene nivel
-        return nextLevel;// Devolvemos el siguiente nivel
+      if (currentIndex > 0) {
+        // Verificamos si no estamos en el último nivel
+        const nextLevel = levelsElevator[currentIndex - 1]; //Recorre el siguiene nivel
+        return nextLevel; // Devolvemos el siguiente nivel
       } else {
-        Alert.alert("Nivel Minimo","Ya no se puede bajar más");
+        Alert.alert("Nivel Minimo", "Ya no se puede bajar más");
         return prevLevel; //Devuelve el nivel 1
       }
     });
-  };
+  }
 
   //Funcion para iniciar grabacion
   async function startRecording() {
-    try {//Permisos de microfono
+    try {
+      //Permisos de microfono
       const permission = await Audio.requestPermissionsAsync();
       if (permission.status === "granted") {
         await Audio.setAudioModeAsync({
@@ -89,7 +113,7 @@ export default function CodingScreen () {
         //Configuracion del audio
         const recordingOptions = {
           android: {
-            extension: '.wav',
+            extension: ".wav",
             outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_WAV,
             audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_ACC,
             sampleRate: 44100,
@@ -107,10 +131,12 @@ export default function CodingScreen () {
             linearPCMIsFloat: false,
           },
         };
-        const { recording } = await Audio.Recording.createAsync(recordingOptions);
+        const { recording } = await Audio.Recording.createAsync(
+          recordingOptions
+        );
         setRecording(recording);
       } else {
-        console.error('No se acepto los permisos');
+        console.error("No se acepto los permisos");
       }
     } catch (err) {
       console.error("Fallo en accesibilidad", err);
@@ -121,11 +147,9 @@ export default function CodingScreen () {
   async function stopRecording() {
     setRecording(undefined);
     await recording.stopAndUnloadAsync();
-    await Audio.setAudioModeAsync(
-      {
-        allowsRecordingIOS: false,
-      }
-    );
+    await Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+    });
     let updatedRecordings = [...recordings];
     //Nueva localizacion del archivo de audio
     const fileUri = `${FileSystem.documentDirectory}recording${Date.now()}.wav`;
@@ -138,9 +162,9 @@ export default function CodingScreen () {
       sound: sound,
       file: fileUri,
     });
-    setRecordings(updatedRecordings);//Actualizamos la lista de grabacione
+    setRecordings(updatedRecordings); //Actualizamos la lista de grabacione
     translateSpeechToText(fileUri);
-    setRecordings([]);//Limpiamos la lista de grabaciones
+    setRecordings([]); //Limpiamos la lista de grabaciones
   }
 
   //Llamada al API de Open AI
@@ -154,13 +178,17 @@ export default function CodingScreen () {
       });
       formData.append("model", "whisper-1");
       formData.append("response_format", "text");
-      formData.append('language', 'es');
-      const response = await axios.post("https://api.openai.com/v1/audio/transcriptions",formData,{
-        headers: { 
-          "Content-Type": "multipart/form-data",
-          "Authorization":"Bearer APIKEY",
-        },
-      });
+      formData.append("language", "es");
+      const response = await axios.post(
+        "https://api.openai.com/v1/audio/transcriptions",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer APIKEY",
+          },
+        }
+      );
 
       const resultSpeech = response.data; //Resultado del reconocimiento del API
 
@@ -193,35 +221,54 @@ export default function CodingScreen () {
         .replace(/Ocho|ocho|OCHO/g, "8") // Reemplazar alguna opcion de Subir por "8"
         .replace(/Nueve|nueve|NUEVE/g, "9"); // Reemplazar alguna opcion de Subir por "9"
 
-
       //Comando para activar el dictado dentro del inputTextCoding
-      if (resultSpeech.includes("fin")||resultSpeech.includes("Fin")||resultSpeech.includes("FIN")) {
+      if (
+        resultSpeech.includes("fin") ||
+        resultSpeech.includes("Fin") ||
+        resultSpeech.includes("FIN")
+      ) {
         setIsValidCoding(true);
       }
 
       //Comando para activar el dictado dentro del inputTextCoding
-      if (resultSpeech.includes("código") || resultSpeech.includes("Código") || resultSpeech.includes("CÓDIGO")) {
+      if (
+        resultSpeech.includes("código") ||
+        resultSpeech.includes("Código") ||
+        resultSpeech.includes("CÓDIGO")
+      ) {
         setInputTextCoding(modifiedResultSpeech);
         inputRefCoding.current.focus();
       }
 
       //Comando para activar el dictado dentro del nameProgram
-      if (resultSpeech.includes("nombre") || resultSpeech.includes("Nombre") || resultSpeech.includes("NOMBRE")) {
+      if (
+        resultSpeech.includes("nombre") ||
+        resultSpeech.includes("Nombre") ||
+        resultSpeech.includes("NOMBRE")
+      ) {
         setNameProgram(modifiedResultSpeech);
         inputRefName.current.focus();
       }
 
       //Comando para activar ir Ayuda por voz
-      if (resultSpeech.includes("ayuda") || resultSpeech.includes("Ayuda") || resultSpeech.includes("AYUDA")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
+      if (
+        resultSpeech.includes("ayuda") ||
+        resultSpeech.includes("Ayuda") ||
+        resultSpeech.includes("AYUDA")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
         navigation.navigate("HelpCodingScreen");
         Speech.speak("Comando ver ayuda detectado");
       }
 
       //Compilar
       if (!compilationInProgress) {
-        if (resultSpeech.includes("compilar") || resultSpeech.includes("Compilar") || resultSpeech.includes("COMPILAR")) {
-          await playSound(require("../assets/audio/soundCorrect.mp3"),1);
+        if (
+          resultSpeech.includes("compilar") ||
+          resultSpeech.includes("Compilar") ||
+          resultSpeech.includes("COMPILAR")
+        ) {
+          await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
           Speech.speak("Comando compilar detectado");
           await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperamos 1 segundo
           setCompilationInProgress(true); // Establece que la compilación está en progreso
@@ -232,100 +279,159 @@ export default function CodingScreen () {
       }
 
       //Guardar
-      if (resultSpeech.includes("guardar") || resultSpeech.includes("Guardar") || resultSpeech.includes("GUARDAR")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        saveProgram()
+      if (
+        resultSpeech.includes("guardar") ||
+        resultSpeech.includes("Guardar") ||
+        resultSpeech.includes("GUARDAR")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        saveProgram();
         Speech.speak("Comando guardar detectado");
       }
 
       //Comando para piso 7
-      if (resultSpeech.includes("Piso 7") || resultSpeech.includes("piso 7") || resultSpeech.includes("PISO 7") || resultSpeech.includes("PISO SIETE")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        setSelectedFloor(7)
-        setCurrentLevelXElevator(levelsElevator[6])
+      if (
+        resultSpeech.includes("Piso 7") ||
+        resultSpeech.includes("piso 7") ||
+        resultSpeech.includes("PISO 7") ||
+        resultSpeech.includes("PISO SIETE")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        setSelectedFloor(7);
+        setCurrentLevelXElevator(levelsElevator[6]);
         Speech.speak("Comando detectado");
       }
 
       //Comando para piso 6
-      if (resultSpeech.includes("Piso 6") || resultSpeech.includes("piso 6") || resultSpeech.includes("PISO 6") || resultSpeech.includes("PISO SEIS")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        setSelectedFloor(6)
-        setCurrentLevelXElevator(levelsElevator[5])
+      if (
+        resultSpeech.includes("Piso 6") ||
+        resultSpeech.includes("piso 6") ||
+        resultSpeech.includes("PISO 6") ||
+        resultSpeech.includes("PISO SEIS")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        setSelectedFloor(6);
+        setCurrentLevelXElevator(levelsElevator[5]);
         Speech.speak("Comando detectado");
       }
 
       //Comando para piso 5
-      if (resultSpeech.includes("Piso 5") || resultSpeech.includes("piso 5") || resultSpeech.includes("PISO 5") || resultSpeech.includes("PISO CINCO")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        setSelectedFloor(5)
-        setCurrentLevelXElevator(levelsElevator[4])
+      if (
+        resultSpeech.includes("Piso 5") ||
+        resultSpeech.includes("piso 5") ||
+        resultSpeech.includes("PISO 5") ||
+        resultSpeech.includes("PISO CINCO")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        setSelectedFloor(5);
+        setCurrentLevelXElevator(levelsElevator[4]);
         Speech.speak("Comando detectado");
       }
 
       //Comando para piso 4
-      if (resultSpeech.includes("Piso 4") || resultSpeech.includes("piso 4") || resultSpeech.includes("PISO 4") || resultSpeech.includes("PISO CUATRO")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        setSelectedFloor(4)
-        setCurrentLevelXElevator(levelsElevator[3])
+      if (
+        resultSpeech.includes("Piso 4") ||
+        resultSpeech.includes("piso 4") ||
+        resultSpeech.includes("PISO 4") ||
+        resultSpeech.includes("PISO CUATRO")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        setSelectedFloor(4);
+        setCurrentLevelXElevator(levelsElevator[3]);
         Speech.speak("Comando detectado");
       }
 
       //Comando para piso 3
-      if (resultSpeech.includes("Piso 3") || resultSpeech.includes("piso 3") || resultSpeech.includes("PISO 3") || resultSpeech.includes("PISO TRES")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        setSelectedFloor(3)
-        setCurrentLevelXElevator(levelsElevator[2])
+      if (
+        resultSpeech.includes("Piso 3") ||
+        resultSpeech.includes("piso 3") ||
+        resultSpeech.includes("PISO 3") ||
+        resultSpeech.includes("PISO TRES")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        setSelectedFloor(3);
+        setCurrentLevelXElevator(levelsElevator[2]);
         Speech.speak("Comando detectado");
       }
 
       //Comando para piso 2
-      if (resultSpeech.includes("Piso 2") || resultSpeech.includes("piso 2") || resultSpeech.includes("PISO 2") || resultSpeech.includes("PISO DOS")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        setSelectedFloor(2)
-        setCurrentLevelXElevator(levelsElevator[1])
+      if (
+        resultSpeech.includes("Piso 2") ||
+        resultSpeech.includes("piso 2") ||
+        resultSpeech.includes("PISO 2") ||
+        resultSpeech.includes("PISO DOS")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        setSelectedFloor(2);
+        setCurrentLevelXElevator(levelsElevator[1]);
         Speech.speak("Comando detectado");
       }
 
       //Comando para piso 1
-      if (resultSpeech.includes("Piso 1") || resultSpeech.includes("piso 1") || resultSpeech.includes("PISO 1") || resultSpeech.includes("PISO UNO")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        setSelectedFloor(1)
-        setCurrentLevelXElevator(levelsElevator[0])
+      if (
+        resultSpeech.includes("Piso 1") ||
+        resultSpeech.includes("piso 1") ||
+        resultSpeech.includes("PISO 1") ||
+        resultSpeech.includes("PISO UNO")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        setSelectedFloor(1);
+        setCurrentLevelXElevator(levelsElevator[0]);
         Speech.speak("Comando detectado");
       }
 
       //Comando borrar
-      if (resultSpeech.includes("borrar") || resultSpeech.includes("Borrar") || resultSpeech.includes("BORRAR")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
+      if (
+        resultSpeech.includes("borrar") ||
+        resultSpeech.includes("Borrar") ||
+        resultSpeech.includes("BORRAR")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
         deletedProgram();
         Speech.speak("Comando borrar detectado");
       }
 
       //Comando para activar ir simulacion por voz
-      if (resultSpeech.includes("simulación") || resultSpeech.includes("Simulación") || resultSpeech.includes("SIMULACIÓN")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        setModalVisibleSimulation(true); 
+      if (
+        resultSpeech.includes("simulación") ||
+        resultSpeech.includes("Simulación") ||
+        resultSpeech.includes("SIMULACIÓN")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        setModalVisibleSimulation(true);
         Speech.speak("Comando ver simulacion detectado");
       }
 
       //Comando para activar ir Inicio por voz
-      if (resultSpeech.includes("Casa")||resultSpeech.includes("casa")||resultSpeech.includes("CASA")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
+      if (
+        resultSpeech.includes("Casa") ||
+        resultSpeech.includes("casa") ||
+        resultSpeech.includes("CASA")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
         navigation.navigate("Home");
         Speech.speak("Comando Inicio detectado");
       }
 
       //Comando para activar ir Ver simulacion por voz
-      if (resultSpeech.includes("Simular")||resultSpeech.includes("simular")||resultSpeech.includes("SIMULAR")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
+      if (
+        resultSpeech.includes("Simular") ||
+        resultSpeech.includes("simular") ||
+        resultSpeech.includes("SIMULAR")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
         navigation.navigate("Simulations");
-        Speech.speak('Comando Simular detectado');
+        Speech.speak("Comando Simular detectado");
       }
 
       //Comando para activar ir Ayuda de App por voz
-      if (resultSpeech.includes("Tutorial")||resultSpeech.includes("tutorial")||resultSpeech.includes("TUTORIAL")) {
-        await playSound(require("../assets/audio/soundCorrect.mp3"),1);
-        navigation.navigate("HelpAppScreen")
+      if (
+        resultSpeech.includes("Tutorial") ||
+        resultSpeech.includes("tutorial") ||
+        resultSpeech.includes("TUTORIAL")
+      ) {
+        await playSound(require("../assets/audio/soundCorrect.mp3"), 1);
+        navigation.navigate("HelpAppScreen");
         Speech.speak("Comando Tutorial detectado");
       }
 
@@ -350,14 +456,14 @@ export default function CodingScreen () {
         !resultSpeech.includes("PISO 4") &&
         !resultSpeech.includes("PISO 3") &&
         !resultSpeech.includes("PISO 2") &&
-        !resultSpeech.includes("PISO 1") && 
+        !resultSpeech.includes("PISO 1") &&
         !resultSpeech.includes("PISO SIETE") &&
         !resultSpeech.includes("PISO SEIS") &&
         !resultSpeech.includes("PISO CINCO") &&
         !resultSpeech.includes("PISO CUATRO") &&
         !resultSpeech.includes("PISO TRES") &&
         !resultSpeech.includes("PISO DOS") &&
-        !resultSpeech.includes("PISO UNO") && 
+        !resultSpeech.includes("PISO UNO") &&
         !resultSpeech.includes("código") &&
         !resultSpeech.includes("Código") &&
         !resultSpeech.includes("CÓDIGO") &&
@@ -389,48 +495,67 @@ export default function CodingScreen () {
         !resultSpeech.includes("Tutorial") &&
         !resultSpeech.includes("TUTORIAL")
       ) {
-        await playSound(require("../assets/audio/incorrectSound.mp3"),1);
-        Speech.speak(`Comando'${resultSpeech}'no valido o posiblemente no lo detecte bien`);
+        await playSound(require("../assets/audio/incorrectSound.mp3"), 1);
+        Speech.speak(
+          `Comando'${resultSpeech}'no valido o posiblemente no lo detecte bien`
+        );
       }
     } catch (error) {
       console.error("Fallo de transcripcion", { ...error });
-      Alert.alert("Error", "El reconocimiento de voz no es posible en Android o hubo un error externo.");
+      Alert.alert(
+        "Error",
+        "El reconocimiento de voz no es posible en Android o hubo un error externo."
+      );
     }
 
     //Eliminamos el archivo del App
     try {
       await FileSystem.deleteAsync(fileUri);
     } catch (error) {
-      console.error(`Error al eliminar el archivo ${fileUri}: ${error.message}`);
+      console.error(
+        `Error al eliminar el archivo ${fileUri}: ${error.message}`
+      );
     }
-
   }
 
   //Funcion para Guardar NombredePrograma y Codigo
-  function saveProgram () {
+  function saveProgram() {
     if (nameProgram === "") {
-      Alert.alert("Falta nombre","Por favor, ingresa un nombre para el programa.");
+      Alert.alert(
+        "Falta nombre",
+        "Por favor, ingresa un nombre para el programa."
+      );
     } else if (inputTextCoding === "") {
       Alert.alert("Falta Codigo", "Por favor, ingresa el codigo del programa.");
     } else {
       // Verificar si el programa ya existe en la lista
-      const isDuplicate = programsSaveds.some((program) => program.nameProgram === nameProgram);
+      const isDuplicate = programsSaveds.some(
+        (program) => program.nameProgram === nameProgram
+      );
       if (isDuplicate) {
-        Alert.alert("Nombre duplicado","Ya existe un programa con el mismo nombre. Por favor, ingresa un nombre diferente.");
+        Alert.alert(
+          "Nombre duplicado",
+          "Ya existe un programa con el mismo nombre. Por favor, ingresa un nombre diferente."
+        );
       } else {
         const programfind = {
           nameProgram: nameProgram,
           inputTextCoding: inputTextCoding,
         };
         setProgramsSaveds([...programsSaveds, programfind]);
-        Alert.alert("Programa guardado","El programa ha sido guardado exitosamente");
+        Alert.alert(
+          "Programa guardado",
+          "El programa ha sido guardado exitosamente"
+        );
       }
     }
-  };
+  }
 
   //Funcion para cargar NombredePrograma y Codigo desde el modal
-  function selectProgram (nameProgramSelect) {
-    const selectProgram = programsSaveds.find((program) => program.nameProgram === nameProgramSelect);
+  function selectProgram(nameProgramSelect) {
+    const selectProgram = programsSaveds.find(
+      (program) => program.nameProgram === nameProgramSelect
+    );
     if (selectProgram) {
       setNameProgram(selectProgram.nameProgram);
       setInputTextCoding(selectProgram.inputTextCoding);
@@ -441,9 +566,12 @@ export default function CodingScreen () {
       setIsValidCoding(false);
       setSelectedFloor(1);
       setCurrentLevelXElevator(levelsElevator[0]);
-      Alert.alert("Programa cargado","El programa ha sido cargado exitosamente");
+      Alert.alert(
+        "Programa cargado",
+        "El programa ha sido cargado exitosamente"
+      );
     }
-  };
+  }
 
   //Funcion para borrar el programa cargado desde el modal
   function deletedProgram() {
@@ -463,34 +591,42 @@ export default function CodingScreen () {
         setResultVerific("Ingresa tus comandos");
         return; // Salir de la función sin hacer el borrado
       } else {
-        Alert.alert("Confirmar eliminación",`¿Estás seguro de que deseas eliminar el programa '${programSelect.nameProgram}'?`,
-        [
-          {
-            text: "Cancelar",
-            style: "cancel",
-          },
-          {
-            text: "Eliminar",
-            onPress: () => {
-              setProgramsSaveds((prevPrograms) =>
-                prevPrograms.filter((program) => program.nameProgram !== programSelect.nameProgram)
-              );
-              setInputTextCoding("");
-              setNameProgram("");
-              setSelectedFloor(1);
-              setCurrentLevelXElevator(levelsElevator[0])
-              setIsValidCoding(false)
-              setResult("Comienza tu programa");
-              setResultVerific("Ingresa tus comandos");
-              Alert.alert("Programa Borrado", "El programa ha sido borrado exitosamente");
-              setProgramSelect(null); // Reiniciar el programa seleccionado
+        Alert.alert(
+          "Confirmar eliminación",
+          `¿Estás seguro de que deseas eliminar el programa '${programSelect.nameProgram}'?`,
+          [
+            {
+              text: "Cancelar",
+              style: "cancel",
             },
-          },
-        ]
+            {
+              text: "Eliminar",
+              onPress: () => {
+                setProgramsSaveds((prevPrograms) =>
+                  prevPrograms.filter(
+                    (program) =>
+                      program.nameProgram !== programSelect.nameProgram
+                  )
+                );
+                setInputTextCoding("");
+                setNameProgram("");
+                setSelectedFloor(1);
+                setCurrentLevelXElevator(levelsElevator[0]);
+                setIsValidCoding(false);
+                setResult("Comienza tu programa");
+                setResultVerific("Ingresa tus comandos");
+                Alert.alert(
+                  "Programa Borrado",
+                  "El programa ha sido borrado exitosamente"
+                );
+                setProgramSelect(null); // Reiniciar el programa seleccionado
+              },
+            },
+          ]
         );
       }
     } else {
-      Alert.alert("Compilacion en curso", "NO es posible borrar")
+      Alert.alert("Compilacion en curso", "NO es posible borrar");
     }
   }
 
@@ -526,7 +662,9 @@ export default function CodingScreen () {
           } else if (char === " ") {
             continue; //Continua en el estado si hay espacios antes de cualquier caracter
           } else {
-            setResult(`Invalido: El símbolo '${char}' no pertenece al lenguaje de comandos`);
+            setResult(
+              `Invalido: El símbolo '${char}' no pertenece al lenguaje de comandos`
+            );
             return false; // Si no es invalido
           }
           break;
@@ -628,11 +766,21 @@ export default function CodingScreen () {
           break;
         case 2: // Estado 2
           if (char === "\n") {
-          continue; // Permite más saltos de línea sin cambiar de estado
-          } else if (char === "S" || char === "s" || char === "B" || char === "b") {
-          currentState = 3; // Si char es S,s o B,b pasa al estado 3
-          setResultVerific("Tu código va por buen camino");
-          } else if (char === "P" || char === "p" || char === "A" ||char === "a") {
+            continue; // Permite más saltos de línea sin cambiar de estado
+          } else if (
+            char === "S" ||
+            char === "s" ||
+            char === "B" ||
+            char === "b"
+          ) {
+            currentState = 3; // Si char es S,s o B,b pasa al estado 3
+            setResultVerific("Tu código va por buen camino");
+          } else if (
+            char === "P" ||
+            char === "p" ||
+            char === "A" ||
+            char === "a"
+          ) {
             currentState = 4; //Si char es A,a o P,p pasa al estado 4
           } else if (char === "I" || char === "i") {
             setResultVerific("Error ya haz colacado un comando Inicio");
@@ -692,16 +840,26 @@ export default function CodingScreen () {
           }
           break;
         case 8: // Estado 8
-        if (char === "\n") {
-          continue; // Permite más saltos de línea sin cambiar de estado
+          if (char === "\n") {
+            continue; // Permite más saltos de línea sin cambiar de estado
           } else if (char === "F" || char === "f") {
-          currentState = 9; // Si char es un enter pasa al estado 9
-          setResultVerific("La estructura de tu código es correcta");
+            currentState = 9; // Si char es un enter pasa al estado 9
+            setResultVerific("La estructura de tu código es correcta");
           } else if (char === " ") {
             continue; //Continua en el estado 8 si hay espacios antes de F
-          } else if (char === "S" || char === "s" || char === "B" ||char === "b") {
+          } else if (
+            char === "S" ||
+            char === "s" ||
+            char === "B" ||
+            char === "b"
+          ) {
             currentState = 3; //Si char es A,a o P,p pasa al estado 3
-          } else if (char === "P" || char === "p" || char === "A" ||char === "a") {
+          } else if (
+            char === "P" ||
+            char === "p" ||
+            char === "A" ||
+            char === "a"
+          ) {
             currentState = 4; //Si char es A,a o P,p pasa al estado 4
           } else if (char === "I" || char === "i") {
             setResultVerific("Error ya tienes un comando Inicio");
@@ -712,7 +870,7 @@ export default function CodingScreen () {
           break;
         case 9: // Estado 9
           if (char === "\n") {
-            currentState=9; // Si char es un enter pasa al estado 9
+            currentState = 9; // Si char es un enter pasa al estado 9
           } else if (char === " ") {
             continue; //Continua en el estado 9 si hay espacios antes del enter
           } else {
@@ -740,7 +898,10 @@ export default function CodingScreen () {
   //Funcion para usar elevador
   async function usedElevator(selectedFloor) {
     if (nameProgram === "") {
-      Alert.alert("Falta nombre","Por favor, ingresa un nombre para el programa.");
+      Alert.alert(
+        "Falta nombre",
+        "Por favor, ingresa un nombre para el programa."
+      );
     } else if (inputTextCoding === "") {
       Alert.alert("Falta Codigo", "Por favor, ingresa el codigo del programa.");
     } else {
@@ -748,14 +909,14 @@ export default function CodingScreen () {
         Alert.alert("Error", "La compilacion NO es posible, tienes errores.");
         return;
       } else {
-        console.log("----------Compilacion en proceso----------")
-        setButtonDisabled(true);//Desabilitamos el boton compilar
-        setCompilationInProgress(true);//Actulizamos el estado de que se esta compilando
-        setIconCompile('clock-o');//Cambiamos el icono de compilar mientras se compila
+        console.log("----------Compilacion en proceso----------");
+        setButtonDisabled(true); //Desabilitamos el boton compilar
+        setCompilationInProgress(true); //Actulizamos el estado de que se esta compilando
+        setIconCompile("clock-o"); //Cambiamos el icono de compilar mientras se compila
 
         // Se reproduce el sonido según el valor de selectedFloor para subir al elevador(Robot) en el piso indicado
         if (selectedFloor !== 1) {
-          console.log('Subiendo el elevador al piso...', selectedFloor)
+          console.log("Subiendo el elevador al piso...", selectedFloor);
           await playSound(require("../assets/audio/dtmf_2.wav"), selectedFloor);
         }
 
@@ -763,7 +924,7 @@ export default function CodingScreen () {
         console.log("Piso elegido:", selectedFloor);
         console.log("Piso actual:", currentFloor);
         console.log("Texto ingresado:\n", inputTextCoding);
-        
+
         const floorMax = 7;
         const floorMin = 1;
         let numSeg;
@@ -788,7 +949,11 @@ export default function CodingScreen () {
             // Verificar si el siguiente caracter es un número
             if (!isNaN(inputTextCoding[i])) {
               numFloors = parseInt(inputTextCoding[i]);
-              console.log("Comando Subir detectado, subiendo:",numFloors,"pisos");
+              console.log(
+                "Comando Subir detectado, subiendo:",
+                numFloors,
+                "pisos"
+              );
               for (let j = 0; j < numFloors; j++) {
                 await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperamos 1 segundo
                 if (currentFloor < floorMax) {
@@ -798,13 +963,21 @@ export default function CodingScreen () {
                   upNextLevelElevator();
                   playSound(require("../assets/audio/dtmf_2.wav"), 1);
                 } else {
-                  console.log("El elevador no puede subir más. Límite de piso alcanzado:",floorMax);
-                  Alert.alert("Piso maximo alcanzado ","Pasaremos al siguiente comando");
+                  console.log(
+                    "El elevador no puede subir más. Límite de piso alcanzado:",
+                    floorMax
+                  );
+                  Alert.alert(
+                    "Piso maximo alcanzado ",
+                    "Pasaremos al siguiente comando"
+                  );
                   break; // Detenemos el bucle si el elevador alcanza el piso máximo
                 }
               }
             } else {
-              console.log("Comando Subir detectado, pero el siguiente caracter no es un número.");
+              console.log(
+                "Comando Subir detectado, pero el siguiente caracter no es un número."
+              );
             }
             //Comando B
           } else if (inputTextCoding[i] === "B" || inputTextCoding[i] === "b") {
@@ -816,7 +989,11 @@ export default function CodingScreen () {
             // Verificar si el siguiente caracter es un número
             if (!isNaN(inputTextCoding[i])) {
               numFloors = parseInt(inputTextCoding[i]);
-              console.log("Comando Bajar detectado, bajando:",numFloors,"pisos");
+              console.log(
+                "Comando Bajar detectado, bajando:",
+                numFloors,
+                "pisos"
+              );
               for (let j = 0; j < numFloors; j++) {
                 await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperamos 1 segundo
                 if (currentFloor > floorMin) {
@@ -824,15 +1001,23 @@ export default function CodingScreen () {
                   console.log("Bajando a piso:", currentFloor);
                   setSelectedFloor(currentFloor);
                   downNextLevelElevator();
-                  playSound(require("../assets/audio/dtmf_1.wav"), 1); 
+                  playSound(require("../assets/audio/dtmf_1.wav"), 1);
                 } else {
-                  console.log("El elevador no puede bajar más. Límite de piso alcanzado:",floorMin);
-                  Alert.alert("Piso minimo alcanzado ","Pasaremos al siguiente comando");
+                  console.log(
+                    "El elevador no puede bajar más. Límite de piso alcanzado:",
+                    floorMin
+                  );
+                  Alert.alert(
+                    "Piso minimo alcanzado ",
+                    "Pasaremos al siguiente comando"
+                  );
                   break; // Detenemos el bucle si el elevador alcanza el piso minimo
                 }
               }
             } else {
-              console.log("Comando Bajar detectado, pero el siguiente caracter no es un número.");
+              console.log(
+                "Comando Bajar detectado, pero el siguiente caracter no es un número."
+              );
             }
             //Comando F
           } else if (inputTextCoding[i] === "F" || inputTextCoding[i] === "f") {
@@ -851,7 +1036,11 @@ export default function CodingScreen () {
             if (!isNaN(inputTextCoding[i])) {
               let segInicial = 0;
               numSeg = parseInt(inputTextCoding[i]);
-              console.log("Comando Parar detectado, parando:",numSeg,"segundos");
+              console.log(
+                "Comando Parar detectado, parando:",
+                numSeg,
+                "segundos"
+              );
               for (let j = 0; j < numSeg; j++) {
                 segInicial++;
                 await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperamos 1 segundo
@@ -859,7 +1048,9 @@ export default function CodingScreen () {
                 playSound(require("../assets/audio/dtmf_3.wav"), 1);
               }
             } else {
-              console.log("Comando Parar detectado, pero el siguiente caracter no es un número.");
+              console.log(
+                "Comando Parar detectado, pero el siguiente caracter no es un número."
+              );
             }
             //Comando A
           } else if (inputTextCoding[i] === "A" || inputTextCoding[i] === "a") {
@@ -879,7 +1070,7 @@ export default function CodingScreen () {
               await new Promise((resolve) => setTimeout(resolve, 1000));
               let segInicial = 0;
               numSeg = parseInt(inputTextCoding[i]);
-              console.log("Puerta abierta por:",numSeg,"segundos");
+              console.log("Puerta abierta por:", numSeg, "segundos");
               for (let j = 0; j < numSeg; j++) {
                 segInicial++;
                 await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperamos 1 segundo
@@ -887,7 +1078,9 @@ export default function CodingScreen () {
                 playSound(require("../assets/audio/dtmf_3.wav"), 1);
               }
             } else {
-              console.log("Comando Abrir detectado, pero el siguiente caracter no es un número.");
+              console.log(
+                "Comando Abrir detectado, pero el siguiente caracter no es un número."
+              );
             }
             await new Promise((resolve) => setTimeout(resolve, 1000));
             console.log("Cerrando puertas");
@@ -903,11 +1096,11 @@ export default function CodingScreen () {
         console.log("Piso final:", currentFloor); // Imprimimos el piso final
         await new Promise((resolve) => setTimeout(resolve, 1000));
         console.log("Valores restablecidos"); //Reiniciamos todo
-        Alert.alert("Programa terminado","Reiniciando el elevador")
+        Alert.alert("Programa terminado", "Reiniciando el elevador");
         console.log("Bajando el elevador al piso... 1");
         setSelectedFloor(1);
-        setCurrentLevelXElevator(levelsElevator[0])
-        setIconCompile('play-circle');
+        setCurrentLevelXElevator(levelsElevator[0]);
+        setIconCompile("play-circle");
         setButtonDisabled(false);
         setCompilationInProgress(false);
         console.log("----------Fin de la Compilacion----------");
@@ -916,25 +1109,30 @@ export default function CodingScreen () {
   }
 
   return (
-    <View style={styles.maincontainer}>
-      <View style={[styles.containerSVG, { flex: 1.5, backgroundColor: "#56D0F6" }]}>
+    <SafeAreaView style={styles.maincontainer}>
+      <View
+        style={[styles.containerSVG, { flex: 1.5, backgroundColor: "#56D0F6" }]}
+      >
         <SVGTop />
       </View>
 
       <View style={[styles.sectionforName, { flex: 1 }]}>
-      <TextInput
-        style={[styles.programName]}
-        ref={inputRefName}
-        placeholder="Nombra tu programa aquí"
-        value={nameProgram}
-        onChangeText={(text) => {
-          if (text.length <= 15) {
-            setNameProgram(text);
-          } else {
-            Alert.alert('Advertencia', 'El nombre no puede superar los 15 caracteres');
-          }
-        }}
-      ></TextInput>
+        <TextInput
+          style={[styles.programName]}
+          ref={inputRefName}
+          placeholder="Nombra tu programa aquí"
+          value={nameProgram}
+          onChangeText={(text) => {
+            if (text.length <= 15) {
+              setNameProgram(text);
+            } else {
+              Alert.alert(
+                "Advertencia",
+                "El nombre no puede superar los 15 caracteres"
+              );
+            }
+          }}
+        ></TextInput>
       </View>
 
       <View style={[styles.sectionOfPrograms, { flex: 10 }]}>
@@ -944,7 +1142,12 @@ export default function CodingScreen () {
               style={styles.picker}
               selectedValue={selectedFloor}
               mode="dropdown" // Opcion desplegable para android
-              itemStyle={{ height: 50, fontSize: Platform.OS === 'android' ? 10 : 10, textAlign: "center",justifyContent: "center" }}
+              itemStyle={{
+                height: 50,
+                fontSize: Platform.OS === "android" ? 10 : 10,
+                textAlign: "center",
+                justifyContent: "center",
+              }}
               onValueChange={(itemValue) => {
                 setSelectedFloor(itemValue);
                 const selectedLevel = levelsElevator[itemValue - 1]; // Resta 1 porque los valores de Picker comienzan desde 1
@@ -964,10 +1167,11 @@ export default function CodingScreen () {
 
           <View style={[styles.Icons, { flex: 1 }]}>
             <FontAwesome
-              name= {iconCompile}
-              size={Platform.OS === 'android' ? 40 : 35}
+              name={iconCompile}
+              size={Platform.OS === "android" ? 40 : 35}
               color="black"
-              onPress={() => usedElevator(selectedFloor)}disabled={isButtonDisabled}           
+              onPress={() => usedElevator(selectedFloor)}
+              disabled={isButtonDisabled}
             />
             <Text style={styles.textComand}>Compilar</Text>
           </View>
@@ -975,7 +1179,7 @@ export default function CodingScreen () {
           <TouchableOpacity style={[styles.Icons, { flex: 1 }]}>
             <MaterialCommunityIcons
               name="usb-port"
-              size={Platform.OS === 'android' ? 40 : 35}
+              size={Platform.OS === "android" ? 40 : 35}
               color="black"
               onPress={saveProgram}
             />
@@ -985,7 +1189,7 @@ export default function CodingScreen () {
           <View style={[styles.Icons, { flex: 1 }]}>
             <FontAwesome5
               name="file-upload"
-              size={Platform.OS === 'android' ? 40 : 35}
+              size={Platform.OS === "android" ? 40 : 35}
               color="black"
               onPress={() => setModalVisible(true)}
             />
@@ -1001,7 +1205,12 @@ export default function CodingScreen () {
             onDismiss={() => setModalVisible(false)}
           >
             <View style={styles.modalView}>
-              <Text style={{ fontSize: Platform.OS === 'android' ? 10 : 15, marginBottom: 10 }}>
+              <Text
+                style={{
+                  fontSize: Platform.OS === "android" ? 10 : 15,
+                  marginBottom: 10,
+                }}
+              >
                 Tus Programas:
               </Text>
               {programsSaveds.map((program, index) => (
@@ -1009,8 +1218,8 @@ export default function CodingScreen () {
                   key={index}
                   onPress={() => selectProgram(program.nameProgram)}
                   style={{
-                    fontSize:20,
-                    marginBottom:20,
+                    fontSize: 20,
+                    marginBottom: 20,
                     padding: 5, // Espaciado interno para separar el texto del borde
                   }}
                 >
@@ -1018,8 +1227,11 @@ export default function CodingScreen () {
                 </Text>
               ))}
 
-              <Pressable style={styles.buttonCloseModal} onPress={() => setModalVisible(!modalVisible)}>
-                  <AntDesign name="closecircle" size={25} color="black" />
+              <Pressable
+                style={styles.buttonCloseModal}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <AntDesign name="closecircle" size={25} color="black" />
               </Pressable>
             </View>
           </Modal>
@@ -1027,7 +1239,7 @@ export default function CodingScreen () {
           <View style={[styles.Icons, { flex: 1 }]}>
             <MaterialIcons
               name="delete"
-              size={Platform.OS === 'android' ? 40 : 35}
+              size={Platform.OS === "android" ? 40 : 35}
               color="black"
               onPress={() => {
                 deletedProgram();
@@ -1039,10 +1251,10 @@ export default function CodingScreen () {
           <View style={[styles.Icons, { flex: 1 }]}>
             <MaterialCommunityIcons
               name="gamepad-variant"
-              size={Platform.OS === 'android' ? 40 : 35}
+              size={Platform.OS === "android" ? 40 : 35}
               color="black"
               onPress={() => {
-                setModalVisibleSimulation(true)
+                setModalVisibleSimulation(true);
               }}
             />
             <Text style={styles.textComand}>Ver</Text>
@@ -1056,16 +1268,26 @@ export default function CodingScreen () {
             onRequestClose={() => setModalVisibleSimulation(false)}
           >
             <View style={styles.maincontainer}>
-              <View style={[styles.containerSVG, { flex: 1.5, backgroundColor: "#56D0F6" }]}>
-                <SVGTop/>
-              </View> 
+              <View
+                style={[
+                  styles.containerSVG,
+                  { flex: 1.5, backgroundColor: "#56D0F6" },
+                ]}
+              >
+                <SVGTop />
+              </View>
 
-              <View style={[styles.sectionforPicker, {flex: 1}]}>
+              <View style={[styles.sectionforPicker, { flex: 1 }]}>
                 <Picker
                   style={styles.pickerSimulation}
                   selectedValue={selectedFloor}
                   mode="dropdown" // Opcion desplegable para android
-                  itemStyle={{ height: 50, fontSize: 10, textAlign: "center",justifyContent: "center" }}
+                  itemStyle={{
+                    height: 50,
+                    fontSize: 10,
+                    textAlign: "center",
+                    justifyContent: "center",
+                  }}
                   onValueChange={(itemValue) => {
                     setSelectedFloor(itemValue);
                     const selectedLevel = levelsElevator[itemValue - 1]; // Se resta 1 porque los valores de Picker comienzan desde 1
@@ -1081,33 +1303,48 @@ export default function CodingScreen () {
                   <Picker.Item label="Piso 7" value={7} />
                 </Picker>
               </View>
-              
-              <View style={[styles.sectionforElementsSimulations, { flex: 9, marginLeft:10}]}>
-                <SVGSimulation pathWidth={sectionBuildWidth} 
-                  pathHeight={sectionBuildHeight} 
-                  levelXElevator={currentLevelXElevator} 
-                  statusDoor={currentDoorElevator} />
+
+              <View
+                style={[
+                  styles.sectionforElementsSimulations,
+                  { flex: 9, marginLeft: 10 },
+                ]}
+              >
+                <SVGSimulation
+                  pathWidth={sectionBuildWidth}
+                  pathHeight={sectionBuildHeight}
+                  levelXElevator={currentLevelXElevator}
+                  statusDoor={currentDoorElevator}
+                />
               </View>
 
-              <Pressable style={styles.buttonCloseModal} onPress={() => setModalVisibleSimulation(!modalVisibleSimulation)}>
-                  <AntDesign name="closecircle" size={35} color="black" />
+              <Pressable
+                style={styles.buttonCloseModal}
+                onPress={() =>
+                  setModalVisibleSimulation(!modalVisibleSimulation)
+                }
+              >
+                <AntDesign name="closecircle" size={35} color="black" />
               </Pressable>
             </View>
 
-            <TouchableOpacity style={styles.recordButtonContainer }>
-                <FontAwesome5 name={recording ?"microphone-slash":"microphone"} 
-                  size={35} color="#f0ffff" 
-                  onPress={recording ? stopRecording : startRecording}disabled={isButtonDisabled} 
-                  />
-              </TouchableOpacity>
+            <TouchableOpacity style={styles.recordButtonContainer}>
+              <FontAwesome5
+                name={recording ? "microphone-slash" : "microphone"}
+                size={35}
+                color="#f0ffff"
+                onPress={recording ? stopRecording : startRecording}
+                disabled={isButtonDisabled}
+              />
+            </TouchableOpacity>
           </Modal>
 
           <View style={[styles.Icons, { flex: 1 }]}>
             <MaterialIcons
               name="help"
-              size={Platform.OS === 'android' ? 40 : 35}
+              size={Platform.OS === "android" ? 40 : 35}
               color="black"
-              onPress={() => navigation.navigate("HelpCodingScreen")} 
+              onPress={() => navigation.navigate("HelpCodingScreen")}
             />
             <Text style={styles.textComand}>Ayuda</Text>
           </View>
@@ -1137,7 +1374,6 @@ export default function CodingScreen () {
               checkAutomatonComand(text);
               checkAutomatonCoding(text);
             }}
-            
           ></TextInput>
 
           <TouchableOpacity style={styles.recordButtonContainer}>
@@ -1145,11 +1381,12 @@ export default function CodingScreen () {
               name={recording ? "microphone-slash" : "microphone"}
               size={35}
               color="#f0ffff"
-              onPress={recording ? stopRecording : startRecording}disabled={isButtonDisabled} 
+              onPress={recording ? stopRecording : startRecording}
+              disabled={isButtonDisabled}
             />
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
