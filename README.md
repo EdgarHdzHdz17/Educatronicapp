@@ -5,7 +5,7 @@ The development of this document focuses on the creation of a multi-platform mob
 </p>
 <br>
 <p align="center">
-<img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/e9a81085-26b7-4164-8d02-6a3c28316949">
+<img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/79cfca0b-e9b8-4bfd-b4bf-cf02af4ed953">
 </p>
 <br>
 <p align="center">
