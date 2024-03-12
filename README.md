@@ -14,9 +14,9 @@ The development of this document focuses on the creation of a multi-platform mob
 
 ## Screenshots
 <div align="center">
-  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/15dde726-4666-43b0-8c04-4c9054ba99a0" width="45%">
-  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/f618dd1c-b921-4702-91c6-6661329dce03" width="45%">
-  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/cca3915b-0284-49dc-959a-c459fd9a276c" width="45%">
+  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/15dde726-4666-43b0-8c04-4c9054ba99a0" width="80%">
+  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/f618dd1c-b921-4702-91c6-6661329dce03" width="80%">
+  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/cca3915b-0284-49dc-959a-c459fd9a276c" width="80%">
 </div>
 
 ## Run Locally
