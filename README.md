@@ -12,6 +12,59 @@ The development of this document focuses on the creation of a multi-platform mob
 <img src="https://github.com/EdgarHdz17/Educatronicapp/assets/47467891/e2fccb1e-1696-499c-bec3-c32e3958f51d">
 </p>
 
+## Screenshots
+<div align="center">
+  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/77b86071-116d-4281-a421-3d8adaf1972e" width="20%">
+  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/2fe9846f-daac-40c5-ab76-fad6b16d7946" width="20%">
+  <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/4ac436ee-1e89-42d2-a908-87c29e148902" width="20%">
+</div>
+
+## Run Locally
+
+Clone the Educatronicapp
+
+```bash
+  git clone https://github.com/EdgarHdzHdz17/Educatronicapp.git
+```
+
+Go to the project directory
+
+```bash
+  cd Educatronicapp
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the server
+
+```bash
+  npx expo start
+```
+
+## API Reference
+
+### Environment Variables
+
+To run this project, you will need to add the following environment variables to yours Screens.js file
+
+`API_KEY`
+
+### Post Item
+
+```https://platform.openai.com/docs/guides/speech-to-text
+  https://api.openai.com/v1/audio/translations
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `api_key` | `string` | **Required**. Your API key |
+
+## Appendix
+
 Developer: Ing. Edgar Hernández Hernández<br>
 
 Deployment: December 2023<br>
@@ -24,7 +77,15 @@ Dra. Josefina Bárcenas López<br>
 
 M. in C. Víctor Hugo García Ortega<br>
 
+## Skills
+<div align="center">
+  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> </a> 
+  <a href="https://reactnative.dev/" target="_blank" rel="noreferrer"> <img src="https://reactnative.dev/img/header_logo.svg" alt="reactnative" width="40" height="40"/> </a>
+</div>
+
+## License
+
 Copyright reserved. This project is protected by copyright and is only permitted for educational use. Any reproduction, distribution or modification is prohibited without the express consent of the copyright holder.<br>
 LICENSE: CC BY-NC-ND 4.0
 
-
+[CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es)
