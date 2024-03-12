@@ -11,6 +11,7 @@ The development of this document focuses on the creation of a multi-platform mob
 <p align="center">
 <img src="https://github.com/EdgarHdz17/Educatronicapp/assets/47467891/e2fccb1e-1696-499c-bec3-c32e3958f51d">
 </p>
+
 Developer: Ing. Edgar Hernández Hernández<br>
 
 Deployment: December 2023<br>
@@ -24,6 +25,6 @@ Dra. Josefina Bárcenas López<br>
 M. in C. Víctor Hugo García Ortega<br>
 
 Copyright reserved. This project is protected by copyright and is only permitted for educational use. Any reproduction, distribution or modification is prohibited without the express consent of the copyright holder.<br>
-LICENCE: CC BY-NC-ND 4.0
+LICENSE: CC BY-NC-ND 4.0
 
 
