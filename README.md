@@ -7,10 +7,6 @@ The development of this document focuses on the creation of a multi-platform mob
 <p align="center">
 <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/79cfca0b-e9b8-4bfd-b4bf-cf02af4ed953">
 </p>
-<br>
-<p align="center">
-<img src="https://github.com/EdgarHdz17/Educatronicapp/assets/47467891/e2fccb1e-1696-499c-bec3-c32e3958f51d">
-</p>
 
 ## Screenshots
 <div align="center">
@@ -79,13 +75,13 @@ M. in C. Víctor Hugo García Ortega<br>
 
 ## Skills
 <div align="center">
-  <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/> </a> 
-  <a href="https://reactnative.dev/" target="_blank" rel="noreferrer"> <img src="https://reactnative.dev/img/header_logo.svg" alt="reactnative" width="40" height="40"/> </a>
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="45" height="45"/> </a> 
+<a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original.svg" alt="react" width="45" height="45"/> </a> 
 </div>
 
 ## License
-
+<p align="justify">
 Copyright reserved. This project is protected by copyright and is only permitted for educational use. Any reproduction, distribution or modification is prohibited without the express consent of the copyright holder.<br>
 LICENSE: CC BY-NC-ND 4.0
-
+</p>
 [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.es)
