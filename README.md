@@ -15,6 +15,13 @@ The development of this document focuses on the creation of a multi-platform mob
   <img src="https://github.com/EdgarHdzHdz17/Educatronicapp/assets/47467891/cca3915b-0284-49dc-959a-c459fd9a276c" width="80%">
 </div>
 
+## Demo
+https://github.com/user-attachments/assets/a77affac-493a-4558-8559-960800faa129
+
+https://github.com/user-attachments/assets/139fed4c-7c0b-43de-9bb9-b19f80296202
+
+https://github.com/user-attachments/assets/40668e87-8d11-4a1f-a7e1-de2954970177
+
 ## Run Locally
 
 Clone the Educatronicapp
