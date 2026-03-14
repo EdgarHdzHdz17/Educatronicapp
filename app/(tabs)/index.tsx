@@ -1,18 +1,18 @@
-import { StyleSheet, TouchableOpacity, View, Animated } from 'react-native';
-import { useTranslation } from 'react-i18next';
-import { useState, useRef, useEffect } from 'react';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { StyleSheet, TouchableOpacity, View, Animated } from "react-native";
+import { useTranslation } from "react-i18next";
+import { useState, useRef, useEffect } from "react";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
 
 export default function HomeScreen() {
   const { t, i18n } = useTranslation();
-  const [isSpanish, setIsSpanish] = useState(i18n.language === 'es');
+  const [isSpanish, setIsSpanish] = useState(i18n.language === "es");
   const animatedValue = useRef(new Animated.Value(isSpanish ? 0 : 1)).current;
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'es' ? 'en' : 'es';
+    const newLang = i18n.language === "es" ? "en" : "es";
     i18n.changeLanguage(newLang);
-    setIsSpanish(newLang === 'es');
+    setIsSpanish(newLang === "es");
   };
 
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function HomeScreen() {
       duration: 300,
       useNativeDriver: false,
     }).start();
-  }, [isSpanish]);
+  }, [isSpanish, animatedValue]);
 
   const translateX = animatedValue.interpolate({
     inputRange: [0, 1],
@@ -30,13 +30,12 @@ export default function HomeScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title">{t('home.title')}</ThemedText>
-      <ThemedText style={styles.welcome}>{t('home.welcome')}</ThemedText>
-      
+      <ThemedText style={styles.welcome}>{t("home.welcome")}</ThemedText>
+
       <View style={styles.languageContainer}>
-        <ThemedText style={styles.label}>{t('home.changeLanguage')}</ThemedText>
-        <TouchableOpacity 
-          style={styles.toggleSwitch} 
+        <ThemedText style={styles.label}>{t("home.changeLanguage")}</ThemedText>
+        <TouchableOpacity
+          style={styles.toggleSwitch}
           onPress={toggleLanguage}
           activeOpacity={0.8}
         >
@@ -44,15 +43,12 @@ export default function HomeScreen() {
             <ThemedText style={styles.flagLeft}>🇪🇸</ThemedText>
             <ThemedText style={styles.flagRight}>🇺🇸</ThemedText>
           </View>
-          <Animated.View 
-            style={[
-              styles.toggleThumb,
-              { transform: [{ translateX }] }
-            ]}
+          <Animated.View
+            style={[styles.toggleThumb, { transform: [{ translateX }] }]}
           />
         </TouchableOpacity>
         <ThemedText style={styles.currentLang}>
-          {isSpanish ? 'Español' : 'English'}
+          {isSpanish ? "Español" : "English"}
         </ThemedText>
       </View>
     </ThemedView>
@@ -62,8 +58,6 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 20,
   },
   welcome: {
@@ -72,26 +66,26 @@ const styles = StyleSheet.create({
   },
   languageContainer: {
     marginTop: 40,
-    alignItems: 'center',
+    alignItems: "center",
   },
   label: {
     fontSize: 16,
     marginBottom: 15,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   toggleSwitch: {
     width: 100,
     height: 50,
-    position: 'relative',
+    position: "relative",
   },
   toggleTrack: {
     width: 100,
     height: 50,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: "#E0E0E0",
     borderRadius: 25,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 10,
   },
   flagLeft: {
@@ -103,14 +97,14 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   toggleThumb: {
-    position: 'absolute',
+    position: "absolute",
     width: 46,
     height: 46,
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     borderRadius: 23,
     top: 2,
     left: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -122,6 +116,6 @@ const styles = StyleSheet.create({
   currentLang: {
     marginTop: 15,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });
