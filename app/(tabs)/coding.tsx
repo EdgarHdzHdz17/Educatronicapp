@@ -7,6 +7,7 @@ import { ThemedView } from "@/components/themed-view";
 export default function CodingScreen() {
   const { t } = useTranslation();
   const [code, setCode] = useState("");
+  const [programName, setProgramName] = useState("");
 
   const codingButtons = [
     { key: "compile" },
@@ -26,6 +27,16 @@ export default function CodingScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <View style={styles.topSection}>
+        <TextInput
+          style={styles.programNameInput}
+          placeholder={t("coding.programName")}
+          placeholderTextColor="#999"
+          value={programName}
+          onChangeText={setProgramName}
+        />
+      </View>
+      
       <View style={styles.codingSection}>
         <View style={styles.buttonsColumn}>
           {codingButtons.map((button) => (
@@ -60,6 +71,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  topSection: {
+    padding: 10,
+    paddingBottom: 0,
+  },
+  programNameInput: {
+    width: "100%",
+    backgroundColor: "#fff",
+    padding: 15,
+    fontSize: 16,
+    color: "#000",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
+  },
   title: {
     fontSize: 28,
     fontWeight: "700",
@@ -71,6 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 20,
     overflow: "hidden",
+    padding: 10,
   },
   buttonsColumn: {
     width: 100,

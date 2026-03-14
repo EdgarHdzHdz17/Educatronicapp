@@ -16,6 +16,7 @@
     "clear": "Clear",
     "simulate": "Simulation",
     "help": "Help",
-    "placeholder": "Write your code here..."
+    "placeholder": "Write your code here...",
+    "programName": "Program Name"
   }
 }
