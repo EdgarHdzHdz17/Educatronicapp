@@ -1,5 +1,5 @@
-import { View, SafeAreaView, type ViewProps } from "react-native";
-
+import { View, type ViewProps } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useThemeColor } from "@/hooks/use-theme-color";
 
 export type ThemedViewProps = ViewProps & {
@@ -13,7 +13,7 @@ export function ThemedView({
   style,
   lightColor,
   darkColor,
-  useSafeArea = false,
+  useSafeArea = true,
   noPadding = false,
   ...otherProps
 }: ThemedViewProps) {
@@ -22,11 +22,20 @@ export function ThemedView({
     "background",
   );
 
-  const Component = useSafeArea ? SafeAreaView : View;
-  const padding = noPadding ? 0 : 0;
+  const padding = noPadding ? 0 : 10;
+
+  if (useSafeArea) {
+    return (
+      <SafeAreaView
+        edges={["top"]}
+        style={[{ backgroundColor, flex: 1, padding }, style]}
+        {...otherProps}
+      />
+    );
+  }
 
   return (
-    <Component
+    <View
       style={[{ backgroundColor, flex: 1, padding }, style]}
       {...otherProps}
     />
