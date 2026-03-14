@@ -1,0 +1,12 @@
+{
+  "home": {
+    "title": "Home",
+    "welcome": "Welcome to Educatronic",
+    "changeLanguage": "Change Language"
+  },
+  "tabs": {
+    "home": "Home",
+    "coding": "Coding",
+    "simulations": "Simulations"
+  }
+}

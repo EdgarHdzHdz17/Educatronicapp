@@ -1,0 +1,12 @@
+{
+  "home": {
+    "title": "Inicio",
+    "welcome": "Bienvenido a Educatronic",
+    "changeLanguage": "Cambiar Idioma"
+  },
+  "tabs": {
+    "home": "Inicio",
+    "coding": "Programación",
+    "simulations": "Simulaciones"
+  }
+}
