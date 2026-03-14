@@ -55,12 +55,12 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
   },
   welcome: {
-    marginTop: 20,
-    fontSize: 18,
+    marginTop: 10,
+    fontSize: 30,
     textAlign: "center",
+    padding: 20,
   },
   languageContainer: {
     marginTop: 40,
