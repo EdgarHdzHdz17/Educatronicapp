@@ -59,7 +59,6 @@ export default function CodingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
   },
   title: {
     fontSize: 28,
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
   },
   buttonsColumn: {
     width: 150,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "",
     padding: 10,
     justifyContent: "space-around",
   },
@@ -103,5 +102,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "monospace",
     color: "#000",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 10,
   },
 });
