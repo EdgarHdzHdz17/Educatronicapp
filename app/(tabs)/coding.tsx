@@ -1,4 +1,5 @@
 import { StyleSheet, TouchableOpacity, View, TextInput } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { ThemedText } from "@/components/themed-text";
@@ -8,6 +9,7 @@ export default function CodingScreen() {
   const { t } = useTranslation();
   const [code, setCode] = useState("");
   const [programName, setProgramName] = useState("");
+  const [level, setLevel] = useState(1);
 
   const codingButtons = [
     { key: "compile" },
@@ -39,6 +41,28 @@ export default function CodingScreen() {
 
       <View style={styles.codingSection}>
         <View style={styles.buttonsColumn}>
+          <View style={styles.levelContainer}>
+            <View style={styles.pickerWrapper}>
+              <Picker
+                selectedValue={level}
+                onValueChange={(itemValue) => setLevel(itemValue)}
+                style={styles.picker}
+                itemStyle={styles.pickerItem}
+                dropdownIconColor="#000"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
+                  <Picker.Item
+                    key={num}
+                    label={`${num}`}
+                    value={num}
+                    color="#000"
+                  />
+                ))}
+              </Picker>
+            </View>
+            <ThemedText>Level: {level}</ThemedText>
+          </View>
+
           {codingButtons.map((button) => (
             <TouchableOpacity
               key={button.key}
@@ -101,6 +125,36 @@ const styles = StyleSheet.create({
   buttonsColumn: {
     width: 100,
     justifyContent: "flex-start",
+  },
+  levelContainer: {
+    marginBottom: 10,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    overflow: "hidden",
+  },
+  pickerWrapper: {
+    backgroundColor: "#fff",
+  },
+  picker: {
+    width: "100%",
+    height: 120,
+    color: "#000",
+    textAlign: "center",
+  },
+  pickerItem: {
+    height: 120,
+    fontSize: 18,
+    color: "#000",
+  },
+  levelText: {
+    textAlign: "center",
+    fontSize: 13,
+    fontWeight: "700",
+    paddingVertical: 8,
+    backgroundColor: "#007AFF",
+    color: "#fff",
   },
   codingButton: {
     backgroundColor: "#007AFF",
