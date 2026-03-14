@@ -36,7 +36,7 @@ export default function CodingScreen() {
           onChangeText={setProgramName}
         />
       </View>
-      
+
       <View style={styles.codingSection}>
         <View style={styles.buttonsColumn}>
           {codingButtons.map((button) => (
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   topSection: {
-    padding: 10,
+    paddingVertical: 10,
     paddingBottom: 0,
   },
   programNameInput: {
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 20,
     overflow: "hidden",
-    padding: 10,
+    paddingVertical: 10,
   },
   buttonsColumn: {
     width: 100,
