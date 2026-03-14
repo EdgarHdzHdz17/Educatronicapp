@@ -8,5 +8,14 @@
     "home": "Home",
     "coding": "Coding",
     "simulations": "Simulations"
+  },
+  "coding": {
+    "compile": "Compile",
+    "save": "Save",
+    "load": "Load Program",
+    "clear": "Clear",
+    "simulate": "Simulation",
+    "help": "Help",
+    "placeholder": "Write your code here..."
   }
 }

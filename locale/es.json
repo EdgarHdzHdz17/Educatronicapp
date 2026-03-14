@@ -8,5 +8,14 @@
     "home": "Inicio",
     "coding": "Programación",
     "simulations": "Simulaciones"
+  },
+  "coding": {
+    "compile": "Compilar",
+    "save": "Guardar",
+    "load": "Cargar Programa",
+    "clear": "Borrar",
+    "simulate": "Simulación",
+    "help": "Ayuda",
+    "placeholder": "Escribe tu código aquí..."
   }
 }

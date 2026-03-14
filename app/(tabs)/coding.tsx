@@ -5,17 +5,16 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 
 export default function CodingScreen() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [code, setCode] = useState("");
-  const isSpanish = i18n.language === "es";
 
   const codingButtons = [
-    { key: "compile", labelEs: "Compilar", labelEn: "Compile" },
-    { key: "save", labelEs: "Guardar", labelEn: "Save" },
-    { key: "load", labelEs: "Cargar Programa", labelEn: "Load Program" },
-    { key: "clear", labelEs: "Borrar", labelEn: "Clear" },
-    { key: "simulate", labelEs: "Simulación", labelEn: "Simulation" },
-    { key: "help", labelEs: "Ayuda", labelEn: "Help" },
+    { key: "compile" },
+    { key: "save" },
+    { key: "load" },
+    { key: "clear" },
+    { key: "simulate" },
+    { key: "help" },
   ];
 
   const handleButtonPress = (key: string) => {
@@ -37,7 +36,7 @@ export default function CodingScreen() {
               activeOpacity={0.7}
             >
               <ThemedText style={styles.buttonText}>
-                {isSpanish ? button.labelEs : button.labelEn}
+                {t(`coding.${button.key}`)}
               </ThemedText>
             </TouchableOpacity>
           ))}
@@ -46,9 +45,7 @@ export default function CodingScreen() {
         <TextInput
           style={styles.codeInput}
           multiline
-          placeholder={
-            isSpanish ? "Escribe tu código aquí..." : "Write your code here..."
-          }
+          placeholder={t("coding.placeholder")}
           placeholderTextColor="#999"
           value={code}
           onChangeText={setCode}
