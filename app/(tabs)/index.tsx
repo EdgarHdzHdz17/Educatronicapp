@@ -47,9 +47,6 @@ export default function HomeScreen() {
             style={[styles.toggleThumb, { transform: [{ translateX }] }]}
           />
         </TouchableOpacity>
-        <ThemedText style={styles.currentLang}>
-          {isSpanish ? "Español" : "English"}
-        </ThemedText>
       </View>
     </ThemedView>
   );
@@ -63,6 +60,7 @@ const styles = StyleSheet.create({
   welcome: {
     marginTop: 20,
     fontSize: 18,
+    textAlign: "center",
   },
   languageContainer: {
     marginTop: 40,
