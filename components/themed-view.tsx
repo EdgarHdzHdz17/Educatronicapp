@@ -13,7 +13,7 @@ export function ThemedView({
   style,
   lightColor,
   darkColor,
-  useSafeArea = true,
+  useSafeArea = false,
   noPadding = false,
   ...otherProps
 }: ThemedViewProps) {
@@ -23,7 +23,7 @@ export function ThemedView({
   );
 
   const Component = useSafeArea ? SafeAreaView : View;
-  const padding = noPadding ? 0 : 20;
+  const padding = noPadding ? 0 : 0;
 
   return (
     <Component

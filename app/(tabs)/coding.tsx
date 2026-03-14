@@ -59,6 +59,7 @@ export default function CodingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
   },
   title: {
     fontSize: 28,
@@ -69,9 +70,6 @@ const styles = StyleSheet.create({
   codingSection: {
     flexDirection: "row",
     flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
     overflow: "hidden",
   },
   buttonsColumn: {
