@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   buttonsColumn: {
-    width: 100,
+    width: 80,
     alignSelf: "stretch",
     justifyContent: "space-between",
   },
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   codingButton: {
     backgroundColor: "#007AFF",
     paddingVertical: 8,
-    paddingHorizontal: 6,
+    paddingHorizontal: 4,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: "600",
     textAlign: "center",
   },
