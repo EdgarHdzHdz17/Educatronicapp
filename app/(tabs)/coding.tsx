@@ -1,10 +1,10 @@
+import { FloorPicker } from "@/components/floor-picker";
 import { ThemedView } from "@/components/themed-view";
 import {
   compileProgram,
   type CompilerEvent,
 } from "@/helpers/compiler-program";
 import { parseNaturalLanguage } from "@/helpers/natural-language";
-import { Picker } from "@react-native-picker/picker";
 import {
   CircleHelp,
   Eraser,
@@ -252,26 +252,14 @@ export default function CodingScreen() {
           <View style={styles.levelContainer}>
             <Text style={styles.levelLabel}>{t("coding.floor")}</Text>
             <View style={styles.pickerWrapper}>
-              <Picker
-                selectedValue={runtimeFloor}
+              <FloorPicker
+                value={runtimeFloor}
                 enabled={!isRunning}
                 onValueChange={(itemValue) => {
                   setLevel(itemValue);
                   setRuntimeFloor(itemValue);
                 }}
-                style={styles.picker}
-                itemStyle={styles.pickerItem}
-                dropdownIconColor="#000"
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                  <Picker.Item
-                    key={num}
-                    label={`${num}`}
-                    value={num}
-                    color="#000"
-                  />
-                ))}
-              </Picker>
+              />
             </View>
           </View>
 
@@ -543,19 +531,7 @@ const styles = StyleSheet.create({
   },
   pickerWrapper: {
     width: "100%",
-    backgroundColor: "#fff",
     alignItems: "center",
-  },
-  picker: {
-    width: "100%",
-    height: 72,
-    color: "#000",
-  },
-  pickerItem: {
-    height: 72,
-    fontSize: 16,
-    color: "#000",
-    textAlign: "center",
   },
   codingButton: {
     backgroundColor: "#007AFF",

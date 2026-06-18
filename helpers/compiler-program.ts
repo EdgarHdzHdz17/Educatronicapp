@@ -1,4 +1,5 @@
 import type { CommandSoundKey } from '@/constants/audio';
+import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
 import { playCommandSound } from '@/helpers/command-sounds';
 import {
   parseNaturalLanguage,
@@ -37,7 +38,6 @@ export type CompileProgramResult = {
   finalFloor: number;
 };
 
-const MIN_FLOOR = 1;
 const DEFAULT_COMMAND_DELAY_MS = 300;
 const DEFAULT_SOUND_DELAY_MS = 550;
 
@@ -151,6 +151,17 @@ async function executeVerticalMove(
         action: command.action,
         floor: currentFloor,
         message: `No puede bajar más: el elevador ya está en el piso ${MIN_FLOOR}.`,
+      });
+      break;
+    }
+
+    if (nextFloor > MAX_FLOOR) {
+      emit({
+        type: 'skip',
+        line: command.line,
+        action: command.action,
+        floor: currentFloor,
+        message: `No puede subir más: el elevador ya está en el piso ${MAX_FLOOR}.`,
       });
       break;
     }
