@@ -17,7 +17,15 @@
     "simulate": "Simulación",
     "help": "Ayuda",
     "placeholder": "Escribe tu código aquí...",
-    "programName": "Nombre del Programa"
+    "programName": "Nombre del Programa",
+    "untitled": "sin_nombre.edk",
+    "language": "Educatronic",
+    "line": "Ln",
+    "column": "Col",
+    "lines": "líneas",
+    "errors": "errores",
+    "noErrors": "Sin errores",
+    "problems": "Problemas"
   },
   "simulations": {
     "startElevator": "Inicio Elevador",
