@@ -33,6 +33,7 @@
     "referenceFloor": "Reference",
     "currentFloor": "Current",
     "compileErrors": "Fix errors before compiling",
+    "compileEmpty": "Write a program before compiling",
     "elevatorStatus": "Elevator status",
     "waiting": "Waiting to run...",
     "consoleEmpty": "Press Compile or Simulation to see what the elevator does.",

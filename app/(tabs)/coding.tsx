@@ -215,6 +215,14 @@ export default function CodingScreen() {
       return;
     }
 
+    if (!code.trim()) {
+      handleCompilerEvent({
+        type: "error",
+        message: t("coding.compileEmpty"),
+      });
+      return;
+    }
+
     const parseResult = parseNaturalLanguage(code, {
       realtime: false,
       referenceFloor: level,
