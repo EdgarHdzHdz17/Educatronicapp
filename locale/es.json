@@ -34,7 +34,14 @@
     "compileErrors": "Corrige los errores antes de compilar",
     "elevatorStatus": "Estado del elevador",
     "waiting": "Esperando ejecución...",
-    "consoleEmpty": "Presiona Compilar o Simulación para ver qué hace el elevador."
+    "consoleEmpty": "Presiona Compilar o Simulación para ver qué hace el elevador.",
+    "saveNeedsName": "Escribe un nombre para el programa antes de guardarlo.",
+    "saveNeedsCode": "No se puede guardar un programa vacío.",
+    "saveSuccess": "Se guardó \"{{name}}\" correctamente.",
+    "saveError": "No se pudo guardar el programa.",
+    "loadTitle": "Programas guardados",
+    "loadEmpty": "No hay programas guardados.",
+    "close": "Cerrar"
   },
   "simulations": {
     "startElevator": "Inicio Elevador",

@@ -6,6 +6,12 @@ import {
 } from "@/helpers/compiler-program";
 import { parseNaturalLanguage } from "@/helpers/natural-language";
 import {
+  getSavedPrograms,
+  saveProgram,
+  SavedProgramError,
+  type SavedProgram,
+} from "@/lib/saved-programs";
+import {
   CircleHelp,
   Eraser,
   FolderOpen,
@@ -18,6 +24,9 @@ import {
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
+  Alert,
+  Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -78,6 +87,8 @@ export default function CodingScreen() {
   const [executingLine, setExecutingLine] = useState<number | null>(null);
   const [runtimeFloor, setRuntimeFloor] = useState(1);
   const [elevatorStatus, setElevatorStatus] = useState("");
+  const [isLoadModalVisible, setIsLoadModalVisible] = useState(false);
+  const [savedPrograms, setSavedPrograms] = useState<SavedProgram[]>([]);
   const lineNumbersScrollRef = useRef<ScrollView>(null);
   const shouldContinueRef = useRef(true);
 
@@ -218,6 +229,62 @@ export default function CodingScreen() {
     { key: "help", Icon: CircleHelp },
   ];
 
+  const handleSaveProgram = useCallback(async () => {
+    if (isRunning) {
+      return;
+    }
+
+    const trimmedName = programName.trim();
+    if (!trimmedName) {
+      Alert.alert(t("coding.save"), t("coding.saveNeedsName"));
+      return;
+    }
+
+    if (!code.trim()) {
+      Alert.alert(t("coding.save"), t("coding.saveNeedsCode"));
+      return;
+    }
+
+    try {
+      await saveProgram(trimmedName, code);
+      Alert.alert(t("coding.save"), t("coding.saveSuccess", { name: trimmedName }));
+    } catch (error) {
+      if (error instanceof SavedProgramError) {
+        if (error.code === "EMPTY_NAME") {
+          Alert.alert(t("coding.save"), t("coding.saveNeedsName"));
+          return;
+        }
+
+        if (error.code === "EMPTY_CODE") {
+          Alert.alert(t("coding.save"), t("coding.saveNeedsCode"));
+          return;
+        }
+      }
+
+      Alert.alert(t("coding.save"), t("coding.saveError"));
+    }
+  }, [code, isRunning, programName, t]);
+
+  const handleOpenLoadModal = useCallback(async () => {
+    if (isRunning) {
+      return;
+    }
+
+    const programs = await getSavedPrograms();
+    setSavedPrograms(programs);
+    setIsLoadModalVisible(true);
+  }, [isRunning]);
+
+  const handleLoadProgram = useCallback((program: SavedProgram) => {
+    setProgramName(program.name);
+    setCode(program.code);
+    setCursorLine(1);
+    setCursorColumn(1);
+    setElevatorStatus("");
+    setExecutingLine(null);
+    setIsLoadModalVisible(false);
+  }, []);
+
   const handleButtonPress = (key: string) => {
     if (key === "clear") {
       shouldContinueRef.current = false;
@@ -228,6 +295,16 @@ export default function CodingScreen() {
       setExecutingLine(null);
       setIsRunning(false);
       setRuntimeFloor(level);
+      return;
+    }
+
+    if (key === "save") {
+      void handleSaveProgram();
+      return;
+    }
+
+    if (key === "load") {
+      void handleOpenLoadModal();
       return;
     }
 
@@ -476,6 +553,45 @@ export default function CodingScreen() {
           )}
         </View>
       </View>
+
+      <Modal
+        visible={isLoadModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsLoadModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => setIsLoadModalVisible(false)}
+        >
+          <Pressable style={styles.modalCard} onPress={() => undefined}>
+            <Text style={styles.modalTitle}>{t("coding.loadTitle")}</Text>
+            {savedPrograms.length === 0 ? (
+              <Text style={styles.modalEmpty}>{t("coding.loadEmpty")}</Text>
+            ) : (
+              <ScrollView style={styles.modalList}>
+                {savedPrograms.map((program) => (
+                  <TouchableOpacity
+                    key={program.name}
+                    style={styles.modalItem}
+                    onPress={() => handleLoadProgram(program)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.modalItemName}>{program.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            )}
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setIsLoadModalVisible(false)}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.modalCloseButtonText}>{t("coding.close")}</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ThemedView>
   );
 }
@@ -554,6 +670,57 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: "600",
     textAlign: "center",
+  },
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.45)",
+    justifyContent: "center",
+    padding: 24,
+  },
+  modalCard: {
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    maxHeight: "70%",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#222",
+    marginBottom: 12,
+  },
+  modalEmpty: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 16,
+  },
+  modalList: {
+    maxHeight: 320,
+    marginBottom: 12,
+  },
+  modalItem: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    marginBottom: 8,
+    backgroundColor: "#fafafa",
+  },
+  modalItemName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#222",
+  },
+  modalCloseButton: {
+    alignSelf: "flex-end",
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  modalCloseButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#007AFF",
   },
   editorColumn: {
     flex: 1,

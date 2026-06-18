@@ -34,7 +34,14 @@
     "compileErrors": "Fix errors before compiling",
     "elevatorStatus": "Elevator status",
     "waiting": "Waiting to run...",
-    "consoleEmpty": "Press Compile or Simulation to see what the elevator does."
+    "consoleEmpty": "Press Compile or Simulation to see what the elevator does.",
+    "saveNeedsName": "Enter a program name before saving.",
+    "saveNeedsCode": "Cannot save an empty program.",
+    "saveSuccess": "\"{{name}}\" was saved successfully.",
+    "saveError": "Could not save the program.",
+    "loadTitle": "Saved programs",
+    "loadEmpty": "No saved programs yet.",
+    "close": "Close"
   },
   "simulations": {
     "startElevator": "Start Elevator",
