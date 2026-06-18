@@ -26,6 +26,50 @@ function getIndexForOffset(offsetY: number, maxIndex: number): number {
   return Math.max(0, Math.min(maxIndex, index));
 }
 
+function StaticFloorDisplay({
+  value,
+  floors,
+}: {
+  value: number;
+  floors: number[];
+}) {
+  const index = Math.max(0, floors.indexOf(value));
+  const visibleFloors = [
+    floors[index - 1] ?? null,
+    floors[index],
+    floors[index + 1] ?? null,
+  ];
+
+  return (
+    <View style={styles.container}>
+      <View
+        pointerEvents="none"
+        style={[styles.selectionIndicator, { height: ITEM_HEIGHT }]}
+      />
+      <View style={styles.staticPicker}>
+        {visibleFloors.map((floor, slotIndex) => (
+          <View key={`${slotIndex}-${floor ?? "empty"}`} style={styles.item}>
+            {floor !== null ? (
+              <Text
+                style={[
+                  styles.itemText,
+                  floor === value
+                    ? styles.itemTextSelected
+                    : styles.itemTextAdjacent,
+                ]}
+              >
+                {floor}
+              </Text>
+            ) : null}
+          </View>
+        ))}
+      </View>
+      <View pointerEvents="none" style={styles.fadeTop} />
+      <View pointerEvents="none" style={styles.fadeBottom} />
+    </View>
+  );
+}
+
 export function FloorPicker({
   value,
   onValueChange,
@@ -76,12 +120,10 @@ export function FloorPicker({
 
       if (floor !== lastEmittedValue.current) {
         lastEmittedValue.current = floor;
-        if (enabled) {
-          onValueChange(floor);
-        }
+        onValueChange(floor);
       }
     },
-    [enabled, floors, onValueChange, scrollToIndex],
+    [floors, onValueChange, scrollToIndex],
   );
 
   const snapToNearest = useCallback(
@@ -103,6 +145,12 @@ export function FloorPicker({
   );
 
   useEffect(() => {
+    if (!enabled) {
+      isUserInteracting.current = false;
+      isSnapping.current = false;
+      return;
+    }
+
     if (isUserInteracting.current) {
       return;
     }
@@ -110,7 +158,7 @@ export function FloorPicker({
     lastEmittedValue.current = value;
     setCenteredFloor(value);
     scrollToFloor(value, false);
-  }, [value, scrollToFloor]);
+  }, [enabled, value, scrollToFloor]);
 
   const handleScrollBeginDrag = () => {
     isUserInteracting.current = true;
@@ -144,6 +192,10 @@ export function FloorPicker({
     snapToNearest(event.nativeEvent.contentOffset.y);
   };
 
+  if (!enabled) {
+    return <StaticFloorDisplay value={value} floors={floors} />;
+  }
+
   const paddingVertical = ITEM_HEIGHT * Math.floor(VISIBLE_ITEMS / 2);
 
   return (
@@ -154,7 +206,6 @@ export function FloorPicker({
       />
       <ScrollView
         ref={scrollRef}
-        scrollEnabled={enabled}
         showsVerticalScrollIndicator={false}
         snapToOffsets={snapOffsets}
         snapToAlignment="start"
@@ -199,6 +250,10 @@ const styles = StyleSheet.create({
     width: "100%",
     overflow: "hidden",
     backgroundColor: "#fff",
+  },
+  staticPicker: {
+    flex: 1,
+    justifyContent: "center",
   },
   selectionIndicator: {
     position: "absolute",
