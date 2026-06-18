@@ -4,7 +4,7 @@ import {
   compileProgram,
   type CompilerEvent,
 } from "@/helpers/compiler-program";
-import { parseNaturalLanguage } from "@/helpers/natural-language";
+import { parseNaturalLanguage, type ParseError } from "@/helpers/natural-language";
 import {
   getSavedPrograms,
   saveProgram,
@@ -46,6 +46,7 @@ const LINE_NUMBER_FONT_SIZE = 10;
 const CODE_PADDING = 12;
 const LINE_NUMBERS_WIDTH_PERCENT = "10%";
 const MIN_VISIBLE_LINES = 24;
+const REVIEW_LINE_DELAY_MS = 180;
 
 const EDITOR_COLORS = {
   background: "#fafafa",
@@ -58,6 +59,8 @@ const EDITOR_COLORS = {
   activeLine: "#e8f0fe",
   executingLine: "#e8f5e9",
   executingLineCode: "#f1f8e9",
+  reviewingLine: "#fff8e1",
+  reviewingLineCode: "#fffde7",
   errorLine: "#fde8e8",
   errorLineCode: "#fff5f5",
   errorAccent: "#e53935",
@@ -76,6 +79,16 @@ function getCursorPosition(code: string, cursorIndex: number) {
   return { line, column };
 }
 
+function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+function getErrorKey(error: ParseError): string {
+  return `${error.code}-${error.line}-${error.message}`;
+}
+
 export default function CodingScreen() {
   const { t } = useTranslation();
   const [code, setCode] = useState("");
@@ -86,13 +99,23 @@ export default function CodingScreen() {
   const [cursorLine, setCursorLine] = useState(1);
   const [cursorColumn, setCursorColumn] = useState(1);
   const [isRunning, setIsRunning] = useState(false);
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [reviewingLine, setReviewingLine] = useState<number | null>(null);
+  const [reviewErrors, setReviewErrors] = useState<ParseError[]>([]);
   const [executingLine, setExecutingLine] = useState<number | null>(null);
   const [runtimeFloor, setRuntimeFloor] = useState(1);
   const [elevatorStatus, setElevatorStatus] = useState("");
   const [isLoadModalVisible, setIsLoadModalVisible] = useState(false);
   const [savedPrograms, setSavedPrograms] = useState<SavedProgram[]>([]);
+  const [loadedSnapshot, setLoadedSnapshot] = useState<{
+    code: string;
+    level: number;
+  } | null>(null);
   const lineNumbersScrollRef = useRef<ScrollView>(null);
   const shouldContinueRef = useRef(true);
+  const reviewCancelRef = useRef(false);
+
+  const isBusy = isRunning || isReviewing;
 
   const handleEditorLayout = useCallback(
     (height: number) => {
@@ -104,12 +127,32 @@ export default function CodingScreen() {
   );
 
   const errors = useMemo(() => {
+    if (isReviewing) {
+      return reviewErrors;
+    }
+
     if (!code.trim()) {
       return [];
     }
 
-    return parseNaturalLanguage(code, { realtime: true, referenceFloor: level }).errors;
-  }, [code, level]);
+    const isLoadedSnapshot =
+      loadedSnapshot?.code === code && loadedSnapshot.level === level;
+
+    return parseNaturalLanguage(code, {
+      realtime: !isLoadedSnapshot,
+      referenceFloor: level,
+    }).errors;
+  }, [code, isReviewing, level, loadedSnapshot, reviewErrors]);
+
+  const handleCodeChange = useCallback(
+    (nextCode: string) => {
+      setCode(nextCode);
+      if (loadedSnapshot && nextCode !== loadedSnapshot.code) {
+        setLoadedSnapshot(null);
+      }
+    },
+    [loadedSnapshot],
+  );
 
   const visibleLineCount = useMemo(() => {
     if (editorHeight === 0) {
@@ -160,6 +203,10 @@ export default function CodingScreen() {
   }, []);
 
   const runProgram = useCallback(async () => {
+    if (isReviewing) {
+      return;
+    }
+
     if (isRunning) {
       shouldContinueRef.current = false;
       return;
@@ -192,7 +239,7 @@ export default function CodingScreen() {
 
     setIsRunning(false);
     setExecutingLine(null);
-  }, [handleCompilerEvent, code, isRunning, level, t]);
+  }, [handleCompilerEvent, code, isReviewing, isRunning, level, t]);
 
   const highlightsHeight = CODE_PADDING * 2 + lineCount * CODE_LINE_HEIGHT;
 
@@ -232,7 +279,7 @@ export default function CodingScreen() {
   ];
 
   const handleSaveProgram = useCallback(async () => {
-    if (isRunning) {
+    if (isBusy) {
       return;
     }
 
@@ -265,41 +312,107 @@ export default function CodingScreen() {
 
       Alert.alert(t("coding.save"), t("coding.saveError"));
     }
-  }, [code, isRunning, programName, t]);
+  }, [code, isBusy, programName, t]);
 
   const handleOpenLoadModal = useCallback(async () => {
-    if (isRunning) {
+    if (isBusy) {
       return;
     }
 
     const programs = await getSavedPrograms();
     setSavedPrograms(programs);
     setIsLoadModalVisible(true);
-  }, [isRunning]);
+  }, [isBusy]);
 
-  const handleLoadProgram = useCallback(
-    (program: SavedProgram) => {
+  const reviewLoadedProgram = useCallback(
+    async (program: SavedProgram) => {
+      reviewCancelRef.current = false;
       setProgramName(program.name);
       setCode(program.code);
       setExecutingLine(null);
       setElevatorStatus("");
       setIsLoadModalVisible(false);
+      setIsReviewing(true);
+      setReviewErrors([]);
+      setReviewingLine(null);
+      setLoadedSnapshot(null);
 
-      const loadErrors = parseNaturalLanguage(program.code, {
+      const fullParse = parseNaturalLanguage(program.code, {
         realtime: false,
         referenceFloor: level,
-      }).errors;
+      });
+      const lines = program.code.split("\n");
+      const totalLines = Math.max(lines.length, 1);
+      const revealedKeys = new Set<string>();
 
-      if (loadErrors.length > 0) {
-        setCursorLine(loadErrors[0].line);
+      for (let index = 0; index < totalLines; index += 1) {
+        if (reviewCancelRef.current) {
+          break;
+        }
+
+        const lineNumber = index + 1;
+        setReviewingLine(lineNumber);
+        setCursorLine(lineNumber);
         setCursorColumn(1);
-        return;
+
+        const lineErrors = fullParse.errors.filter(
+          (error) => error.line === lineNumber,
+        );
+
+        if (lineErrors.length > 0) {
+          setReviewErrors((current) => {
+            const next = [...current];
+
+            for (const error of lineErrors) {
+              const key = getErrorKey(error);
+              if (revealedKeys.has(key)) {
+                continue;
+              }
+
+              revealedKeys.add(key);
+              next.push(error);
+            }
+
+            return next;
+          });
+        }
+
+        await delay(REVIEW_LINE_DELAY_MS);
       }
 
-      setCursorLine(1);
-      setCursorColumn(1);
+      if (!reviewCancelRef.current) {
+        const remainingErrors = fullParse.errors.filter(
+          (error) => !revealedKeys.has(getErrorKey(error)),
+        );
+
+        if (remainingErrors.length > 0) {
+          setReviewErrors((current) => [...current, ...remainingErrors]);
+        }
+
+        if (fullParse.errors.length > 0) {
+          setCursorLine(fullParse.errors[0].line);
+        } else {
+          setCursorLine(1);
+        }
+
+        setCursorColumn(1);
+      }
+
+      if (!reviewCancelRef.current) {
+        setLoadedSnapshot({ code: program.code, level });
+      }
+
+      setIsReviewing(false);
+      setReviewingLine(null);
     },
     [level],
+  );
+
+  const handleLoadProgram = useCallback(
+    (program: SavedProgram) => {
+      void reviewLoadedProgram(program);
+    },
+    [reviewLoadedProgram],
   );
 
   const handleDeleteProgram = useCallback(async (name: string) => {
@@ -309,6 +422,7 @@ export default function CodingScreen() {
 
   const handleButtonPress = (key: string) => {
     if (key === "clear") {
+      reviewCancelRef.current = true;
       shouldContinueRef.current = false;
       setCode("");
       setCursorLine(1);
@@ -316,7 +430,15 @@ export default function CodingScreen() {
       setElevatorStatus("");
       setExecutingLine(null);
       setIsRunning(false);
+      setIsReviewing(false);
+      setReviewingLine(null);
+      setReviewErrors([]);
+      setLoadedSnapshot(null);
       setRuntimeFloor(level);
+      return;
+    }
+
+    if (isReviewing && (key === "compile" || key === "simulate" || key === "load" || key === "save")) {
       return;
     }
 
@@ -356,9 +478,12 @@ export default function CodingScreen() {
             <View style={styles.pickerWrapper}>
               <FloorPicker
                 value={runtimeFloor}
-                enabled={!isRunning}
+                enabled={!isBusy}
                 onValueChange={(itemValue) => {
                   setLevel(itemValue);
+                  if (loadedSnapshot) {
+                    setLoadedSnapshot(null);
+                  }
                   setRuntimeFloor(itemValue);
                 }}
               />
@@ -369,6 +494,12 @@ export default function CodingScreen() {
             {codingButtons.map((button) => {
               const isCompileRunning =
                 button.key === "compile" && isRunning;
+              const isBlockedWhileReviewing =
+                isReviewing &&
+                (button.key === "compile" ||
+                  button.key === "simulate" ||
+                  button.key === "load" ||
+                  button.key === "save");
               const IconComponent =
                 isCompileRunning && button.runningIcon
                   ? button.runningIcon
@@ -380,15 +511,19 @@ export default function CodingScreen() {
                   style={[
                     styles.codingButton,
                     isCompileRunning && styles.codingButtonActive,
+                    isBlockedWhileReviewing && styles.codingButtonDisabled,
                   ]}
                   onPress={() => handleButtonPress(button.key)}
                   activeOpacity={0.7}
+                  disabled={isBlockedWhileReviewing}
                 >
                   <IconComponent color="#fff" size={16} strokeWidth={2.25} />
                   <Text style={styles.buttonText}>
-                    {isCompileRunning
-                      ? t("coding.running")
-                      : t(`coding.${button.key}`)}
+                    {isReviewing && button.key === "compile"
+                      ? t("coding.reviewing")
+                      : isCompileRunning
+                        ? t("coding.running")
+                        : t(`coding.${button.key}`)}
                   </Text>
                 </TouchableOpacity>
               );
@@ -429,6 +564,7 @@ export default function CodingScreen() {
                   const hasError = errorLines.has(lineNumber);
                   const isActive = cursorLine === lineNumber;
                   const isExecuting = executingLine === lineNumber;
+                  const isReviewingLine = reviewingLine === lineNumber;
 
                   return (
                     <View
@@ -436,8 +572,18 @@ export default function CodingScreen() {
                       style={[
                         styles.lineNumberRow,
                         isExecuting && styles.lineNumberRowExecuting,
-                        isActive && !hasError && !isExecuting && styles.lineNumberRowActive,
-                        hasError && !isExecuting && styles.lineNumberRowError,
+                        isReviewingLine &&
+                          !isExecuting &&
+                          styles.lineNumberRowReviewing,
+                        isActive &&
+                          !hasError &&
+                          !isExecuting &&
+                          !isReviewingLine &&
+                          styles.lineNumberRowActive,
+                        hasError &&
+                          !isExecuting &&
+                          !isReviewingLine &&
+                          styles.lineNumberRowError,
                       ]}
                     >
                       {hasError && <View style={styles.errorMarker} />}
@@ -471,6 +617,7 @@ export default function CodingScreen() {
                     const hasError = errorLines.has(lineNumber);
                     const isActive = cursorLine === lineNumber;
                     const isExecuting = executingLine === lineNumber;
+                    const isReviewingLine = reviewingLine === lineNumber;
 
                     return (
                       <View
@@ -483,12 +630,17 @@ export default function CodingScreen() {
                               (lineNumber - 1) * CODE_LINE_HEIGHT,
                           },
                           isExecuting && styles.codeLineHighlightExecuting,
+                          isReviewingLine &&
+                            !isExecuting &&
+                            styles.codeLineHighlightReviewing,
                           isActive &&
                             !hasError &&
                             !isExecuting &&
+                            !isReviewingLine &&
                             styles.codeLineHighlightActive,
                           hasError &&
                             !isExecuting &&
+                            !isReviewingLine &&
                             styles.codeLineHighlightError,
                         ]}
                       />
@@ -499,11 +651,11 @@ export default function CodingScreen() {
                 <TextInput
                   style={styles.codeInput}
                   multiline
-                  editable={!isRunning}
+                  editable={!isBusy}
                   placeholder={t("coding.placeholder")}
                   placeholderTextColor="#aaa"
                   value={code}
-                  onChangeText={setCode}
+                  onChangeText={handleCodeChange}
                   onSelectionChange={handleSelectionChange}
                   onScroll={handleCodeScroll}
                   textAlignVertical="top"
@@ -542,9 +694,11 @@ export default function CodingScreen() {
               <Text style={styles.statusBarText}>
                 {isRunning
                   ? `${t("coding.running")} · ${t("coding.floor")} ${runtimeFloor}`
-                  : errors.length > 0
-                    ? `${errors.length} ${t("coding.errors")}`
-                    : t("coding.noErrors")}
+                  : isReviewing
+                    ? `${t("coding.reviewing")} · ${t("coding.line")} ${reviewingLine ?? 1}`
+                    : errors.length > 0
+                      ? `${errors.length} ${t("coding.errors")}`
+                      : t("coding.noErrors")}
               </Text>
             </View>
           </View>
@@ -695,6 +849,9 @@ const styles = StyleSheet.create({
   },
   codingButtonActive: {
     backgroundColor: "#c62828",
+  },
+  codingButtonDisabled: {
+    opacity: 0.45,
   },
   buttonText: {
     color: "#fff",
@@ -848,6 +1005,9 @@ const styles = StyleSheet.create({
   lineNumberRowExecuting: {
     backgroundColor: EDITOR_COLORS.executingLine,
   },
+  lineNumberRowReviewing: {
+    backgroundColor: EDITOR_COLORS.reviewingLine,
+  },
   lineNumberRowError: {
     backgroundColor: EDITOR_COLORS.errorLine,
   },
@@ -902,6 +1062,9 @@ const styles = StyleSheet.create({
   },
   codeLineHighlightExecuting: {
     backgroundColor: EDITOR_COLORS.executingLineCode,
+  },
+  codeLineHighlightReviewing: {
+    backgroundColor: EDITOR_COLORS.reviewingLineCode,
   },
   codeLineHighlightError: {
     backgroundColor: EDITOR_COLORS.errorLineCode,
