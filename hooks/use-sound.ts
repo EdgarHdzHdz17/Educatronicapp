@@ -6,7 +6,7 @@ import {
   type AudioSource,
 } from 'expo-audio';
 
-import { AUDIO_SOURCES, type AudioSourceKey } from '@/constants/audio';
+import { COMMAND_SOUNDS, type CommandSoundKey } from '@/constants/audio';
 import { configureAudioMode } from '@/lib/audio';
 
 const DEFAULT_OPTIONS: AudioPlayerOptions = {
@@ -41,9 +41,9 @@ export function useSound(
   return { player, play, pause };
 }
 
-export function useSoundByKey(
-  key: AudioSourceKey,
+export function useCommandSound(
+  key: CommandSoundKey,
   options?: AudioPlayerOptions,
 ): UseSoundResult {
-  return useSound(AUDIO_SOURCES[key], options);
+  return useSound(COMMAND_SOUNDS[key], options);
 }

@@ -6,8 +6,6 @@ import {
   type AudioSource,
 } from 'expo-audio';
 
-import { AUDIO_SOURCES, type AudioSourceKey } from '@/constants/audio';
-
 const SOUND_PLAYER_OPTIONS: AudioPlayerOptions = {
   keepAudioSessionActive: true,
 };
@@ -45,8 +43,4 @@ export async function playSound(source: AudioSource): Promise<void> {
   const player = getSoundPlayer(source);
   await player.seekTo(0);
   player.play();
-}
-
-export function playSoundByKey(key: AudioSourceKey): Promise<void> {
-  return playSound(AUDIO_SOURCES[key]);
 }
