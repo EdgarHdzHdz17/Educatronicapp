@@ -32,6 +32,8 @@ export type ParseErrorCode =
   | 'MISSING_NEWLINE'
   | 'MULTIPLE_START'
   | 'UNEXPECTED_AFTER_END'
+  | 'INVALID_START_PLACEMENT'
+  | 'INVALID_END_PLACEMENT'
   | 'FLOOR_ABOVE_MAX'
   | 'FLOOR_BELOW_MIN';
 
@@ -88,31 +90,31 @@ const SPANISH_DEFINITION: CommandLanguageDefinition = {
   patterns: [
     {
       action: 'UpLevelElevator',
-      pattern: /^\s*[Ss]\s+([1-6])\n+/,
+      pattern: /^\s*[Ss]\s+([1-6])(?:\n+|$)/,
       extract: (match) => ({ level: Number(match[1]) }),
     },
     {
       action: 'DownLevelElevator',
-      pattern: /^\s*[Bb]\s+([1-6])\n+/,
+      pattern: /^\s*[Bb]\s+([1-6])(?:\n+|$)/,
       extract: (match) => ({ level: Number(match[1]) }),
     },
     {
       action: 'StopElevator',
-      pattern: /^\s*[Pp]\s+([1-9])\n+/,
+      pattern: /^\s*[Pp]\s+([1-9])(?:\n+|$)/,
       extract: (match) => ({ channel: Number(match[1]) }),
     },
     {
       action: 'OpenDoorCloseDoor',
-      pattern: /^\s*[Aa]\s+([1-9])\n+/,
+      pattern: /^\s*[Aa]\s+([1-9])(?:\n+|$)/,
       extract: (match) => ({ channel: Number(match[1]) }),
     },
     {
       action: 'StartElevator',
-      pattern: /^\s*[Ii]\s*\n+/,
+      pattern: /^\s*[Ii]\s*(?:\n+|$)/,
     },
     {
       action: 'EndElevator',
-      pattern: /^\s*[Ff]\n*/,
+      pattern: /^\s*[Ff]\s*(?:\n+|$)/,
     },
   ],
   startClass: 'Ii',
@@ -139,31 +141,31 @@ const ENGLISH_DEFINITION: CommandLanguageDefinition = {
   patterns: [
     {
       action: 'UpLevelElevator',
-      pattern: /^\s*[Uu]\s+([1-6])\n+/,
+      pattern: /^\s*[Uu]\s+([1-6])(?:\n+|$)/,
       extract: (match) => ({ level: Number(match[1]) }),
     },
     {
       action: 'DownLevelElevator',
-      pattern: /^\s*[Dd]\s+([1-6])\n+/,
+      pattern: /^\s*[Dd]\s+([1-6])(?:\n+|$)/,
       extract: (match) => ({ level: Number(match[1]) }),
     },
     {
       action: 'StopElevator',
-      pattern: /^\s*[Pp]\s+([1-9])\n+/,
+      pattern: /^\s*[Pp]\s+([1-9])(?:\n+|$)/,
       extract: (match) => ({ channel: Number(match[1]) }),
     },
     {
       action: 'OpenDoorCloseDoor',
-      pattern: /^\s*[Oo]\s+([1-9])\n+/,
+      pattern: /^\s*[Oo]\s+([1-9])(?:\n+|$)/,
       extract: (match) => ({ channel: Number(match[1]) }),
     },
     {
       action: 'StartElevator',
-      pattern: /^\s*[Ss]\s*\n+/,
+      pattern: /^\s*[Ss]\s*(?:\n+|$)/,
     },
     {
       action: 'EndElevator',
-      pattern: /^\s*[Ee]\n*/,
+      pattern: /^\s*[Ee]\s*(?:\n+|$)/,
     },
   ],
   startClass: 'Ss',
@@ -336,6 +338,57 @@ function getFirstNonBlankLine(
   }
 
   return null;
+}
+
+function getLastNonBlankLine(
+  input: string,
+): { line: number; content: string } | null {
+  const lines = input.split('\n');
+
+  for (let index = lines.length - 1; index >= 0; index -= 1) {
+    const content = lines[index].trim();
+    if (content) {
+      return { line: index + 1, content };
+    }
+  }
+
+  return null;
+}
+
+function isCompleteCommandLine(
+  lineContent: string,
+  definition: CommandLanguageDefinition,
+): boolean {
+  const trimmed = lineContent.trim();
+  if (!trimmed) {
+    return false;
+  }
+
+  if (isValidStartCommandLine(lineContent, definition)) {
+    return true;
+  }
+
+  if (isValidEndCommandLine(lineContent, definition)) {
+    return true;
+  }
+
+  const parameterizedChecks: Array<{ letterClass: string; range: 'level' | 'channel' }> =
+    [
+      { letterClass: definition.upClass, range: 'level' },
+      { letterClass: definition.downClass, range: 'level' },
+      { letterClass: definition.stopClass, range: 'channel' },
+      { letterClass: definition.openClass, range: 'channel' },
+    ];
+
+  return parameterizedChecks.some(({ letterClass, range }) => {
+    const validPattern = new RegExp(
+      range === 'level'
+        ? `^\\s*[${letterClass}]\\s+[1-6]\\s*$`
+        : `^\\s*[${letterClass}]\\s+[1-9]\\s*$`,
+    );
+
+    return validPattern.test(lineContent);
+  });
 }
 
 function validateProgramStart(
@@ -562,7 +615,11 @@ function filterRealtimeErrors(
 
   return errors.filter((error) => {
     if (error.code === 'MISSING_END') {
-      return false;
+      if (!isCompleteCommandLine(incompleteLineContent, definition)) {
+        return false;
+      }
+
+      return true;
     }
 
     if (error.line !== incompleteLineNumber) {
@@ -623,6 +680,61 @@ function validateStructure(
       errors.push(createError('UNEXPECTED_AFTER_END', command.line, input));
     }
   }
+}
+
+function validateCommandPlacement(
+  input: string,
+  errors: ParseError[],
+  definition: CommandLanguageDefinition,
+): void {
+  const firstLine = getFirstNonBlankLine(input);
+  const lastLine = getLastNonBlankLine(input);
+
+  if (!firstLine || !lastLine) {
+    return;
+  }
+
+  const incompleteLineNumber = getIncompleteLastLineNumber(input);
+  const lines = input.split('\n');
+
+  lines.forEach((lineContent, index) => {
+    const line = index + 1;
+    const trimmed = lineContent.trim();
+
+    if (!trimmed) {
+      return;
+    }
+
+    const isIncomplete = incompleteLineNumber === line;
+    if (isIncomplete && isIncompleteLineStillValid(lineContent, definition)) {
+      return;
+    }
+
+    const isFirst = line === firstLine.line;
+    const isLast = line === lastLine.line;
+
+    if (new RegExp(`^[${definition.startClass}]`).test(trimmed)) {
+      if (!isValidStartCommandLine(lineContent, definition)) {
+        return;
+      }
+
+      if (!isFirst) {
+        errors.push(createError('INVALID_START_PLACEMENT', line, input));
+      }
+
+      return;
+    }
+
+    if (new RegExp(`^[${definition.endClass}]`).test(trimmed)) {
+      if (!isValidEndCommandLine(lineContent, definition)) {
+        return;
+      }
+
+      if (!isLast) {
+        errors.push(createError('INVALID_END_PLACEMENT', line, input));
+      }
+    }
+  });
 }
 
 function clampReferenceFloor(referenceFloor: number): number {
@@ -740,6 +852,7 @@ export function parseNaturalLanguage(
 
   validateProgramStart(input, errors, definition);
   validateLineFormats(input, errors, definition);
+  validateCommandPlacement(input, errors, definition);
   validateStructure(input, commands, errors, definition);
   validateFloorBounds(
     input,

@@ -54,6 +54,8 @@
     "INVALID_COMMAND": "Comando no reconocido en la línea {{line}}{{suffix}}.",
     "INVALID_START_COMMAND": "El comando {{start}} solo puede ser la letra {{start}} o {{startLower}}, sin números ni texto adicional (línea {{line}}{{suffix}}).",
     "INVALID_END_COMMAND": "El comando {{end}} solo puede ser la letra {{end}} o {{endLower}}, sin números ni texto adicional (línea {{line}}{{suffix}}).",
+    "INVALID_START_PLACEMENT": "El comando {{start}} (inicio) solo puede estar en la primera línea del programa (línea {{line}}{{suffix}}).",
+    "INVALID_END_PLACEMENT": "El comando {{end}} (fin) solo puede estar en la última línea del programa (línea {{line}}{{suffix}}).",
     "INVALID_LEVEL": "Nivel inválido en la línea {{line}}{{suffix}}. Use un número del 1 al 6 para {{up}} o {{down}}.",
     "INVALID_CHANNEL": "Canal inválido en la línea {{line}}{{suffix}}. Use un número del 1 al 9 para {{stop}} o {{open}}.",
     "MISSING_NEWLINE": "Falta un salto de línea después del comando en la línea {{line}}{{suffix}}.",
