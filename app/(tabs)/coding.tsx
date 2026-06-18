@@ -5,6 +5,7 @@ import {
   type CompilerEvent,
 } from "@/helpers/compiler-program";
 import {
+  getParseErrorMessage,
   normalizeCommandLanguage,
   parseNaturalLanguage,
   type ParseError,
@@ -90,7 +91,7 @@ function delay(ms: number): Promise<void> {
 }
 
 function getErrorKey(error: ParseError): string {
-  return `${error.code}-${error.line}-${error.message}`;
+  return `${error.code}-${error.line}-${error.snippet ?? ""}`;
 }
 
 export default function CodingScreen() {
@@ -765,7 +766,9 @@ export default function CodingScreen() {
                     <Text style={styles.errorLineLabel}>
                       {t("coding.line")} {error.line}
                     </Text>
-                    <Text style={styles.errorText}>{error.message}</Text>
+                    <Text style={styles.errorText}>
+                      {getParseErrorMessage(error, commandLanguage)}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </ScrollView>

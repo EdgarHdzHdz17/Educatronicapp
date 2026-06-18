@@ -1,7 +1,9 @@
 import type { CommandSoundKey } from '@/constants/audio';
 import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
 import { playCommandSound } from '@/helpers/command-sounds';
+import i18n from '@/i18n';
 import {
+  getParseErrorMessage,
   parseNaturalLanguage,
   type CommandAction,
   type CommandLanguage,
@@ -335,7 +337,9 @@ export async function compileProgram(
     emit({
       type: 'error',
       line: firstError?.line,
-      message: firstError?.message ?? 'El programa tiene errores y no puede ejecutarse.',
+      message: firstError
+        ? getParseErrorMessage(firstError, commandLanguage ?? 'es')
+        : i18n.t('coding.compileErrors'),
     });
 
     return {

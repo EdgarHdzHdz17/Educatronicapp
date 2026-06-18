@@ -47,6 +47,21 @@
     "deleteProgram": "Delete program",
     "close": "Close"
   },
+  "parseErrors": {
+    "EMPTY_PROGRAM": "The program is empty.",
+    "MISSING_START": "The program must start with command {{start}} (start elevator).",
+    "MISSING_END": "The program must end with command {{end}} (end elevator).",
+    "INVALID_COMMAND": "Unrecognized command on line {{line}}{{suffix}}.",
+    "INVALID_START_COMMAND": "Command {{start}} must be only the letter {{start}} (uppercase or lowercase), with no numbers or extra text (line {{line}}{{suffix}}).",
+    "INVALID_END_COMMAND": "Command {{end}} must be only the letter {{end}} (uppercase or lowercase), with no numbers or extra text (line {{line}}{{suffix}}).",
+    "INVALID_LEVEL": "Invalid level on line {{line}}{{suffix}}. Use a number from 1 to 6 for {{up}} or {{down}}.",
+    "INVALID_CHANNEL": "Invalid channel on line {{line}}{{suffix}}. Use a number from 1 to 9 for {{stop}} or {{open}}.",
+    "MISSING_NEWLINE": "Missing newline after the command on line {{line}}{{suffix}}.",
+    "MULTIPLE_START": "There can only be one {{start}} (start) command in the program (line {{line}}{{suffix}}).",
+    "UNEXPECTED_AFTER_END": "There is content after the {{end}} (end) command on line {{line}}{{suffix}}.",
+    "FLOOR_ABOVE_MAX": "Cannot go up further: the elevator cannot go above floor {{maxFloor}} (line {{line}}{{suffix}}).",
+    "FLOOR_BELOW_MIN": "Cannot go down further: the elevator cannot go below floor {{minFloor}} (line {{line}}{{suffix}})."
+  },
   "simulations": {
     "startElevator": "Start Elevator",
     "endElevator": "End Elevator",

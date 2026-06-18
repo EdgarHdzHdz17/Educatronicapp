@@ -47,6 +47,21 @@
     "deleteProgram": "Eliminar programa",
     "close": "Cerrar"
   },
+  "parseErrors": {
+    "EMPTY_PROGRAM": "El programa está vacío.",
+    "MISSING_START": "El programa debe comenzar con el comando {{start}} (inicio de elevador).",
+    "MISSING_END": "El programa debe terminar con el comando {{end}} (fin de elevador).",
+    "INVALID_COMMAND": "Comando no reconocido en la línea {{line}}{{suffix}}.",
+    "INVALID_START_COMMAND": "El comando {{start}} solo puede ser la letra {{start}} o {{startLower}}, sin números ni texto adicional (línea {{line}}{{suffix}}).",
+    "INVALID_END_COMMAND": "El comando {{end}} solo puede ser la letra {{end}} o {{endLower}}, sin números ni texto adicional (línea {{line}}{{suffix}}).",
+    "INVALID_LEVEL": "Nivel inválido en la línea {{line}}{{suffix}}. Use un número del 1 al 6 para {{up}} o {{down}}.",
+    "INVALID_CHANNEL": "Canal inválido en la línea {{line}}{{suffix}}. Use un número del 1 al 9 para {{stop}} o {{open}}.",
+    "MISSING_NEWLINE": "Falta un salto de línea después del comando en la línea {{line}}{{suffix}}.",
+    "MULTIPLE_START": "Solo puede haber un comando {{start}} (inicio) en el programa (línea {{line}}{{suffix}}).",
+    "UNEXPECTED_AFTER_END": "Hay contenido después del comando {{end}} (fin) en la línea {{line}}{{suffix}}.",
+    "FLOOR_ABOVE_MAX": "No puede subir más: el elevador no puede pasar del piso {{maxFloor}} (línea {{line}}{{suffix}}).",
+    "FLOOR_BELOW_MIN": "No puede bajar más: el elevador no puede ir por debajo del piso {{minFloor}} (línea {{line}}{{suffix}})."
+  },
   "simulations": {
     "startElevator": "Inicio Elevador",
     "endElevator": "Fin Elevador",

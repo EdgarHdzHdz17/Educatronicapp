@@ -1,4 +1,5 @@
 import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
+import i18n from '@/i18n';
 
 export type CommandAction =
   | 'StartElevator'
@@ -44,7 +45,7 @@ export type ParsedCommand = {
 export type ParseError = {
   code: ParseErrorCode;
   line: number;
-  message: string;
+  snippet?: string;
 };
 
 export type ParseResult = {
@@ -189,6 +190,29 @@ export function getCommandLabels(language: CommandLanguage = 'es'): CommandLabel
   return { ...LANGUAGE_DEFINITIONS[language].labels };
 }
 
+export function getParseErrorMessage(
+  error: ParseError,
+  commandLanguage: CommandLanguage = 'es',
+): string {
+  const labels = getCommandLabels(commandLanguage);
+  const suffix = error.snippet ? `: "${error.snippet}"` : '';
+
+  return i18n.t(`parseErrors.${error.code}`, {
+    line: error.line,
+    suffix,
+    start: labels.start,
+    startLower: labels.start.toLowerCase(),
+    end: labels.end,
+    endLower: labels.end.toLowerCase(),
+    up: labels.up,
+    down: labels.down,
+    stop: labels.stop,
+    open: labels.open,
+    maxFloor: MAX_FLOOR,
+    minFloor: MIN_FLOOR,
+  });
+}
+
 function getDefinition(language?: CommandLanguage): CommandLanguageDefinition {
   return LANGUAGE_DEFINITIONS[language ?? 'es'];
 }
@@ -223,48 +247,14 @@ function createError(
   code: ParseErrorCode,
   line: number,
   input: string,
-  definition: CommandLanguageDefinition,
 ): ParseError {
   const snippet = getLineSnippet(input, line);
-  const suffix = snippet ? `: "${snippet}"` : '';
-  const { labels } = definition;
-  const levelCommands = `${labels.up} or ${labels.down}`;
-  const channelCommands = `${labels.stop} or ${labels.open}`;
 
-  const messages: Record<ParseErrorCode, string> =
-    definition.lang === 'en'
-      ? {
-          EMPTY_PROGRAM: 'The program is empty.',
-          MISSING_START: `The program must start with command ${labels.start} (start elevator).`,
-          MISSING_END: `The program must end with command ${labels.end} (end elevator).`,
-          INVALID_COMMAND: `Unrecognized command on line ${line}${suffix}.`,
-          INVALID_START_COMMAND: `Command ${labels.start} must be only the letter ${labels.start} (uppercase or lowercase), with no numbers or extra text (line ${line}${suffix}).`,
-          INVALID_END_COMMAND: `Command ${labels.end} must be only the letter ${labels.end} (uppercase or lowercase), with no numbers or extra text (line ${line}${suffix}).`,
-          INVALID_LEVEL: `Invalid level on line ${line}${suffix}. Use a number from 1 to 6 for ${levelCommands}.`,
-          INVALID_CHANNEL: `Invalid channel on line ${line}${suffix}. Use a number from 1 to 9 for ${channelCommands}.`,
-          MISSING_NEWLINE: `Missing newline after the command on line ${line}${suffix}.`,
-          MULTIPLE_START: `There can only be one ${labels.start} (start) command in the program (line ${line}${suffix}).`,
-          UNEXPECTED_AFTER_END: `There is content after the ${labels.end} (end) command on line ${line}${suffix}.`,
-          FLOOR_ABOVE_MAX: `Cannot go up further: the elevator cannot go above floor ${MAX_FLOOR} (line ${line}${suffix}).`,
-          FLOOR_BELOW_MIN: `Cannot go down further: the elevator cannot go below floor ${MIN_FLOOR} (line ${line}${suffix}).`,
-        }
-      : {
-          EMPTY_PROGRAM: 'El programa está vacío.',
-          MISSING_START: `El programa debe comenzar con el comando ${labels.start} (inicio de elevador).`,
-          MISSING_END: `El programa debe terminar con el comando ${labels.end} (fin de elevador).`,
-          INVALID_COMMAND: `Comando no reconocido en la línea ${line}${suffix}.`,
-          INVALID_START_COMMAND: `El comando ${labels.start} solo puede ser la letra ${labels.start} o ${labels.start.toLowerCase()}, sin números ni texto adicional (línea ${line}${suffix}).`,
-          INVALID_END_COMMAND: `El comando ${labels.end} solo puede ser la letra ${labels.end} o ${labels.end.toLowerCase()}, sin números ni texto adicional (línea ${line}${suffix}).`,
-          INVALID_LEVEL: `Nivel inválido en la línea ${line}${suffix}. Use un número del 1 al 6 para ${labels.up} o ${labels.down}.`,
-          INVALID_CHANNEL: `Canal inválido en la línea ${line}${suffix}. Use un número del 1 al 9 para ${labels.stop} o ${labels.open}.`,
-          MISSING_NEWLINE: `Falta un salto de línea después del comando en la línea ${line}${suffix}.`,
-          MULTIPLE_START: `Solo puede haber un comando ${labels.start} (inicio) en el programa (línea ${line}${suffix}).`,
-          UNEXPECTED_AFTER_END: `Hay contenido después del comando ${labels.end} (fin) en la línea ${line}${suffix}.`,
-          FLOOR_ABOVE_MAX: `No puede subir más: el elevador no puede pasar del piso ${MAX_FLOOR} (línea ${line}${suffix}).`,
-          FLOOR_BELOW_MIN: `No puede bajar más: el elevador no puede ir por debajo del piso ${MIN_FLOOR} (línea ${line}${suffix}).`,
-        };
-
-  return { code, line, message: messages[code] };
+  return {
+    code,
+    line,
+    snippet: snippet || undefined,
+  };
 }
 
 function detectErrorAt(
@@ -281,7 +271,7 @@ function detectErrorAt(
   if (levelCommand) {
     const level = Number(levelCommand[2]);
     if (level < 1 || level > 6) {
-      return createError('INVALID_LEVEL', line, input, definition);
+      return createError('INVALID_LEVEL', line, input);
     }
   }
 
@@ -291,7 +281,7 @@ function detectErrorAt(
   if (channelCommand) {
     const channel = Number(channelCommand[2]);
     if (channel < 1 || channel > 9) {
-      return createError('INVALID_CHANNEL', line, input, definition);
+      return createError('INVALID_CHANNEL', line, input);
     }
   }
 
@@ -299,21 +289,21 @@ function detectErrorAt(
     new RegExp(`^\\s*([${definition.levelClass}${definition.channelClass}])(\\d)`),
   );
   if (missingSpace) {
-    return createError('INVALID_COMMAND', line, input, definition);
+    return createError('INVALID_COMMAND', line, input);
   }
 
   const invalidStartCommand = remaining.match(
     new RegExp(`^\\s*[${definition.startClass}]\\s*(\\S)`),
   );
   if (invalidStartCommand) {
-    return createError('INVALID_START_COMMAND', line, input, definition);
+    return createError('INVALID_START_COMMAND', line, input);
   }
 
   const invalidEndCommand = remaining.match(
     new RegExp(`^\\s*[${definition.endClass}](?:\\s+.*|\\d)`),
   );
   if (invalidEndCommand) {
-    return createError('INVALID_END_COMMAND', line, input, definition);
+    return createError('INVALID_END_COMMAND', line, input);
   }
 
   const missingNewline = remaining.match(
@@ -322,10 +312,10 @@ function detectErrorAt(
     ),
   );
   if (missingNewline) {
-    return createError('MISSING_NEWLINE', line, input, definition);
+    return createError('MISSING_NEWLINE', line, input);
   }
 
-  return createError('INVALID_COMMAND', line, input, definition);
+  return createError('INVALID_COMMAND', line, input);
 }
 
 function skipToNextLine(input: string, position: number): number {
@@ -363,13 +353,13 @@ function validateProgramStart(
   if (new RegExp(`^\\s*[${definition.startClass}]`).test(rawLine.trim())) {
     if (!isValidStartCommandLine(rawLine, definition)) {
       errors.push(
-        createError('INVALID_START_COMMAND', firstLine.line, input, definition),
+        createError('INVALID_START_COMMAND', firstLine.line, input),
       );
     }
     return;
   }
 
-  errors.push(createError('MISSING_START', firstLine.line, input, definition));
+  errors.push(createError('MISSING_START', firstLine.line, input));
 }
 
 function validateParameterizedLine(
@@ -400,16 +390,16 @@ function validateParameterizedLine(
   if (valueMatch) {
     const value = Number(valueMatch[1]);
     if (range === 'level' && (value < 1 || value > 6)) {
-      errors.push(createError('INVALID_LEVEL', line, input, definition));
+      errors.push(createError('INVALID_LEVEL', line, input));
       return true;
     }
     if (range === 'channel' && (value < 1 || value > 9)) {
-      errors.push(createError('INVALID_CHANNEL', line, input, definition));
+      errors.push(createError('INVALID_CHANNEL', line, input));
       return true;
     }
   }
 
-  errors.push(createError('INVALID_COMMAND', line, input, definition));
+  errors.push(createError('INVALID_COMMAND', line, input));
   return true;
 }
 
@@ -436,14 +426,14 @@ function validateLineFormats(
 
     if (new RegExp(`^[${definition.startClass}]`).test(trimmed)) {
       if (!isValidStartCommandLine(lineContent, definition)) {
-        errors.push(createError('INVALID_START_COMMAND', line, input, definition));
+        errors.push(createError('INVALID_START_COMMAND', line, input));
       }
       return;
     }
 
     if (new RegExp(`^[${definition.endClass}]`).test(trimmed)) {
       if (!isValidEndCommandLine(lineContent, definition)) {
-        errors.push(createError('INVALID_END_COMMAND', line, input, definition));
+        errors.push(createError('INVALID_END_COMMAND', line, input));
       }
       return;
     }
@@ -505,7 +495,7 @@ function validateLineFormats(
     }
 
     if (!new RegExp(`^[${definition.allCommandClass}]`).test(trimmed)) {
-      errors.push(createError('INVALID_COMMAND', line, input, definition));
+      errors.push(createError('INVALID_COMMAND', line, input));
     }
   });
 }
@@ -612,7 +602,7 @@ function validateStructure(
 
   if (startCommands.length > 1) {
     for (const command of startCommands.slice(1)) {
-      errors.push(createError('MULTIPLE_START', command.line, input, definition));
+      errors.push(createError('MULTIPLE_START', command.line, input));
     }
   }
 
@@ -623,7 +613,6 @@ function validateStructure(
         'MISSING_END',
         lastCommand?.line ?? getLineNumber(input, input.length),
         input,
-        definition,
       ),
     );
   }
@@ -631,7 +620,7 @@ function validateStructure(
   const endIndex = commands.findIndex((command) => command.action === 'EndElevator');
   if (endIndex !== -1) {
     for (const command of commands.slice(endIndex + 1)) {
-      errors.push(createError('UNEXPECTED_AFTER_END', command.line, input, definition));
+      errors.push(createError('UNEXPECTED_AFTER_END', command.line, input));
     }
   }
 }
@@ -668,12 +657,12 @@ function validateFloorBounds(
       const nextFloor = currentFloor + direction;
 
       if (nextFloor > MAX_FLOOR) {
-        errors.push(createError('FLOOR_ABOVE_MAX', command.line, input, definition));
+        errors.push(createError('FLOOR_ABOVE_MAX', command.line, input));
         break;
       }
 
       if (nextFloor < MIN_FLOOR) {
-        errors.push(createError('FLOOR_BELOW_MIN', command.line, input, definition));
+        errors.push(createError('FLOOR_BELOW_MIN', command.line, input));
         break;
       }
 
@@ -701,7 +690,7 @@ export function parseNaturalLanguage(
     return {
       success: false,
       commands: [],
-      errors: [createError('EMPTY_PROGRAM', 1, input, definition)],
+      errors: [createError('EMPTY_PROGRAM', 1, input)],
     };
   }
 
