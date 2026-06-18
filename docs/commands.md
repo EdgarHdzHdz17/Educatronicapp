@@ -139,14 +139,14 @@ Commands are case-insensitive for the action letter (`S`/`s`, `E`/`e`, etc.).
 
 Each action is associated with a DTMF tone that the app plays during simulation or execution. The corresponding audio files are located in `assets/audio/`.
 
-| Identifier | File          | Associated action        |
-| ---------- | ------------- | ------------------------ |
-| `dtmf_12`  | `dtmf_12.wav` | StartElevator            |
-| `dtmf_d`   | `dtmf_d.wav`  | EndElevator              |
-| `dtmf_2`   | `dtmf_2.wav`  | UpLevelElevator          |
-| `dtmf_1`   | `dtmf_1.wav`  | DownLevelElevator        |
-| `dtmf_3`   | `dtmf_3.wav`  | StopElevator             |
-| `dtmf_8`   | `dtmf_8.wav`  | Open (OpenDoor-CloseDoor) |
+| Identifier | File          | Associated action          |
+| ---------- | ------------- | -------------------------- |
+| `dtmf_12`  | `dtmf_12.wav` | StartElevator              |
+| `dtmf_d`   | `dtmf_d.wav`  | EndElevator                |
+| `dtmf_2`   | `dtmf_2.wav`  | UpLevelElevator            |
+| `dtmf_1`   | `dtmf_1.wav`  | DownLevelElevator          |
+| `dtmf_3`   | `dtmf_3.wav`  | StopElevator               |
+| `dtmf_8`   | `dtmf_8.wav`  | Open (OpenDoor-CloseDoor)  |
 | `dtmf_4`   | `dtmf_4.wav`  | Close (OpenDoor-CloseDoor) |
 
 ---
@@ -159,14 +159,14 @@ Este documento define las acciones disponibles en el lenguaje de programación E
 
 Los comandos en español usan la letra inicial de cada palabra de acción (**I**nicio, **F**in, **S**ubir, **B**ajar, **P**arar, **A**brir).
 
-| Acción                    | Comando  | Expresión regular (patrón) | Identificador DTMF  |
-| ------------------------- | -------- | -------------------------- | ------------------- |
-| InicioElevador            | `I`, `i` | `\s*[Ii]\s*\n+`            | `dtmf_12`           |
-| FinElevador               | `F`, `f` | `\s*[Ff]\n*`               | `dtmf_d`            |
-| SubirNivelElevador        | `S`, `s` | `\s*[Ss]\s+[1-6]\n+`       | `dtmf_2`            |
-| BajarNivelElevador        | `B`, `b` | `\s*[Bb]\s+[1-6]\n+`       | `dtmf_1`            |
-| PararElevador             | `P`, `p` | `\s*[Pp]\s+[1-9]\n+`       | `dtmf_3`            |
-| AbrirPuerta-CerrarPuerta  | `A`, `a` | `\s*[Aa]\s+[1-9]\n+`       | `dtmf_8` – `dtmf_4` |
+| Acción                   | Comando  | Expresión regular (patrón) | Identificador DTMF  |
+| ------------------------ | -------- | -------------------------- | ------------------- |
+| InicioElevador           | `I`, `i` | `\s*[Ii]\s*\n+`            | `dtmf_12`           |
+| FinElevador              | `F`, `f` | `\s*[Ff]\s*\n*`            | `dtmf_d`            |
+| SubirNivelElevador       | `S`, `s` | `\s*[Ss]\s+[1-6]\s*\n+`    | `dtmf_2`            |
+| BajarNivelElevador       | `B`, `b` | `\s*[Bb]\s+[1-6]\s*\n+`    | `dtmf_1`            |
+| PararElevador            | `P`, `p` | `\s*[Pp]\s+[1-9]\s*\n+`    | `dtmf_3`            |
+| AbrirPuerta-CerrarPuerta | `A`, `a` | `\s*[Aa]\s+[1-9]\s*\n+`    | `dtmf_8` – `dtmf_4` |
 
 ### Descripción de cada acción
 
@@ -281,12 +281,12 @@ Los comandos no distinguen entre mayúsculas y minúsculas en la letra de acció
 
 Cada acción se asocia a un tono DTMF que la app reproduce durante la simulación o ejecución. Los archivos de audio correspondientes se encuentran en `assets/audio/`.
 
-| Identificador | Archivo       | Acción asociada                      |
-| ------------- | ------------- | ------------------------------------ |
-| `dtmf_12`     | `dtmf_12.wav` | InicioElevador                       |
-| `dtmf_d`      | `dtmf_d.wav`  | FinElevador                          |
-| `dtmf_2`      | `dtmf_2.wav`  | SubirNivelElevador                   |
-| `dtmf_1`      | `dtmf_1.wav`  | BajarNivelElevador                   |
-| `dtmf_3`      | `dtmf_3.wav`  | PararElevador                        |
-| `dtmf_8`      | `dtmf_8.wav`  | Abrir (AbrirPuerta-CerrarPuerta)     |
-| `dtmf_4`      | `dtmf_4.wav`  | Cerrar (AbrirPuerta-CerrarPuerta)    |
+| Identificador | Archivo       | Acción asociada                   |
+| ------------- | ------------- | --------------------------------- |
+| `dtmf_12`     | `dtmf_12.wav` | InicioElevador                    |
+| `dtmf_d`      | `dtmf_d.wav`  | FinElevador                       |
+| `dtmf_2`      | `dtmf_2.wav`  | SubirNivelElevador                |
+| `dtmf_1`      | `dtmf_1.wav`  | BajarNivelElevador                |
+| `dtmf_3`      | `dtmf_3.wav`  | PararElevador                     |
+| `dtmf_8`      | `dtmf_8.wav`  | Abrir (AbrirPuerta-CerrarPuerta)  |
+| `dtmf_4`      | `dtmf_4.wav`  | Cerrar (AbrirPuerta-CerrarPuerta) |

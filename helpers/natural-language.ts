@@ -90,22 +90,22 @@ const SPANISH_DEFINITION: CommandLanguageDefinition = {
   patterns: [
     {
       action: 'UpLevelElevator',
-      pattern: /^\s*[Ss]\s+([1-6])(?:\n+|$)/,
+      pattern: /^\s*[Ss]\s+([1-6])\s*(?:\n+|$)/,
       extract: (match) => ({ level: Number(match[1]) }),
     },
     {
       action: 'DownLevelElevator',
-      pattern: /^\s*[Bb]\s+([1-6])(?:\n+|$)/,
+      pattern: /^\s*[Bb]\s+([1-6])\s*(?:\n+|$)/,
       extract: (match) => ({ level: Number(match[1]) }),
     },
     {
       action: 'StopElevator',
-      pattern: /^\s*[Pp]\s+([1-9])(?:\n+|$)/,
+      pattern: /^\s*[Pp]\s+([1-9])\s*(?:\n+|$)/,
       extract: (match) => ({ channel: Number(match[1]) }),
     },
     {
       action: 'OpenDoorCloseDoor',
-      pattern: /^\s*[Aa]\s+([1-9])(?:\n+|$)/,
+      pattern: /^\s*[Aa]\s+([1-9])\s*(?:\n+|$)/,
       extract: (match) => ({ channel: Number(match[1]) }),
     },
     {
@@ -114,7 +114,7 @@ const SPANISH_DEFINITION: CommandLanguageDefinition = {
     },
     {
       action: 'EndElevator',
-      pattern: /^\s*[Ff]\s*(?:\n+|$)/,
+      pattern: /^\s*[Ff]\s*\n*/,
     },
   ],
   startClass: 'Ii',
@@ -165,7 +165,7 @@ const ENGLISH_DEFINITION: CommandLanguageDefinition = {
     },
     {
       action: 'EndElevator',
-      pattern: /^\s*[Ee]\s*(?:\n+|$)/,
+      pattern: /^\s*[Ee]\n*/,
     },
   ],
   startClass: 'Ss',
@@ -242,7 +242,7 @@ function isValidEndCommandLine(
   lineContent: string,
   definition: CommandLanguageDefinition,
 ): boolean {
-  return new RegExp(`^\\s*[${definition.endClass}]$`).test(lineContent);
+  return new RegExp(`^\\s*[${definition.endClass}]\\s*$`).test(lineContent);
 }
 
 function createError(
