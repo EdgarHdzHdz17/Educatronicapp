@@ -250,6 +250,59 @@ async function executeCommand(
   return { currentFloor, doorOpen, success: true };
 }
 
+async function returnToHomeFloor(context: {
+  currentFloor: number;
+  doorOpen: boolean;
+  emit: (event: CompilerEvent) => void;
+  shouldContinue?: () => boolean;
+  commandDelayMs: number;
+  soundDelayMs: number;
+}): Promise<{ currentFloor: number; doorOpen: boolean; success: boolean }> {
+  const { emit, shouldContinue, commandDelayMs, soundDelayMs } = context;
+  let { currentFloor, doorOpen } = context;
+
+  if (currentFloor <= MIN_FLOOR) {
+    return { currentFloor, doorOpen, success: true };
+  }
+
+  emit({
+    type: 'status',
+    floor: currentFloor,
+    message: 'Regresando al piso 1, un piso a la vez.',
+  });
+
+  while (currentFloor > MIN_FLOOR) {
+    if (shouldContinue && !shouldContinue()) {
+      return { currentFloor, doorOpen, success: false };
+    }
+
+    const nextFloor = currentFloor - 1;
+
+    emit({
+      type: 'status',
+      action: 'DownLevelElevator',
+      floor: nextFloor,
+      message: getDownStepMessage(currentFloor, nextFloor),
+    });
+
+    doorOpen = await playActionSound('DownLevelElevator', doorOpen);
+
+    const canContinueSound = await wait(soundDelayMs, shouldContinue);
+    if (!canContinueSound) {
+      return { currentFloor, doorOpen, success: false };
+    }
+
+    currentFloor = nextFloor;
+
+    const canContinueCommand = await wait(commandDelayMs, shouldContinue);
+    if (!canContinueCommand) {
+      return { currentFloor, doorOpen, success: false };
+    }
+  }
+
+  return { currentFloor, doorOpen, success: true };
+}
+
 export async function compileProgram(
   options: CompileProgramOptions,
 ): Promise<CompileProgramResult> {
@@ -367,10 +420,36 @@ export async function compileProgram(
     }
   }
 
+  const homeResult = await returnToHomeFloor({
+    currentFloor,
+    doorOpen,
+    emit,
+    shouldContinue,
+    commandDelayMs,
+    soundDelayMs,
+  });
+
+  if (!homeResult.success) {
+    emit({
+      type: 'cancelled',
+      floor: homeResult.currentFloor,
+      message: 'Ejecución detenida por el usuario.',
+    });
+
+    return {
+      success: false,
+      events,
+      finalFloor: homeResult.currentFloor,
+    };
+  }
+
+  currentFloor = homeResult.currentFloor;
+  doorOpen = homeResult.doorOpen;
+
   emit({
     type: 'complete',
     floor: currentFloor,
-    message: `Programa finalizado. El elevador quedó en el piso ${currentFloor}.`,
+    message: `Programa finalizado. El elevador regresó al piso ${currentFloor}.`,
   });
 
   return {
