@@ -25,7 +25,14 @@
     "lines": "lines",
     "errors": "errors",
     "noErrors": "No errors",
-    "problems": "Problems"
+    "problems": "Problems",
+    "console": "Console",
+    "running": "Running",
+    "floor": "Floor",
+    "compileErrors": "Fix errors before compiling",
+    "elevatorStatus": "Elevator status",
+    "waiting": "Waiting to run...",
+    "consoleEmpty": "Press Compile or Simulation to see what the elevator does."
   },
   "simulations": {
     "startElevator": "Start Elevator",

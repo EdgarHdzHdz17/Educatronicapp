@@ -25,7 +25,14 @@
     "lines": "líneas",
     "errors": "errores",
     "noErrors": "Sin errores",
-    "problems": "Problemas"
+    "problems": "Problemas",
+    "console": "Consola",
+    "running": "Ejecutando",
+    "floor": "Piso",
+    "compileErrors": "Corrige los errores antes de compilar",
+    "elevatorStatus": "Estado del elevador",
+    "waiting": "Esperando ejecución...",
+    "consoleEmpty": "Presiona Compilar o Simulación para ver qué hace el elevador."
   },
   "simulations": {
     "startElevator": "Inicio Elevador",
