@@ -556,6 +556,33 @@ export default function CodingScreen() {
         </View>
 
         <View style={styles.editorColumn}>
+          {errors.length > 0 && (
+            <View style={styles.problemsPanel}>
+              <View style={styles.problemsHeader}>
+                <View style={styles.problemsBadge}>
+                  <Text style={styles.problemsBadgeText}>{errors.length}</Text>
+                </View>
+                <Text style={styles.problemsTitle}>{t("coding.problems")}</Text>
+              </View>
+              <ScrollView style={styles.errorsContainer}>
+                {errors.map((error, index) => (
+                  <TouchableOpacity
+                    key={`${error.code}-${error.line}-${index}`}
+                    style={styles.errorRow}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.errorLineLabel}>
+                      {t("coding.line")} {error.line}
+                    </Text>
+                    <Text style={styles.errorText}>
+                      {getParseErrorMessage(error, commandLanguage)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
           <View style={styles.editorWrapper}>
             <View style={styles.editorTabBar}>
               <View style={styles.editorTab}>
@@ -693,9 +720,6 @@ export default function CodingScreen() {
 
             {(isRunning || elevatorStatus) && (
               <View style={styles.elevatorStatusBanner}>
-                <Text style={styles.elevatorStatusLabel}>
-                  {t("coding.elevatorStatus")}
-                </Text>
                 <Text style={styles.elevatorStatusText}>
                   {elevatorStatus || t("coding.waiting")}
                 </Text>
@@ -726,33 +750,6 @@ export default function CodingScreen() {
               </Text>
             </View>
           </View>
-
-          {errors.length > 0 && (
-            <View style={styles.problemsPanel}>
-              <View style={styles.problemsHeader}>
-                <View style={styles.problemsBadge}>
-                  <Text style={styles.problemsBadgeText}>{errors.length}</Text>
-                </View>
-                <Text style={styles.problemsTitle}>{t("coding.problems")}</Text>
-              </View>
-              <ScrollView style={styles.errorsContainer}>
-                {errors.map((error, index) => (
-                  <TouchableOpacity
-                    key={`${error.code}-${error.line}-${index}`}
-                    style={styles.errorRow}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.errorLineLabel}>
-                      {t("coding.line")} {error.line}
-                    </Text>
-                    <Text style={styles.errorText}>
-                      {getParseErrorMessage(error, commandLanguage)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          )}
         </View>
       </View>
 
@@ -1130,14 +1127,6 @@ const styles = StyleSheet.create({
     borderTopColor: EDITOR_COLORS.gutterBorder,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    gap: 4,
-  },
-  elevatorStatusLabel: {
-    color: "#2e7d32",
-    fontSize: 11,
-    fontWeight: "700",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
   },
   elevatorStatusText: {
     color: "#1b5e20",
