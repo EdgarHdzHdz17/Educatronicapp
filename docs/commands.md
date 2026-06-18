@@ -15,18 +15,18 @@ This document defines the actions available in the Educatronic programming langu
 
 ### Action summary
 
-| Action     | Command  | Regular expression (pattern) | DTMF identifier     |
-| ---------- | -------- | ---------------------------- | ------------------- |
-| Start      | `I`, `i` | `\s*[Ii]\n+`                 | `dtmf_12`           |
-| End        | `F`, `f` | `\s*[Ff]\n*`                 | `dtmf_d`            |
-| Up         | `S`, `s` | `\s*[Ss]\s+[1-6]\n+`         | `dtmf_2`            |
-| Down       | `B`, `b` | `\s*[Bb]\s+[1-6]\n+`         | `dtmf_1`            |
-| Stop       | `P`, `p` | `\s*[Pp]\s+[1-9]\n+`         | `dtmf_3`            |
-| Open-Close | `A`, `a` | `\s*[Aa]\s+[1-9]\n+`         | `dtmf_8` – `dtmf_4` |
+| Action             | Command  | Regular expression (pattern) | DTMF identifier     |
+| ------------------ | -------- | ---------------------------- | ------------------- |
+| StartElevator      | `I`, `i` | `\s*[Ii]\n+`                 | `dtmf_12`           |
+| EndElevator        | `F`, `f` | `\s*[Ff]\n*`                 | `dtmf_d`            |
+| UpLevelElevator    | `S`, `s` | `\s*[Ss]\s+[1-6]\n+`         | `dtmf_2`            |
+| DownLevelElevator  | `B`, `b` | `\s*[Bb]\s+[1-6]\n+`         | `dtmf_1`            |
+| StopElevator       | `P`, `p` | `\s*[Pp]\s+[1-9]\n+`         | `dtmf_3`            |
+| OpenDoor-CloseDoor | `A`, `a` | `\s*[Aa]\s+[1-9]\n+`         | `dtmf_8` – `dtmf_4` |
 
 ### Action details
 
-#### Start (`I` / `i`)
+#### StartElevator (`I` / `i`)
 
 Marks the beginning of a program or instruction block.
 
@@ -40,7 +40,7 @@ Marks the beginning of a program or instruction block.
 I
 ```
 
-#### End (`F` / `f`)
+#### EndElevator (`F` / `f`)
 
 Marks the end of a program or instruction block.
 
@@ -54,7 +54,7 @@ Marks the end of a program or instruction block.
 F
 ```
 
-#### Up (`S` / `s`)
+#### UpLevelElevator (`S` / `s`)
 
 Activates upward movement at a given level.
 
@@ -68,7 +68,7 @@ Activates upward movement at a given level.
 S 3
 ```
 
-#### Down (`B` / `b`)
+#### DownLevelElevator (`B` / `b`)
 
 Activates downward movement at a given level.
 
@@ -82,7 +82,7 @@ Activates downward movement at a given level.
 B 2
 ```
 
-#### Stop (`P` / `p`)
+#### StopElevator (`P` / `p`)
 
 Stops movement on the specified device or channel.
 
@@ -96,7 +96,7 @@ Stops movement on the specified device or channel.
 P 5
 ```
 
-#### Open-Close (`A` / `a`)
+#### OpenDoor-CloseDoor (`A` / `a`)
 
 Controls opening or closing a mechanism on the specified channel.
 
@@ -132,15 +132,15 @@ Commands are case-insensitive for the action letter (`I`/`i`, `F`/`f`, etc.).
 
 Each action is associated with a DTMF tone that the app plays during simulation or execution. The corresponding audio files are located in `assets/audio/`.
 
-| Identifier | File          | Associated action  |
-| ---------- | ------------- | ------------------ |
-| `dtmf_12`  | `dtmf_12.wav` | Start              |
-| `dtmf_d`   | `dtmf_d.wav`  | End                |
-| `dtmf_2`   | `dtmf_2.wav`  | Up                 |
-| `dtmf_1`   | `dtmf_1.wav`  | Down               |
-| `dtmf_3`   | `dtmf_3.wav`  | Stop               |
-| `dtmf_8`   | `dtmf_8.wav`  | Open (Open-Close)  |
-| `dtmf_4`   | `dtmf_4.wav`  | Close (Open-Close) |
+| Identifier | File          | Associated action        |
+| ---------- | ------------- | ------------------------ |
+| `dtmf_12`  | `dtmf_12.wav` | StartElevator            |
+| `dtmf_d`   | `dtmf_d.wav`  | EndElevator              |
+| `dtmf_2`   | `dtmf_2.wav`  | UpLevelElevator          |
+| `dtmf_1`   | `dtmf_1.wav`  | DownLevelElevator        |
+| `dtmf_3`   | `dtmf_3.wav`  | StopElevator             |
+| `dtmf_8`   | `dtmf_8.wav`  | Open (OpenDoor-CloseDoor) |
+| `dtmf_4`   | `dtmf_4.wav`  | Close (OpenDoor-CloseDoor) |
 
 ---
 
@@ -150,18 +150,18 @@ Este documento define las acciones disponibles en el lenguaje de programación E
 
 ### Resumen de acciones
 
-| Acción       | Comando  | Expresión regular (patrón) | Identificador DTMF  |
-| ------------ | -------- | -------------------------- | ------------------- |
-| Inicio       | `I`, `i` | `\s*[Ii]\n+`               | `dtmf_12`           |
-| Fin          | `F`, `f` | `\s*[Ff]\n*`               | `dtmf_d`            |
-| Subir        | `S`, `s` | `\s*[Ss]\s+[1-6]\n+`       | `dtmf_2`            |
-| Bajar        | `B`, `b` | `\s*[Bb]\s+[1-6]\n+`       | `dtmf_1`            |
-| Parar        | `P`, `p` | `\s*[Pp]\s+[1-9]\n+`       | `dtmf_3`            |
-| Abrir-Cerrar | `A`, `a` | `\s*[Aa]\s+[1-9]\n+`       | `dtmf_8` – `dtmf_4` |
+| Acción                    | Comando  | Expresión regular (patrón) | Identificador DTMF  |
+| ------------------------- | -------- | -------------------------- | ------------------- |
+| InicioElevador            | `I`, `i` | `\s*[Ii]\n+`               | `dtmf_12`           |
+| FinElevador               | `F`, `f` | `\s*[Ff]\n*`               | `dtmf_d`            |
+| SubirNivelElevador        | `S`, `s` | `\s*[Ss]\s+[1-6]\n+`       | `dtmf_2`            |
+| BajarNivelElevador        | `B`, `b` | `\s*[Bb]\s+[1-6]\n+`       | `dtmf_1`            |
+| PararElevador             | `P`, `p` | `\s*[Pp]\s+[1-9]\n+`       | `dtmf_3`            |
+| AbrirPuerta-CerrarPuerta  | `A`, `a` | `\s*[Aa]\s+[1-9]\n+`       | `dtmf_8` – `dtmf_4` |
 
 ### Descripción de cada acción
 
-#### Inicio (`I` / `i`)
+#### InicioElevador (`I` / `i`)
 
 Marca el inicio de un programa o bloque de instrucciones.
 
@@ -175,7 +175,7 @@ Marca el inicio de un programa o bloque de instrucciones.
 I
 ```
 
-#### Fin (`F` / `f`)
+#### FinElevador (`F` / `f`)
 
 Marca el final de un programa o bloque de instrucciones.
 
@@ -189,7 +189,7 @@ Marca el final de un programa o bloque de instrucciones.
 F
 ```
 
-#### Subir (`S` / `s`)
+#### SubirNivelElevador (`S` / `s`)
 
 Activa el movimiento ascendente en un nivel determinado.
 
@@ -203,7 +203,7 @@ Activa el movimiento ascendente en un nivel determinado.
 S 3
 ```
 
-#### Bajar (`B` / `b`)
+#### BajarNivelElevador (`B` / `b`)
 
 Activa el movimiento descendente en un nivel determinado.
 
@@ -217,7 +217,7 @@ Activa el movimiento descendente en un nivel determinado.
 B 2
 ```
 
-#### Parar (`P` / `p`)
+#### PararElevador (`P` / `p`)
 
 Detiene el movimiento en un dispositivo o canal indicado.
 
@@ -231,7 +231,7 @@ Detiene el movimiento en un dispositivo o canal indicado.
 P 5
 ```
 
-#### Abrir-Cerrar (`A` / `a`)
+#### AbrirPuerta-CerrarPuerta (`A` / `a`)
 
 Controla la apertura o el cierre de un mecanismo en un canal indicado.
 
@@ -267,12 +267,12 @@ Los comandos no distinguen entre mayúsculas y minúsculas en la letra de acció
 
 Cada acción se asocia a un tono DTMF que la app reproduce durante la simulación o ejecución. Los archivos de audio correspondientes se encuentran en `assets/audio/`.
 
-| Identificador | Archivo       | Acción asociada       |
-| ------------- | ------------- | --------------------- |
-| `dtmf_12`     | `dtmf_12.wav` | Inicio                |
-| `dtmf_d`      | `dtmf_d.wav`  | Fin                   |
-| `dtmf_2`      | `dtmf_2.wav`  | Subir                 |
-| `dtmf_1`      | `dtmf_1.wav`  | Bajar                 |
-| `dtmf_3`      | `dtmf_3.wav`  | Parar                 |
-| `dtmf_8`      | `dtmf_8.wav`  | Abrir (Abrir-Cerrar)  |
-| `dtmf_4`      | `dtmf_4.wav`  | Cerrar (Abrir-Cerrar) |
+| Identificador | Archivo       | Acción asociada                      |
+| ------------- | ------------- | ------------------------------------ |
+| `dtmf_12`     | `dtmf_12.wav` | InicioElevador                       |
+| `dtmf_d`      | `dtmf_d.wav`  | FinElevador                          |
+| `dtmf_2`      | `dtmf_2.wav`  | SubirNivelElevador                   |
+| `dtmf_1`      | `dtmf_1.wav`  | BajarNivelElevador                   |
+| `dtmf_3`      | `dtmf_3.wav`  | PararElevador                        |
+| `dtmf_8`      | `dtmf_8.wav`  | Abrir (AbrirPuerta-CerrarPuerta)     |
+| `dtmf_4`      | `dtmf_4.wav`  | Cerrar (AbrirPuerta-CerrarPuerta)    |
