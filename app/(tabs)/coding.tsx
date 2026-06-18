@@ -1,15 +1,24 @@
-import { StyleSheet, TouchableOpacity, View, TextInput } from "react-native";
+import { StyleSheet, TouchableOpacity, View, TextInput, ScrollView } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { parseNaturalLanguage } from "@/helpers/natural-language";
 
 export default function CodingScreen() {
   const { t } = useTranslation();
   const [code, setCode] = useState("");
   const [programName, setProgramName] = useState("");
   const [level, setLevel] = useState(1);
+
+  const errors = useMemo(() => {
+    if (!code.trim()) {
+      return [];
+    }
+
+    return parseNaturalLanguage(code).errors;
+  }, [code]);
 
   const codingButtons = [
     { key: "compile" },
@@ -77,15 +86,27 @@ export default function CodingScreen() {
           ))}
         </View>
 
-        <TextInput
-          style={styles.codeInput}
-          multiline
-          placeholder={t("coding.placeholder")}
-          placeholderTextColor="#999"
-          value={code}
-          onChangeText={setCode}
-          textAlignVertical="top"
-        />
+        <View style={styles.editorColumn}>
+          <TextInput
+            style={styles.codeInput}
+            multiline
+            placeholder={t("coding.placeholder")}
+            placeholderTextColor="#999"
+            value={code}
+            onChangeText={setCode}
+            textAlignVertical="top"
+          />
+
+          {errors.length > 0 && (
+            <ScrollView style={styles.errorsContainer}>
+              {errors.map((error, index) => (
+                <ThemedText key={`${error.code}-${error.line}-${index}`} style={styles.errorText}>
+                  Línea {error.line}: {error.message}
+                </ThemedText>
+              ))}
+            </ScrollView>
+          )}
+        </View>
       </View>
     </ThemedView>
   );
@@ -171,6 +192,10 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
   },
+  editorColumn: {
+    flex: 1,
+    gap: 8,
+  },
   codeInput: {
     flex: 1,
     backgroundColor: "#fff",
@@ -181,5 +206,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
+  },
+  errorsContainer: {
+    maxHeight: 120,
+    backgroundColor: "#fff5f5",
+    borderWidth: 1,
+    borderColor: "#f5c2c2",
+    borderRadius: 8,
+    padding: 10,
+  },
+  errorText: {
+    color: "#c62828",
+    fontSize: 13,
+    marginBottom: 4,
   },
 });
