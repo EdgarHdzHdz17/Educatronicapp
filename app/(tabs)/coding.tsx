@@ -52,6 +52,7 @@ const LINE_NUMBER_FONT_SIZE = 10;
 const CODE_PADDING = 12;
 const LINE_NUMBERS_WIDTH_PERCENT = "10%";
 const MIN_VISIBLE_LINES = 24;
+const PROBLEMS_BODY_MAX_HEIGHT = 72;
 const REVIEW_LINE_DELAY_MS = 180;
 
 function getCursorPosition(code: string, cursorIndex: number) {
@@ -556,16 +557,38 @@ export default function CodingScreen() {
         </View>
 
         <View style={styles.editorColumn}>
-          {errors.length > 0 && (
-            <View style={styles.problemsPanel}>
-              <View style={styles.problemsHeader}>
-                <View style={styles.problemsBadge}>
-                  <Text style={styles.problemsBadgeText}>{errors.length}</Text>
-                </View>
-                <Text style={styles.problemsTitle}>{t("coding.problems")}</Text>
+          <View
+            style={[
+              styles.problemsPanel,
+              errors.length === 0 && styles.problemsPanelOk,
+            ]}
+          >
+            <View
+              style={[
+                styles.problemsHeader,
+                errors.length === 0 && styles.problemsHeaderOk,
+              ]}
+            >
+              <View
+                style={[
+                  styles.problemsBadge,
+                  errors.length === 0 && styles.problemsBadgeOk,
+                ]}
+              >
+                <Text style={styles.problemsBadgeText}>{errors.length}</Text>
               </View>
-              <ScrollView style={styles.errorsContainer}>
-                {errors.map((error, index) => (
+              <Text style={styles.problemsTitle}>{t("coding.problems")}</Text>
+            </View>
+            <ScrollView
+              style={styles.errorsContainer}
+              showsVerticalScrollIndicator
+            >
+              {errors.length === 0 ? (
+                <View style={styles.noErrorsRow}>
+                  <Text style={styles.noErrorsText}>{t("coding.noErrors")}</Text>
+                </View>
+              ) : (
+                errors.map((error, index) => (
                   <TouchableOpacity
                     key={`${error.code}-${error.line}-${index}`}
                     style={styles.errorRow}
@@ -578,10 +601,10 @@ export default function CodingScreen() {
                       {getParseErrorMessage(error, commandLanguage)}
                     </Text>
                   </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          )}
+                ))
+              )}
+            </ScrollView>
+          </View>
 
           <View style={styles.editorWrapper}>
             <View style={styles.editorTabBar}>
@@ -825,6 +848,7 @@ const styles = StyleSheet.create({
   codingSection: {
     flexDirection: "row",
     flex: 1,
+    minHeight: 0,
     gap: 20,
     overflow: "hidden",
     paddingVertical: 10,
@@ -947,10 +971,12 @@ const styles = StyleSheet.create({
   },
   editorColumn: {
     flex: 1,
+    minHeight: 0,
     gap: 8,
   },
   editorWrapper: {
     flex: 1,
+    minHeight: 0,
     borderWidth: 1,
     borderColor: EDITOR_COLORS.border,
     borderRadius: 10,
@@ -999,6 +1025,7 @@ const styles = StyleSheet.create({
   },
   codeEditorContainer: {
     flex: 1,
+    minHeight: 0,
     flexDirection: "row",
     backgroundColor: EDITOR_COLORS.background,
     overflow: "hidden",
@@ -1135,11 +1162,15 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   problemsPanel: {
+    flexShrink: 0,
     borderWidth: 1,
     borderColor: "#f5c2c2",
     borderRadius: 8,
     overflow: "hidden",
     backgroundColor: "#fff",
+  },
+  problemsPanelOk: {
+    borderColor: "#c8e6c9",
   },
   problemsHeader: {
     flexDirection: "row",
@@ -1151,6 +1182,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: "#f5c2c2",
   },
+  problemsHeaderOk: {
+    backgroundColor: "#f1f8f2",
+    borderBottomColor: "#c8e6c9",
+  },
   problemsBadge: {
     backgroundColor: EDITOR_COLORS.errorAccent,
     borderRadius: 10,
@@ -1159,6 +1194,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 6,
+  },
+  problemsBadgeOk: {
+    backgroundColor: "#43a047",
   },
   problemsBadgeText: {
     color: "#fff",
@@ -1171,7 +1209,16 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   errorsContainer: {
-    maxHeight: 100,
+    maxHeight: PROBLEMS_BODY_MAX_HEIGHT,
+  },
+  noErrorsRow: {
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  noErrorsText: {
+    color: "#666",
+    fontSize: 12,
+    lineHeight: 16,
   },
   errorRow: {
     paddingHorizontal: 10,
