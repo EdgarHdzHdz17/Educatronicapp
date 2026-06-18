@@ -142,17 +142,28 @@ export default function CodingScreen() {
               showsVerticalScrollIndicator={false}
               scrollEnabled={false}
             >
-              {lineNumbers.map((lineNumber) => (
-                <Text
-                  key={lineNumber}
-                  style={[
-                    styles.lineNumber,
-                    errorLines.has(lineNumber) && styles.lineNumberError,
-                  ]}
-                >
-                  {lineNumber}
-                </Text>
-              ))}
+              {lineNumbers.map((lineNumber) => {
+                const hasError = errorLines.has(lineNumber);
+
+                return (
+                  <View
+                    key={lineNumber}
+                    style={[
+                      styles.lineNumberRow,
+                      hasError && styles.lineNumberRowError,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.lineNumber,
+                        hasError && styles.lineNumberError,
+                      ]}
+                    >
+                      {lineNumber}
+                    </Text>
+                  </View>
+                );
+              })}
             </ScrollView>
 
             <TextInput
@@ -290,8 +301,16 @@ const styles = StyleSheet.create({
   lineNumbersContent: {
     paddingTop: CODE_PADDING,
     paddingBottom: CODE_PADDING,
+  },
+  lineNumberRow: {
+    height: CODE_LINE_HEIGHT,
+    justifyContent: "center",
+    alignSelf: "stretch",
     paddingLeft: 1,
     paddingRight: 2,
+  },
+  lineNumberRowError: {
+    backgroundColor: "#fde8e8",
   },
   lineNumber: {
     fontSize: LINE_NUMBER_FONT_SIZE,
