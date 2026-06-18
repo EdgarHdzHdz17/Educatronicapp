@@ -1,3 +1,5 @@
+import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
+
 export type CommandAction =
   | 'StartElevator'
   | 'EndElevator'
@@ -17,7 +19,9 @@ export type ParseErrorCode =
   | 'INVALID_CHANNEL'
   | 'MISSING_NEWLINE'
   | 'MULTIPLE_START'
-  | 'UNEXPECTED_AFTER_END';
+  | 'UNEXPECTED_AFTER_END'
+  | 'FLOOR_ABOVE_MAX'
+  | 'FLOOR_BELOW_MIN';
 
 export type ParsedCommand = {
   action: CommandAction;
@@ -115,6 +119,8 @@ function createError(
     MISSING_NEWLINE: `Falta un salto de línea después del comando en la línea ${line}${suffix}.`,
     MULTIPLE_START: `Solo puede haber un comando I (inicio) en el programa (línea ${line}${suffix}).`,
     UNEXPECTED_AFTER_END: `Hay contenido después del comando F (fin) en la línea ${line}${suffix}.`,
+    FLOOR_ABOVE_MAX: `No puede subir más: el elevador no puede pasar del piso ${MAX_FLOOR} (línea ${line}${suffix}).`,
+    FLOOR_BELOW_MIN: `No puede bajar más: el elevador no puede ir por debajo del piso ${MIN_FLOOR} (línea ${line}${suffix}).`,
   };
 
   return { code, line, message: messages[code] };
@@ -402,8 +408,54 @@ function validateStructure(
   }
 }
 
+function clampReferenceFloor(referenceFloor: number): number {
+  return Math.min(MAX_FLOOR, Math.max(MIN_FLOOR, referenceFloor));
+}
+
+function validateFloorBounds(
+  input: string,
+  commands: ParsedCommand[],
+  referenceFloor: number,
+  errors: ParseError[],
+): void {
+  let currentFloor = clampReferenceFloor(referenceFloor);
+
+  for (const command of commands) {
+    if (
+      command.action !== 'UpLevelElevator' &&
+      command.action !== 'DownLevelElevator'
+    ) {
+      continue;
+    }
+
+    const steps = command.level;
+    if (steps === undefined || steps < 1) {
+      continue;
+    }
+
+    const direction = command.action === 'UpLevelElevator' ? 1 : -1;
+
+    for (let moveIndex = 0; moveIndex < steps; moveIndex += 1) {
+      const nextFloor = currentFloor + direction;
+
+      if (nextFloor > MAX_FLOOR) {
+        errors.push(createError('FLOOR_ABOVE_MAX', command.line, input));
+        break;
+      }
+
+      if (nextFloor < MIN_FLOOR) {
+        errors.push(createError('FLOOR_BELOW_MIN', command.line, input));
+        break;
+      }
+
+      currentFloor = nextFloor;
+    }
+  }
+}
+
 export type ParseOptions = {
   realtime?: boolean;
+  referenceFloor?: number;
 };
 
 export function parseNaturalLanguage(
@@ -469,6 +521,12 @@ export function parseNaturalLanguage(
   validateProgramStart(input, errors);
   validateLineFormats(input, errors);
   validateStructure(input, commands, errors);
+  validateFloorBounds(
+    input,
+    commands,
+    options.referenceFloor ?? MIN_FLOOR,
+    errors,
+  );
 
   const uniqueErrors = errors.filter((error, index, list) => {
     const specificCodes = new Set<ParseErrorCode>([
@@ -476,6 +534,8 @@ export function parseNaturalLanguage(
       'INVALID_END_COMMAND',
       'INVALID_LEVEL',
       'INVALID_CHANNEL',
+      'FLOOR_ABOVE_MAX',
+      'FLOOR_BELOW_MIN',
     ]);
     const linesWithSpecificError = new Set(
       list.filter((item) => specificCodes.has(item.code)).map((item) => item.line),

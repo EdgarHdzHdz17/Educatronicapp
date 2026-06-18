@@ -268,7 +268,10 @@ export async function compileProgram(
     onEvent?.(event);
   };
 
-  const parseResult = parseNaturalLanguage(code, { realtime: false });
+  const parseResult = parseNaturalLanguage(code, {
+    realtime: false,
+    referenceFloor,
+  });
 
   if (!parseResult.success) {
     const firstError = parseResult.errors[0];

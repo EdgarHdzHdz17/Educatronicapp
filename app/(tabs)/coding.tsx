@@ -95,8 +95,8 @@ export default function CodingScreen() {
       return [];
     }
 
-    return parseNaturalLanguage(code).errors;
-  }, [code]);
+    return parseNaturalLanguage(code, { realtime: true, referenceFloor: level }).errors;
+  }, [code, level]);
 
   const visibleLineCount = useMemo(() => {
     if (editorHeight === 0) {
@@ -152,7 +152,10 @@ export default function CodingScreen() {
       return;
     }
 
-    const parseResult = parseNaturalLanguage(code, { realtime: false });
+    const parseResult = parseNaturalLanguage(code, {
+      realtime: false,
+      referenceFloor: level,
+    });
     if (!parseResult.success) {
       handleCompilerEvent({
         type: "error",
