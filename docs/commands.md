@@ -15,78 +15,80 @@ This document defines the actions available in the Educatronic programming langu
 
 ### Action summary
 
+English commands use the initial letter of each action word (**S**tart, **E**nd, **U**p, **D**own, **P**ause/**S**top, **O**pen).
+
 | Action             | Command  | Regular expression (pattern) | DTMF identifier     |
 | ------------------ | -------- | ---------------------------- | ------------------- |
-| StartElevator      | `I`, `i` | `\s*[Ii]\n+`                 | `dtmf_12`           |
-| EndElevator        | `F`, `f` | `\s*[Ff]\n*`                 | `dtmf_d`            |
-| UpLevelElevator    | `S`, `s` | `\s*[Ss]\s+[1-6]\n+`         | `dtmf_2`            |
-| DownLevelElevator  | `B`, `b` | `\s*[Bb]\s+[1-6]\n+`         | `dtmf_1`            |
+| StartElevator      | `S`, `s` | `\s*[Ss]\s*\n+`              | `dtmf_12`           |
+| EndElevator        | `E`, `e` | `\s*[Ee]\n*`                 | `dtmf_d`            |
+| UpLevelElevator    | `U`, `u` | `\s*[Uu]\s+[1-6]\n+`         | `dtmf_2`            |
+| DownLevelElevator  | `D`, `d` | `\s*[Dd]\s+[1-6]\n+`         | `dtmf_1`            |
 | StopElevator       | `P`, `p` | `\s*[Pp]\s+[1-9]\n+`         | `dtmf_3`            |
-| OpenDoor-CloseDoor | `A`, `a` | `\s*[Aa]\s+[1-9]\n+`         | `dtmf_8` – `dtmf_4` |
+| OpenDoor-CloseDoor | `O`, `o` | `\s*[Oo]\s+[1-9]\n+`         | `dtmf_8` – `dtmf_4` |
 
 ### Action details
 
-#### StartElevator (`I` / `i`)
+#### StartElevator (`S` / `s`)
 
 Marks the beginning of a program or instruction block.
 
-- **Command:** letter `I` or `i` (uppercase or lowercase).
-- **Pattern:** optional leading whitespace, followed by `I` or `i`, and at least one newline.
+- **Command:** letter `S` or `s` (**S**tart; uppercase or lowercase).
+- **Pattern:** optional leading whitespace, followed by `S` or `s`, and at least one newline.
 - **DTMF:** `dtmf_12` → audio file `assets/audio/dtmf_12.wav`.
 
 **Valid example:**
 
 ```
-I
+S
 ```
 
-#### EndElevator (`F` / `f`)
+#### EndElevator (`E` / `e`)
 
 Marks the end of a program or instruction block.
 
-- **Command:** letter `F` or `f`.
-- **Pattern:** optional leading whitespace, followed by `F` or `f`, and zero or more newlines.
+- **Command:** letter `E` or `e` (**E**nd).
+- **Pattern:** optional leading whitespace, followed by `E` or `e`, and zero or more newlines.
 - **DTMF:** `dtmf_d` → audio file `assets/audio/dtmf_d.wav`.
 
 **Valid example:**
 
 ```
-F
+E
 ```
 
-#### UpLevelElevator (`S` / `s`)
+#### UpLevelElevator (`U` / `u`)
 
 Activates upward movement at a given level.
 
-- **Command:** letter `S` or `s`, followed by a space and a number from **1 to 6** (level).
-- **Pattern:** optional leading whitespace, `S` or `s`, one or more spaces, digit `1`–`6`, and at least one newline.
+- **Command:** letter `U` or `u` (**U**p), followed by a space and a number from **1 to 6** (level).
+- **Pattern:** optional leading whitespace, `U` or `u`, one or more spaces, digit `1`–`6`, and at least one newline.
 - **DTMF:** `dtmf_2` → audio file `assets/audio/dtmf_2.wav`.
 
 **Valid example:**
 
 ```
-S 3
+U 3
 ```
 
-#### DownLevelElevator (`B` / `b`)
+#### DownLevelElevator (`D` / `d`)
 
 Activates downward movement at a given level.
 
-- **Command:** letter `B` or `b`, followed by a space and a number from **1 to 6** (level).
-- **Pattern:** optional leading whitespace, `B` or `b`, one or more spaces, digit `1`–`6`, and at least one newline.
+- **Command:** letter `D` or `d` (**D**own), followed by a space and a number from **1 to 6** (level).
+- **Pattern:** optional leading whitespace, `D` or `d`, one or more spaces, digit `1`–`6`, and at least one newline.
 - **DTMF:** `dtmf_1` → audio file `assets/audio/dtmf_1.wav`.
 
 **Valid example:**
 
 ```
-B 2
+D 2
 ```
 
 #### StopElevator (`P` / `p`)
 
 Stops movement on the specified device or channel.
 
-- **Command:** letter `P` or `p`, followed by a space and a number from **1 to 9**.
+- **Command:** letter `P` or `p` (**P**ause/**S**top), followed by a space and a number from **1 to 9**. Letter `P` is used instead of `S` to avoid conflict with **S**tart.
 - **Pattern:** optional leading whitespace, `P` or `p`, one or more spaces, digit `1`–`9`, and at least one newline.
 - **DTMF:** `dtmf_3` → audio file `assets/audio/dtmf_3.wav`.
 
@@ -96,12 +98,12 @@ Stops movement on the specified device or channel.
 P 5
 ```
 
-#### OpenDoor-CloseDoor (`A` / `a`)
+#### OpenDoor-CloseDoor (`O` / `o`)
 
 Controls opening or closing a mechanism on the specified channel.
 
-- **Command:** letter `A` or `a`, followed by a space and a number from **1 to 9**.
-- **Pattern:** optional leading whitespace, `A` or `a`, one or more spaces, digit `1`–`9`, and at least one newline.
+- **Command:** letter `O` or `o` (**O**pen), followed by a space and a number from **1 to 9**.
+- **Pattern:** optional leading whitespace, `O` or `o`, one or more spaces, digit `1`–`9`, and at least one newline.
 - **DTMF:**
   - `dtmf_8` → open (`assets/audio/dtmf_8.wav`)
   - `dtmf_4` → close (`assets/audio/dtmf_4.wav`)
@@ -109,7 +111,7 @@ Controls opening or closing a mechanism on the specified channel.
 **Valid example:**
 
 ```
-A 7
+O 7
 ```
 
 ### Regular expression notes
@@ -122,11 +124,16 @@ A 7
 | `\n`    | Newline                            |
 | `\n+`   | One or more newlines               |
 | `\n*`   | Zero or more newlines              |
-| `[Ii]`  | Character `I` or `i`               |
+| `[Ss]`  | Character `S` or `s`               |
+| `[Ee]`  | Character `E` or `e`               |
+| `[Uu]`  | Character `U` or `u`               |
+| `[Dd]`  | Character `D` or `d`               |
+| `[Pp]`  | Character `P` or `p`               |
+| `[Oo]`  | Character `O` or `o`               |
 | `[1-6]` | Digit from 1 to 6                  |
 | `[1-9]` | Digit from 1 to 9                  |
 
-Commands are case-insensitive for the action letter (`I`/`i`, `F`/`f`, etc.).
+Commands are case-insensitive for the action letter (`S`/`s`, `E`/`e`, etc.).
 
 ### DTMF identifiers
 
@@ -150,9 +157,11 @@ Este documento define las acciones disponibles en el lenguaje de programación E
 
 ### Resumen de acciones
 
+Los comandos en español usan la letra inicial de cada palabra de acción (**I**nicio, **F**in, **S**ubir, **B**ajar, **P**arar, **A**brir).
+
 | Acción                    | Comando  | Expresión regular (patrón) | Identificador DTMF  |
 | ------------------------- | -------- | -------------------------- | ------------------- |
-| InicioElevador            | `I`, `i` | `\s*[Ii]\n+`               | `dtmf_12`           |
+| InicioElevador            | `I`, `i` | `\s*[Ii]\s*\n+`            | `dtmf_12`           |
 | FinElevador               | `F`, `f` | `\s*[Ff]\n*`               | `dtmf_d`            |
 | SubirNivelElevador        | `S`, `s` | `\s*[Ss]\s+[1-6]\n+`       | `dtmf_2`            |
 | BajarNivelElevador        | `B`, `b` | `\s*[Bb]\s+[1-6]\n+`       | `dtmf_1`            |
@@ -165,8 +174,8 @@ Este documento define las acciones disponibles en el lenguaje de programación E
 
 Marca el inicio de un programa o bloque de instrucciones.
 
-- **Comando:** letra `I` o `i` (mayúscula o minúscula).
-- **Patrón:** espacios en blanco opcionales al inicio, seguidos de `I` o `i`, y al menos un salto de línea.
+- **Comando:** letra `I` o `i` (**I**nicio; mayúscula o minúscula).
+- **Patrón:** espacios en blanco opcionales al inicio, seguidos de `I` o `i`, espacios opcionales y al menos un salto de línea.
 - **DTMF:** `dtmf_12` → archivo de audio `assets/audio/dtmf_12.wav`.
 
 **Ejemplo válido:**
@@ -179,7 +188,7 @@ I
 
 Marca el final de un programa o bloque de instrucciones.
 
-- **Comando:** letra `F` o `f`.
+- **Comando:** letra `F` o `f` (**F**in).
 - **Patrón:** espacios en blanco opcionales al inicio, seguidos de `F` o `f`, y cero o más saltos de línea.
 - **DTMF:** `dtmf_d` → archivo de audio `assets/audio/dtmf_d.wav`.
 
@@ -193,7 +202,7 @@ F
 
 Activa el movimiento ascendente en un nivel determinado.
 
-- **Comando:** letra `S` o `s`, seguida de un espacio y un número del **1 al 6** (nivel).
+- **Comando:** letra `S` o `s` (**S**ubir), seguida de un espacio y un número del **1 al 6** (nivel).
 - **Patrón:** espacios opcionales al inicio, `S` o `s`, uno o más espacios, dígito `1`–`6`, y al menos un salto de línea.
 - **DTMF:** `dtmf_2` → archivo de audio `assets/audio/dtmf_2.wav`.
 
@@ -207,7 +216,7 @@ S 3
 
 Activa el movimiento descendente en un nivel determinado.
 
-- **Comando:** letra `B` o `b`, seguida de un espacio y un número del **1 al 6** (nivel).
+- **Comando:** letra `B` o `b` (**B**ajar), seguida de un espacio y un número del **1 al 6** (nivel).
 - **Patrón:** espacios opcionales al inicio, `B` o `b`, uno o más espacios, dígito `1`–`6`, y al menos un salto de línea.
 - **DTMF:** `dtmf_1` → archivo de audio `assets/audio/dtmf_1.wav`.
 
@@ -221,7 +230,7 @@ B 2
 
 Detiene el movimiento en un dispositivo o canal indicado.
 
-- **Comando:** letra `P` o `p`, seguida de un espacio y un número del **1 al 9**.
+- **Comando:** letra `P` o `p` (**P**arar), seguida de un espacio y un número del **1 al 9**.
 - **Patrón:** espacios opcionales al inicio, `P` o `p`, uno o más espacios, dígito `1`–`9`, y al menos un salto de línea.
 - **DTMF:** `dtmf_3` → archivo de audio `assets/audio/dtmf_3.wav`.
 
@@ -235,7 +244,7 @@ P 5
 
 Controla la apertura o el cierre de un mecanismo en un canal indicado.
 
-- **Comando:** letra `A` o `a`, seguida de un espacio y un número del **1 al 9**.
+- **Comando:** letra `A` o `a` (**A**brir), seguida de un espacio y un número del **1 al 9**.
 - **Patrón:** espacios opcionales al inicio, `A` o `a`, uno o más espacios, dígito `1`–`9`, y al menos un salto de línea.
 - **DTMF:**
   - `dtmf_8` → abrir (`assets/audio/dtmf_8.wav`)
@@ -258,10 +267,15 @@ A 7
 | `\n+`   | Uno o más saltos de línea                     |
 | `\n*`   | Cero o más saltos de línea                    |
 | `[Ii]`  | Carácter `I` o `i`                            |
+| `[Ff]`  | Carácter `F` o `f`                            |
+| `[Ss]`  | Carácter `S` o `s`                            |
+| `[Bb]`  | Carácter `B` o `b`                            |
+| `[Pp]`  | Carácter `P` o `p`                            |
+| `[Aa]`  | Carácter `A` o `a`                            |
 | `[1-6]` | Dígito del 1 al 6                             |
 | `[1-9]` | Dígito del 1 al 9                             |
 
-Los comandos no distinguen entre mayúsculas y minúsculas en la letra de acción (`I`/`i`, `F`/`f`, etc.).
+Los comandos no distinguen entre mayúsculas y minúsculas en la letra de acción (`I`/`i`, `F`/`f`, `S`/`s`, etc.).
 
 ### Identificadores DTMF
 
