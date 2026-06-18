@@ -1,16 +1,34 @@
-import { StyleSheet, TouchableOpacity, View, TextInput, ScrollView } from "react-native";
+import { StyleSheet, TouchableOpacity, View, TextInput, ScrollView, Text } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState, useCallback } from "react";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { parseNaturalLanguage } from "@/helpers/natural-language";
+
+const CODE_LINE_HEIGHT = 20;
+const CODE_FONT_SIZE = 14;
+const LINE_NUMBER_FONT_SIZE = 10;
+const CODE_PADDING = 12;
+const LINE_NUMBERS_WIDTH_PERCENT = "10%";
+const MIN_VISIBLE_LINES = 24;
 
 export default function CodingScreen() {
   const { t } = useTranslation();
   const [code, setCode] = useState("");
   const [programName, setProgramName] = useState("");
   const [level, setLevel] = useState(1);
+  const [editorHeight, setEditorHeight] = useState(0);
+  const lineNumbersScrollRef = useRef<ScrollView>(null);
+
+  const handleEditorLayout = useCallback(
+    (height: number) => {
+      if (height > 0 && height !== editorHeight) {
+        setEditorHeight(height);
+      }
+    },
+    [editorHeight],
+  );
 
   const errors = useMemo(() => {
     if (!code.trim()) {
@@ -19,6 +37,32 @@ export default function CodingScreen() {
 
     return parseNaturalLanguage(code).errors;
   }, [code]);
+
+  const visibleLineCount = useMemo(() => {
+    if (editorHeight === 0) {
+      return MIN_VISIBLE_LINES;
+    }
+
+    return Math.max(
+      Math.floor((editorHeight - CODE_PADDING * 2) / CODE_LINE_HEIGHT),
+      1,
+    );
+  }, [editorHeight]);
+
+  const lineCount = useMemo(() => {
+    const codeLines = code.split("\n").length;
+    return Math.max(codeLines, visibleLineCount);
+  }, [code, visibleLineCount]);
+
+  const lineNumbers = useMemo(
+    () => Array.from({ length: lineCount }, (_, index) => index + 1),
+    [lineCount],
+  );
+
+  const errorLines = useMemo(
+    () => new Set(errors.map((error) => error.line)),
+    [errors],
+  );
 
   const codingButtons = [
     { key: "compile" },
@@ -87,15 +131,46 @@ export default function CodingScreen() {
         </View>
 
         <View style={styles.editorColumn}>
-          <TextInput
-            style={styles.codeInput}
-            multiline
-            placeholder={t("coding.placeholder")}
-            placeholderTextColor="#999"
-            value={code}
-            onChangeText={setCode}
-            textAlignVertical="top"
-          />
+          <View
+            style={styles.codeEditorContainer}
+            onLayout={(event) => handleEditorLayout(event.nativeEvent.layout.height)}
+          >
+            <ScrollView
+              ref={lineNumbersScrollRef}
+              style={styles.lineNumbersScroll}
+              contentContainerStyle={styles.lineNumbersContent}
+              showsVerticalScrollIndicator={false}
+              scrollEnabled={false}
+            >
+              {lineNumbers.map((lineNumber) => (
+                <Text
+                  key={lineNumber}
+                  style={[
+                    styles.lineNumber,
+                    errorLines.has(lineNumber) && styles.lineNumberError,
+                  ]}
+                >
+                  {lineNumber}
+                </Text>
+              ))}
+            </ScrollView>
+
+            <TextInput
+              style={styles.codeInput}
+              multiline
+              placeholder={t("coding.placeholder")}
+              placeholderTextColor="#999"
+              value={code}
+              onChangeText={setCode}
+              onScroll={(event) => {
+                lineNumbersScrollRef.current?.scrollTo({
+                  y: event.nativeEvent.contentOffset.y,
+                  animated: false,
+                });
+              }}
+              textAlignVertical="top"
+            />
+          </View>
 
           {errors.length > 0 && (
             <ScrollView style={styles.errorsContainer}>
@@ -196,16 +271,49 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 8,
   },
-  codeInput: {
+  codeEditorContainer: {
     flex: 1,
+    flexDirection: "row",
     backgroundColor: "#fff",
-    padding: 15,
-    fontSize: 14,
-    fontFamily: "monospace",
-    color: "#000",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 10,
+    overflow: "hidden",
+  },
+  lineNumbersScroll: {
+    width: LINE_NUMBERS_WIDTH_PERCENT,
+    maxWidth: 32,
+    backgroundColor: "#f5f5f5",
+    borderRightWidth: 1,
+    borderRightColor: "#e0e0e0",
+  },
+  lineNumbersContent: {
+    paddingTop: CODE_PADDING,
+    paddingBottom: CODE_PADDING,
+    paddingLeft: 1,
+    paddingRight: 2,
+  },
+  lineNumber: {
+    fontSize: LINE_NUMBER_FONT_SIZE,
+    lineHeight: CODE_LINE_HEIGHT,
+    fontFamily: "monospace",
+    color: "#aaa",
+    textAlign: "right",
+  },
+  lineNumberError: {
+    color: "#c62828",
+    fontWeight: "700",
+  },
+  codeInput: {
+    flex: 1,
+    paddingTop: CODE_PADDING,
+    paddingBottom: CODE_PADDING,
+    paddingRight: CODE_PADDING,
+    paddingLeft: 4,
+    fontSize: CODE_FONT_SIZE,
+    lineHeight: CODE_LINE_HEIGHT,
+    fontFamily: "monospace",
+    color: "#000",
   },
   errorsContainer: {
     maxHeight: 120,
