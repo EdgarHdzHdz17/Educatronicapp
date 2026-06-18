@@ -8,6 +8,17 @@ export type CommandAction =
   | 'StopElevator'
   | 'OpenDoorCloseDoor';
 
+export type CommandLanguage = 'es' | 'en';
+
+export type CommandLabels = {
+  start: string;
+  end: string;
+  up: string;
+  down: string;
+  stop: string;
+  open: string;
+};
+
 export type ParseErrorCode =
   | 'EMPTY_PROGRAM'
   | 'MISSING_START'
@@ -48,36 +59,139 @@ type CommandPattern = {
   extract?: (match: RegExpMatchArray) => Pick<ParsedCommand, 'level' | 'channel'>;
 };
 
-const COMMAND_PATTERNS: CommandPattern[] = [
-  {
-    action: 'UpLevelElevator',
-    pattern: /^\s*[Ss]\s+([1-6])\n+/,
-    extract: (match) => ({ level: Number(match[1]) }),
+type CommandLanguageDefinition = {
+  lang: CommandLanguage;
+  labels: CommandLabels;
+  patterns: CommandPattern[];
+  startClass: string;
+  endClass: string;
+  upClass: string;
+  downClass: string;
+  stopClass: string;
+  openClass: string;
+  levelClass: string;
+  channelClass: string;
+  allCommandClass: string;
+};
+
+const SPANISH_DEFINITION: CommandLanguageDefinition = {
+  lang: 'es',
+  labels: {
+    start: 'I',
+    end: 'F',
+    up: 'S',
+    down: 'B',
+    stop: 'P',
+    open: 'A',
   },
-  {
-    action: 'DownLevelElevator',
-    pattern: /^\s*[Bb]\s+([1-6])\n+/,
-    extract: (match) => ({ level: Number(match[1]) }),
+  patterns: [
+    {
+      action: 'UpLevelElevator',
+      pattern: /^\s*[Ss]\s+([1-6])\n+/,
+      extract: (match) => ({ level: Number(match[1]) }),
+    },
+    {
+      action: 'DownLevelElevator',
+      pattern: /^\s*[Bb]\s+([1-6])\n+/,
+      extract: (match) => ({ level: Number(match[1]) }),
+    },
+    {
+      action: 'StopElevator',
+      pattern: /^\s*[Pp]\s+([1-9])\n+/,
+      extract: (match) => ({ channel: Number(match[1]) }),
+    },
+    {
+      action: 'OpenDoorCloseDoor',
+      pattern: /^\s*[Aa]\s+([1-9])\n+/,
+      extract: (match) => ({ channel: Number(match[1]) }),
+    },
+    {
+      action: 'StartElevator',
+      pattern: /^\s*[Ii]\s*\n+/,
+    },
+    {
+      action: 'EndElevator',
+      pattern: /^\s*[Ff]\n*/,
+    },
+  ],
+  startClass: 'Ii',
+  endClass: 'Ff',
+  upClass: 'Ss',
+  downClass: 'Bb',
+  stopClass: 'Pp',
+  openClass: 'Aa',
+  levelClass: 'SsBb',
+  channelClass: 'PpAa',
+  allCommandClass: 'SsBbPpAaFfIi',
+};
+
+const ENGLISH_DEFINITION: CommandLanguageDefinition = {
+  lang: 'en',
+  labels: {
+    start: 'S',
+    end: 'E',
+    up: 'U',
+    down: 'D',
+    stop: 'P',
+    open: 'O',
   },
-  {
-    action: 'StopElevator',
-    pattern: /^\s*[Pp]\s+([1-9])\n+/,
-    extract: (match) => ({ channel: Number(match[1]) }),
-  },
-  {
-    action: 'OpenDoorCloseDoor',
-    pattern: /^\s*[Aa]\s+([1-9])\n+/,
-    extract: (match) => ({ channel: Number(match[1]) }),
-  },
-  {
-    action: 'StartElevator',
-    pattern: /^\s*[Ii]\s*\n+/,
-  },
-  {
-    action: 'EndElevator',
-    pattern: /^\s*[Ff]\n*/,
-  },
-];
+  patterns: [
+    {
+      action: 'UpLevelElevator',
+      pattern: /^\s*[Uu]\s+([1-6])\n+/,
+      extract: (match) => ({ level: Number(match[1]) }),
+    },
+    {
+      action: 'DownLevelElevator',
+      pattern: /^\s*[Dd]\s+([1-6])\n+/,
+      extract: (match) => ({ level: Number(match[1]) }),
+    },
+    {
+      action: 'StopElevator',
+      pattern: /^\s*[Pp]\s+([1-9])\n+/,
+      extract: (match) => ({ channel: Number(match[1]) }),
+    },
+    {
+      action: 'OpenDoorCloseDoor',
+      pattern: /^\s*[Oo]\s+([1-9])\n+/,
+      extract: (match) => ({ channel: Number(match[1]) }),
+    },
+    {
+      action: 'StartElevator',
+      pattern: /^\s*[Ss]\s*\n+/,
+    },
+    {
+      action: 'EndElevator',
+      pattern: /^\s*[Ee]\n*/,
+    },
+  ],
+  startClass: 'Ss',
+  endClass: 'Ee',
+  upClass: 'Uu',
+  downClass: 'Dd',
+  stopClass: 'Pp',
+  openClass: 'Oo',
+  levelClass: 'UuDd',
+  channelClass: 'PpOo',
+  allCommandClass: 'SsEeUuDdPpOo',
+};
+
+const LANGUAGE_DEFINITIONS: Record<CommandLanguage, CommandLanguageDefinition> = {
+  es: SPANISH_DEFINITION,
+  en: ENGLISH_DEFINITION,
+};
+
+export function normalizeCommandLanguage(language?: string): CommandLanguage {
+  return language?.toLowerCase().startsWith('en') ? 'en' : 'es';
+}
+
+export function getCommandLabels(language: CommandLanguage = 'es'): CommandLabels {
+  return { ...LANGUAGE_DEFINITIONS[language].labels };
+}
+
+function getDefinition(language?: CommandLanguage): CommandLanguageDefinition {
+  return LANGUAGE_DEFINITIONS[language ?? 'es'];
+}
 
 function getLineNumber(input: string, position: number): number {
   return input.slice(0, position).split('\n').length;
@@ -91,84 +205,127 @@ function getLineSnippet(input: string, line: number): string {
   return getRawLineContent(input, line).trim();
 }
 
-function isValidStartCommandLine(lineContent: string): boolean {
-  return /^\s*[Ii]\s*$/.test(lineContent);
+function isValidStartCommandLine(
+  lineContent: string,
+  definition: CommandLanguageDefinition,
+): boolean {
+  return new RegExp(`^\\s*[${definition.startClass}]\\s*$`).test(lineContent);
 }
 
-function isValidEndCommandLine(lineContent: string): boolean {
-  return /^\s*[Ff]$/.test(lineContent);
+function isValidEndCommandLine(
+  lineContent: string,
+  definition: CommandLanguageDefinition,
+): boolean {
+  return new RegExp(`^\\s*[${definition.endClass}]$`).test(lineContent);
 }
 
 function createError(
   code: ParseErrorCode,
   line: number,
   input: string,
+  definition: CommandLanguageDefinition,
 ): ParseError {
   const snippet = getLineSnippet(input, line);
   const suffix = snippet ? `: "${snippet}"` : '';
+  const { labels } = definition;
+  const levelCommands = `${labels.up} or ${labels.down}`;
+  const channelCommands = `${labels.stop} or ${labels.open}`;
 
-  const messages: Record<ParseErrorCode, string> = {
-    EMPTY_PROGRAM: 'El programa está vacío.',
-    MISSING_START: 'El programa debe comenzar con el comando I (inicio de elevador).',
-    MISSING_END: 'El programa debe terminar con el comando F (fin de elevador).',
-    INVALID_COMMAND: `Comando no reconocido en la línea ${line}${suffix}.`,
-    INVALID_START_COMMAND: `El comando I solo puede ser la letra I o i, sin números ni texto adicional (línea ${line}${suffix}).`,
-    INVALID_END_COMMAND: `El comando F solo puede ser la letra F o f, sin números ni texto adicional (línea ${line}${suffix}).`,
-    INVALID_LEVEL: `Nivel inválido en la línea ${line}${suffix}. Use un número del 1 al 6 para S o B.`,
-    INVALID_CHANNEL: `Canal inválido en la línea ${line}${suffix}. Use un número del 1 al 9 para P o A.`,
-    MISSING_NEWLINE: `Falta un salto de línea después del comando en la línea ${line}${suffix}.`,
-    MULTIPLE_START: `Solo puede haber un comando I (inicio) en el programa (línea ${line}${suffix}).`,
-    UNEXPECTED_AFTER_END: `Hay contenido después del comando F (fin) en la línea ${line}${suffix}.`,
-    FLOOR_ABOVE_MAX: `No puede subir más: el elevador no puede pasar del piso ${MAX_FLOOR} (línea ${line}${suffix}).`,
-    FLOOR_BELOW_MIN: `No puede bajar más: el elevador no puede ir por debajo del piso ${MIN_FLOOR} (línea ${line}${suffix}).`,
-  };
+  const messages: Record<ParseErrorCode, string> =
+    definition.lang === 'en'
+      ? {
+          EMPTY_PROGRAM: 'The program is empty.',
+          MISSING_START: `The program must start with command ${labels.start} (start elevator).`,
+          MISSING_END: `The program must end with command ${labels.end} (end elevator).`,
+          INVALID_COMMAND: `Unrecognized command on line ${line}${suffix}.`,
+          INVALID_START_COMMAND: `Command ${labels.start} must be only the letter ${labels.start} (uppercase or lowercase), with no numbers or extra text (line ${line}${suffix}).`,
+          INVALID_END_COMMAND: `Command ${labels.end} must be only the letter ${labels.end} (uppercase or lowercase), with no numbers or extra text (line ${line}${suffix}).`,
+          INVALID_LEVEL: `Invalid level on line ${line}${suffix}. Use a number from 1 to 6 for ${levelCommands}.`,
+          INVALID_CHANNEL: `Invalid channel on line ${line}${suffix}. Use a number from 1 to 9 for ${channelCommands}.`,
+          MISSING_NEWLINE: `Missing newline after the command on line ${line}${suffix}.`,
+          MULTIPLE_START: `There can only be one ${labels.start} (start) command in the program (line ${line}${suffix}).`,
+          UNEXPECTED_AFTER_END: `There is content after the ${labels.end} (end) command on line ${line}${suffix}.`,
+          FLOOR_ABOVE_MAX: `Cannot go up further: the elevator cannot go above floor ${MAX_FLOOR} (line ${line}${suffix}).`,
+          FLOOR_BELOW_MIN: `Cannot go down further: the elevator cannot go below floor ${MIN_FLOOR} (line ${line}${suffix}).`,
+        }
+      : {
+          EMPTY_PROGRAM: 'El programa está vacío.',
+          MISSING_START: `El programa debe comenzar con el comando ${labels.start} (inicio de elevador).`,
+          MISSING_END: `El programa debe terminar con el comando ${labels.end} (fin de elevador).`,
+          INVALID_COMMAND: `Comando no reconocido en la línea ${line}${suffix}.`,
+          INVALID_START_COMMAND: `El comando ${labels.start} solo puede ser la letra ${labels.start} o ${labels.start.toLowerCase()}, sin números ni texto adicional (línea ${line}${suffix}).`,
+          INVALID_END_COMMAND: `El comando ${labels.end} solo puede ser la letra ${labels.end} o ${labels.end.toLowerCase()}, sin números ni texto adicional (línea ${line}${suffix}).`,
+          INVALID_LEVEL: `Nivel inválido en la línea ${line}${suffix}. Use un número del 1 al 6 para ${labels.up} o ${labels.down}.`,
+          INVALID_CHANNEL: `Canal inválido en la línea ${line}${suffix}. Use un número del 1 al 9 para ${labels.stop} o ${labels.open}.`,
+          MISSING_NEWLINE: `Falta un salto de línea después del comando en la línea ${line}${suffix}.`,
+          MULTIPLE_START: `Solo puede haber un comando ${labels.start} (inicio) en el programa (línea ${line}${suffix}).`,
+          UNEXPECTED_AFTER_END: `Hay contenido después del comando ${labels.end} (fin) en la línea ${line}${suffix}.`,
+          FLOOR_ABOVE_MAX: `No puede subir más: el elevador no puede pasar del piso ${MAX_FLOOR} (línea ${line}${suffix}).`,
+          FLOOR_BELOW_MIN: `No puede bajar más: el elevador no puede ir por debajo del piso ${MIN_FLOOR} (línea ${line}${suffix}).`,
+        };
 
   return { code, line, message: messages[code] };
 }
 
-function detectErrorAt(input: string, position: number): ParseError {
+function detectErrorAt(
+  input: string,
+  position: number,
+  definition: CommandLanguageDefinition,
+): ParseError {
   const remaining = input.slice(position);
   const line = getLineNumber(input, position);
 
-  const levelCommand = remaining.match(/^\s*([SsBb])\s+(\d+)/);
+  const levelCommand = remaining.match(
+    new RegExp(`^\\s*([${definition.levelClass}])\\s+(\\d+)`),
+  );
   if (levelCommand) {
     const level = Number(levelCommand[2]);
     if (level < 1 || level > 6) {
-      return createError('INVALID_LEVEL', line, input);
+      return createError('INVALID_LEVEL', line, input, definition);
     }
   }
 
-  const channelCommand = remaining.match(/^\s*([PpAa])\s+(\d+)/);
+  const channelCommand = remaining.match(
+    new RegExp(`^\\s*([${definition.channelClass}])\\s+(\\d+)`),
+  );
   if (channelCommand) {
     const channel = Number(channelCommand[2]);
     if (channel < 1 || channel > 9) {
-      return createError('INVALID_CHANNEL', line, input);
+      return createError('INVALID_CHANNEL', line, input, definition);
     }
   }
 
-  const missingSpace = remaining.match(/^\s*([SsBbPpAa])(\d)/);
+  const missingSpace = remaining.match(
+    new RegExp(`^\\s*([${definition.levelClass}${definition.channelClass}])(\\d)`),
+  );
   if (missingSpace) {
-    return createError('INVALID_COMMAND', line, input);
+    return createError('INVALID_COMMAND', line, input, definition);
   }
 
-  const invalidStartCommand = remaining.match(/^\s*[Ii]\s*(\S)/);
+  const invalidStartCommand = remaining.match(
+    new RegExp(`^\\s*[${definition.startClass}]\\s*(\\S)`),
+  );
   if (invalidStartCommand) {
-    return createError('INVALID_START_COMMAND', line, input);
+    return createError('INVALID_START_COMMAND', line, input, definition);
   }
 
-  const invalidEndCommand = remaining.match(/^\s*[Ff](?:\s+.*|\d)/);
+  const invalidEndCommand = remaining.match(
+    new RegExp(`^\\s*[${definition.endClass}](?:\\s+.*|\\d)`),
+  );
   if (invalidEndCommand) {
-    return createError('INVALID_END_COMMAND', line, input);
+    return createError('INVALID_END_COMMAND', line, input, definition);
   }
 
   const missingNewline = remaining.match(
-    /^\s*([SsBbPpAa])(?:\s+\d+)?(?![\n\r])/,
+    new RegExp(
+      `^\\s*([${definition.levelClass}${definition.channelClass}])(?:\\s+\\d+)?(?![\\n\\r])`,
+    ),
   );
   if (missingNewline) {
-    return createError('MISSING_NEWLINE', line, input);
+    return createError('MISSING_NEWLINE', line, input, definition);
   }
 
-  return createError('INVALID_COMMAND', line, input);
+  return createError('INVALID_COMMAND', line, input, definition);
 }
 
 function skipToNextLine(input: string, position: number): number {
@@ -191,7 +348,11 @@ function getFirstNonBlankLine(
   return null;
 }
 
-function validateProgramStart(input: string, errors: ParseError[]): void {
+function validateProgramStart(
+  input: string,
+  errors: ParseError[],
+  definition: CommandLanguageDefinition,
+): void {
   const firstLine = getFirstNonBlankLine(input);
   if (!firstLine) {
     return;
@@ -199,17 +360,64 @@ function validateProgramStart(input: string, errors: ParseError[]): void {
 
   const rawLine = getRawLineContent(input, firstLine.line);
 
-  if (/^\s*[Ii]/.test(rawLine.trim())) {
-    if (!isValidStartCommandLine(rawLine)) {
-      errors.push(createError('INVALID_START_COMMAND', firstLine.line, input));
+  if (new RegExp(`^\\s*[${definition.startClass}]`).test(rawLine.trim())) {
+    if (!isValidStartCommandLine(rawLine, definition)) {
+      errors.push(
+        createError('INVALID_START_COMMAND', firstLine.line, input, definition),
+      );
     }
     return;
   }
 
-  errors.push(createError('MISSING_START', firstLine.line, input));
+  errors.push(createError('MISSING_START', firstLine.line, input, definition));
 }
 
-function validateLineFormats(input: string, errors: ParseError[]): void {
+function validateParameterizedLine(
+  lineContent: string,
+  line: number,
+  input: string,
+  errors: ParseError[],
+  definition: CommandLanguageDefinition,
+  letterClass: string,
+  range: 'level' | 'channel',
+): boolean {
+  const trimmed = lineContent.trim();
+  const validPattern = new RegExp(
+    range === 'level'
+      ? `^\\s*[${letterClass}]\\s+[1-6]\\s*$`
+      : `^\\s*[${letterClass}]\\s+[1-9]\\s*$`,
+  );
+
+  if (!new RegExp(`^[${letterClass}]`).test(trimmed)) {
+    return false;
+  }
+
+  if (validPattern.test(lineContent)) {
+    return true;
+  }
+
+  const valueMatch = trimmed.match(new RegExp(`^[${letterClass}]\\s+(\\d+)`));
+  if (valueMatch) {
+    const value = Number(valueMatch[1]);
+    if (range === 'level' && (value < 1 || value > 6)) {
+      errors.push(createError('INVALID_LEVEL', line, input, definition));
+      return true;
+    }
+    if (range === 'channel' && (value < 1 || value > 9)) {
+      errors.push(createError('INVALID_CHANNEL', line, input, definition));
+      return true;
+    }
+  }
+
+  errors.push(createError('INVALID_COMMAND', line, input, definition));
+  return true;
+}
+
+function validateLineFormats(
+  input: string,
+  errors: ParseError[],
+  definition: CommandLanguageDefinition,
+): void {
   const lines = input.split('\n');
   const incompleteLineNumber = getIncompleteLastLineNumber(input);
 
@@ -222,78 +430,82 @@ function validateLineFormats(input: string, errors: ParseError[]): void {
     }
 
     const isIncomplete = incompleteLineNumber === line;
-    if (isIncomplete && isIncompleteLineStillValid(lineContent)) {
+    if (isIncomplete && isIncompleteLineStillValid(lineContent, definition)) {
       return;
     }
 
-    if (/^[Ii]/.test(trimmed)) {
-      if (!isValidStartCommandLine(lineContent)) {
-        errors.push(createError('INVALID_START_COMMAND', line, input));
+    if (new RegExp(`^[${definition.startClass}]`).test(trimmed)) {
+      if (!isValidStartCommandLine(lineContent, definition)) {
+        errors.push(createError('INVALID_START_COMMAND', line, input, definition));
       }
       return;
     }
 
-    if (/^[Ff]/.test(trimmed)) {
-      if (!isValidEndCommandLine(lineContent)) {
-        errors.push(createError('INVALID_END_COMMAND', line, input));
+    if (new RegExp(`^[${definition.endClass}]`).test(trimmed)) {
+      if (!isValidEndCommandLine(lineContent, definition)) {
+        errors.push(createError('INVALID_END_COMMAND', line, input, definition));
       }
       return;
     }
 
-    if (/^[Ss]/.test(trimmed) && !/^\s*[Ss]\s+[1-6]\s*$/.test(lineContent)) {
-      const levelMatch = trimmed.match(/^[Ss]\s+(\d+)/);
-      if (levelMatch) {
-        const level = Number(levelMatch[1]);
-        if (level < 1 || level > 6) {
-          errors.push(createError('INVALID_LEVEL', line, input));
-          return;
-        }
-      }
-      errors.push(createError('INVALID_COMMAND', line, input));
+    if (
+      validateParameterizedLine(
+        lineContent,
+        line,
+        input,
+        errors,
+        definition,
+        definition.upClass,
+        'level',
+      )
+    ) {
       return;
     }
 
-    if (/^[Bb]/.test(trimmed) && !/^\s*[Bb]\s+[1-6]\s*$/.test(lineContent)) {
-      const levelMatch = trimmed.match(/^[Bb]\s+(\d+)/);
-      if (levelMatch) {
-        const level = Number(levelMatch[1]);
-        if (level < 1 || level > 6) {
-          errors.push(createError('INVALID_LEVEL', line, input));
-          return;
-        }
-      }
-      errors.push(createError('INVALID_COMMAND', line, input));
+    if (
+      validateParameterizedLine(
+        lineContent,
+        line,
+        input,
+        errors,
+        definition,
+        definition.downClass,
+        'level',
+      )
+    ) {
       return;
     }
 
-    if (/^[Pp]/.test(trimmed) && !/^\s*[Pp]\s+[1-9]\s*$/.test(lineContent)) {
-      const channelMatch = trimmed.match(/^[Pp]\s+(\d+)/);
-      if (channelMatch) {
-        const channel = Number(channelMatch[1]);
-        if (channel < 1 || channel > 9) {
-          errors.push(createError('INVALID_CHANNEL', line, input));
-          return;
-        }
-      }
-      errors.push(createError('INVALID_COMMAND', line, input));
+    if (
+      validateParameterizedLine(
+        lineContent,
+        line,
+        input,
+        errors,
+        definition,
+        definition.stopClass,
+        'channel',
+      )
+    ) {
       return;
     }
 
-    if (/^[Aa]/.test(trimmed) && !/^\s*[Aa]\s+[1-9]\s*$/.test(lineContent)) {
-      const channelMatch = trimmed.match(/^[Aa]\s+(\d+)/);
-      if (channelMatch) {
-        const channel = Number(channelMatch[1]);
-        if (channel < 1 || channel > 9) {
-          errors.push(createError('INVALID_CHANNEL', line, input));
-          return;
-        }
-      }
-      errors.push(createError('INVALID_COMMAND', line, input));
+    if (
+      validateParameterizedLine(
+        lineContent,
+        line,
+        input,
+        errors,
+        definition,
+        definition.openClass,
+        'channel',
+      )
+    ) {
       return;
     }
 
-    if (!/^[SsBbPpAaFfIi]/.test(trimmed)) {
-      errors.push(createError('INVALID_COMMAND', line, input));
+    if (!new RegExp(`^[${definition.allCommandClass}]`).test(trimmed)) {
+      errors.push(createError('INVALID_COMMAND', line, input, definition));
     }
   });
 }
@@ -306,47 +518,57 @@ function getIncompleteLastLineNumber(input: string): number | null {
   return input.split('\n').length;
 }
 
-function isIncompleteLineStillValid(lineContent: string): boolean {
+function isIncompleteLineStillValid(
+  lineContent: string,
+  definition: CommandLanguageDefinition,
+): boolean {
   const trimmed = lineContent.trim();
   if (!trimmed) {
     return true;
   }
 
-  if (/^[Ii]/.test(trimmed)) {
-    return isValidStartCommandLine(lineContent);
+  if (new RegExp(`^[${definition.startClass}]`).test(trimmed)) {
+    return isValidStartCommandLine(lineContent, definition);
   }
 
-  if (/^[Ff]/.test(trimmed)) {
-    return isValidEndCommandLine(lineContent);
+  if (new RegExp(`^[${definition.endClass}]`).test(trimmed)) {
+    return isValidEndCommandLine(lineContent, definition);
   }
 
-  if (/^[Ss](?:\s*[1-6]?)?$/.test(trimmed)) {
+  if (new RegExp(`^[${definition.upClass}](?:\\s*[1-6]?)?$`).test(trimmed)) {
     return true;
   }
 
-  if (/^[Bb](?:\s*[1-6]?)?$/.test(trimmed)) {
+  if (new RegExp(`^[${definition.downClass}](?:\\s*[1-6]?)?$`).test(trimmed)) {
     return true;
   }
 
-  if (/^[Pp](?:\s*[1-9]?)?$/.test(trimmed)) {
+  if (new RegExp(`^[${definition.stopClass}](?:\\s*[1-9]?)?$`).test(trimmed)) {
     return true;
   }
 
-  if (/^[Aa](?:\s*[1-9]?)?$/.test(trimmed)) {
+  if (new RegExp(`^[${definition.openClass}](?:\\s*[1-9]?)?$`).test(trimmed)) {
     return true;
   }
 
   return false;
 }
 
-function filterRealtimeErrors(input: string, errors: ParseError[]): ParseError[] {
+function filterRealtimeErrors(
+  input: string,
+  errors: ParseError[],
+  definition: CommandLanguageDefinition,
+): ParseError[] {
   const incompleteLineNumber = getIncompleteLastLineNumber(input);
   if (incompleteLineNumber === null) {
     return errors;
   }
 
   const incompleteLineContent = getRawLineContent(input, incompleteLineNumber);
-  const incompleteLineStillValid = isIncompleteLineStillValid(incompleteLineContent);
+  const incompleteLineStillValid = isIncompleteLineStillValid(
+    incompleteLineContent,
+    definition,
+  );
 
   return errors.filter((error) => {
     if (error.code === 'MISSING_END') {
@@ -378,6 +600,7 @@ function validateStructure(
   input: string,
   commands: ParsedCommand[],
   errors: ParseError[],
+  definition: CommandLanguageDefinition,
 ): void {
   if (commands.length === 0) {
     return;
@@ -389,21 +612,26 @@ function validateStructure(
 
   if (startCommands.length > 1) {
     for (const command of startCommands.slice(1)) {
-      errors.push(createError('MULTIPLE_START', command.line, input));
+      errors.push(createError('MULTIPLE_START', command.line, input, definition));
     }
   }
 
   const lastCommand = commands[commands.length - 1];
   if (lastCommand?.action !== 'EndElevator') {
     errors.push(
-      createError('MISSING_END', lastCommand?.line ?? getLineNumber(input, input.length), input),
+      createError(
+        'MISSING_END',
+        lastCommand?.line ?? getLineNumber(input, input.length),
+        input,
+        definition,
+      ),
     );
   }
 
   const endIndex = commands.findIndex((command) => command.action === 'EndElevator');
   if (endIndex !== -1) {
     for (const command of commands.slice(endIndex + 1)) {
-      errors.push(createError('UNEXPECTED_AFTER_END', command.line, input));
+      errors.push(createError('UNEXPECTED_AFTER_END', command.line, input, definition));
     }
   }
 }
@@ -417,6 +645,7 @@ function validateFloorBounds(
   commands: ParsedCommand[],
   referenceFloor: number,
   errors: ParseError[],
+  definition: CommandLanguageDefinition,
 ): void {
   let currentFloor = clampReferenceFloor(referenceFloor);
 
@@ -439,12 +668,12 @@ function validateFloorBounds(
       const nextFloor = currentFloor + direction;
 
       if (nextFloor > MAX_FLOOR) {
-        errors.push(createError('FLOOR_ABOVE_MAX', command.line, input));
+        errors.push(createError('FLOOR_ABOVE_MAX', command.line, input, definition));
         break;
       }
 
       if (nextFloor < MIN_FLOOR) {
-        errors.push(createError('FLOOR_BELOW_MIN', command.line, input));
+        errors.push(createError('FLOOR_BELOW_MIN', command.line, input, definition));
         break;
       }
 
@@ -456,12 +685,14 @@ function validateFloorBounds(
 export type ParseOptions = {
   realtime?: boolean;
   referenceFloor?: number;
+  commandLanguage?: CommandLanguage;
 };
 
 export function parseNaturalLanguage(
   input: string,
   options: ParseOptions = { realtime: true },
 ): ParseResult {
+  const definition = getDefinition(options.commandLanguage);
   const errors: ParseError[] = [];
   const commands: ParsedCommand[] = [];
 
@@ -470,7 +701,7 @@ export function parseNaturalLanguage(
     return {
       success: false,
       commands: [],
-      errors: [createError('EMPTY_PROGRAM', 1, input)],
+      errors: [createError('EMPTY_PROGRAM', 1, input, definition)],
     };
   }
 
@@ -485,7 +716,7 @@ export function parseNaturalLanguage(
 
     let matched = false;
 
-    for (const { action, pattern, extract } of COMMAND_PATTERNS) {
+    for (const { action, pattern, extract } of definition.patterns) {
       const match = input.slice(position).match(pattern);
       if (!match) {
         continue;
@@ -508,7 +739,7 @@ export function parseNaturalLanguage(
       continue;
     }
 
-    errors.push(detectErrorAt(input, position));
+    errors.push(detectErrorAt(input, position, definition));
     const nextPosition = skipToNextLine(input, position);
 
     if (nextPosition === position) {
@@ -518,14 +749,15 @@ export function parseNaturalLanguage(
     position = nextPosition;
   }
 
-  validateProgramStart(input, errors);
-  validateLineFormats(input, errors);
-  validateStructure(input, commands, errors);
+  validateProgramStart(input, errors, definition);
+  validateLineFormats(input, errors, definition);
+  validateStructure(input, commands, errors, definition);
   validateFloorBounds(
     input,
     commands,
     options.referenceFloor ?? MIN_FLOOR,
     errors,
+    definition,
   );
 
   const uniqueErrors = errors.filter((error, index, list) => {
@@ -558,7 +790,7 @@ export function parseNaturalLanguage(
   const filteredErrors =
     options.realtime === false
       ? uniqueErrors
-      : filterRealtimeErrors(input, uniqueErrors);
+      : filterRealtimeErrors(input, uniqueErrors, definition);
 
   return {
     success: filteredErrors.length === 0,

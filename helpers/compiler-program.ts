@@ -4,6 +4,7 @@ import { playCommandSound } from '@/helpers/command-sounds';
 import {
   parseNaturalLanguage,
   type CommandAction,
+  type CommandLanguage,
   type ParsedCommand,
 } from '@/helpers/natural-language';
 
@@ -26,6 +27,7 @@ export type CompilerEvent = {
 export type CompileProgramOptions = {
   code: string;
   referenceFloor: number;
+  commandLanguage?: CommandLanguage;
   onEvent?: (event: CompilerEvent) => void;
   shouldContinue?: () => boolean;
   commandDelayMs?: number;
@@ -309,6 +311,7 @@ export async function compileProgram(
   const {
     code,
     referenceFloor,
+    commandLanguage,
     onEvent,
     shouldContinue,
     commandDelayMs = DEFAULT_COMMAND_DELAY_MS,
@@ -324,6 +327,7 @@ export async function compileProgram(
   const parseResult = parseNaturalLanguage(code, {
     realtime: false,
     referenceFloor,
+    commandLanguage,
   });
 
   if (!parseResult.success) {

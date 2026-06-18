@@ -4,7 +4,11 @@ import {
   compileProgram,
   type CompilerEvent,
 } from "@/helpers/compiler-program";
-import { parseNaturalLanguage, type ParseError } from "@/helpers/natural-language";
+import {
+  normalizeCommandLanguage,
+  parseNaturalLanguage,
+  type ParseError,
+} from "@/helpers/natural-language";
 import {
   getSavedPrograms,
   saveProgram,
@@ -90,7 +94,8 @@ function getErrorKey(error: ParseError): string {
 }
 
 export default function CodingScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const commandLanguage = normalizeCommandLanguage(i18n.language);
   const [code, setCode] = useState("");
   const [programName, setProgramName] = useState("");
   const [editingSavedProgramName, setEditingSavedProgramName] = useState<
@@ -144,8 +149,9 @@ export default function CodingScreen() {
     return parseNaturalLanguage(code, {
       realtime: !isLoadedSnapshot,
       referenceFloor: level,
+      commandLanguage,
     }).errors;
-  }, [code, isReviewing, level, loadedSnapshot, reviewErrors]);
+  }, [code, commandLanguage, isReviewing, level, loadedSnapshot, reviewErrors]);
 
   const handleCodeChange = useCallback(
     (nextCode: string) => {
@@ -226,6 +232,7 @@ export default function CodingScreen() {
     const parseResult = parseNaturalLanguage(code, {
       realtime: false,
       referenceFloor: level,
+      commandLanguage,
     });
     if (!parseResult.success) {
       handleCompilerEvent({
@@ -244,13 +251,14 @@ export default function CodingScreen() {
     await compileProgram({
       code,
       referenceFloor: level,
+      commandLanguage,
       shouldContinue: () => shouldContinueRef.current,
       onEvent: handleCompilerEvent,
     });
 
     setIsRunning(false);
     setExecutingLine(null);
-  }, [handleCompilerEvent, code, isReviewing, isRunning, level, t]);
+  }, [commandLanguage, handleCompilerEvent, code, isReviewing, isRunning, level, t]);
 
   const highlightsHeight = CODE_PADDING * 2 + lineCount * CODE_LINE_HEIGHT;
 
@@ -373,6 +381,7 @@ export default function CodingScreen() {
       const fullParse = parseNaturalLanguage(program.code, {
         realtime: false,
         referenceFloor: level,
+        commandLanguage,
       });
       const lines = program.code.split("\n");
       const totalLines = Math.max(lines.length, 1);
@@ -438,7 +447,7 @@ export default function CodingScreen() {
       setIsReviewing(false);
       setReviewingLine(null);
     },
-    [level],
+    [commandLanguage, level],
   );
 
   const handleLoadProgram = useCallback(

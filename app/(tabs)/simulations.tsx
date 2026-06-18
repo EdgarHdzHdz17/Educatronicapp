@@ -1,22 +1,62 @@
+import { useMemo } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { commandSounds } from '@/helpers/command-sounds';
-
-const soundButtons = [
-  { key: 'startElevator', command: 'I', play: commandSounds.startElevatorSound },
-  { key: 'endElevator', command: 'F', play: commandSounds.endElevatorSound },
-  { key: 'upLevelElevator', command: 'S', play: commandSounds.upLevelElevatorSound },
-  { key: 'downLevelElevator', command: 'B', play: commandSounds.downLevelElevatorSound },
-  { key: 'stopElevator', command: 'P', play: commandSounds.stopElevatorSound },
-  { key: 'openDoor', command: 'A', play: commandSounds.openDoorSound },
-  { key: 'closeDoor', command: 'A', play: commandSounds.closeDoorSound },
-] as const;
+import {
+  getCommandLabels,
+  normalizeCommandLanguage,
+} from '@/helpers/natural-language';
 
 export default function SimulationsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const commandLabels = useMemo(
+    () => getCommandLabels(normalizeCommandLanguage(i18n.language)),
+    [i18n.language],
+  );
+
+  const soundButtons = useMemo(
+    () => [
+      {
+        key: 'startElevator',
+        command: commandLabels.start,
+        play: commandSounds.startElevatorSound,
+      },
+      {
+        key: 'endElevator',
+        command: commandLabels.end,
+        play: commandSounds.endElevatorSound,
+      },
+      {
+        key: 'upLevelElevator',
+        command: commandLabels.up,
+        play: commandSounds.upLevelElevatorSound,
+      },
+      {
+        key: 'downLevelElevator',
+        command: commandLabels.down,
+        play: commandSounds.downLevelElevatorSound,
+      },
+      {
+        key: 'stopElevator',
+        command: commandLabels.stop,
+        play: commandSounds.stopElevatorSound,
+      },
+      {
+        key: 'openDoor',
+        command: commandLabels.open,
+        play: commandSounds.openDoorSound,
+      },
+      {
+        key: 'closeDoor',
+        command: commandLabels.open,
+        play: commandSounds.closeDoorSound,
+      },
+    ] as const,
+    [commandLabels],
+  );
 
   return (
     <ThemedView style={styles.container}>
