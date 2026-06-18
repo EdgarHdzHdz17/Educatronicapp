@@ -38,6 +38,7 @@
     "consoleEmpty": "Presiona Compilar o Simulación para ver qué hace el elevador.",
     "saveNeedsName": "Escribe un nombre para el programa antes de guardarlo.",
     "saveNeedsCode": "No se puede guardar un programa vacío.",
+    "saveDuplicateName": "Ya existe un programa con ese nombre. Usa otro nombre o carga el programa para actualizarlo.",
     "saveSuccess": "Se guardó \"{{name}}\" correctamente.",
     "saveError": "No se pudo guardar el programa.",
     "loadTitle": "Programas guardados",

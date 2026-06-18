@@ -93,6 +93,9 @@ export default function CodingScreen() {
   const { t } = useTranslation();
   const [code, setCode] = useState("");
   const [programName, setProgramName] = useState("");
+  const [editingSavedProgramName, setEditingSavedProgramName] = useState<
+    string | null
+  >(null);
   const [level, setLevel] = useState(1);
   const [editorHeight, setEditorHeight] = useState(0);
   const [scrollY, setScrollY] = useState(0);
@@ -278,6 +281,19 @@ export default function CodingScreen() {
     { key: "help", Icon: CircleHelp },
   ];
 
+  const handleProgramNameChange = useCallback(
+    (value: string) => {
+      setProgramName(value);
+      if (
+        editingSavedProgramName &&
+        value.trim() !== editingSavedProgramName
+      ) {
+        setEditingSavedProgramName(null);
+      }
+    },
+    [editingSavedProgramName],
+  );
+
   const handleSaveProgram = useCallback(async () => {
     if (isBusy) {
       return;
@@ -295,7 +311,10 @@ export default function CodingScreen() {
     }
 
     try {
-      await saveProgram(trimmedName, code);
+      await saveProgram(trimmedName, code, {
+        replaceName: editingSavedProgramName,
+      });
+      setEditingSavedProgramName(trimmedName);
       Alert.alert(t("coding.save"), t("coding.saveSuccess", { name: trimmedName }));
     } catch (error) {
       if (error instanceof SavedProgramError) {
@@ -308,11 +327,16 @@ export default function CodingScreen() {
           Alert.alert(t("coding.save"), t("coding.saveNeedsCode"));
           return;
         }
+
+        if (error.code === "DUPLICATE_NAME") {
+          Alert.alert(t("coding.save"), t("coding.saveDuplicateName"));
+          return;
+        }
       }
 
       Alert.alert(t("coding.save"), t("coding.saveError"));
     }
-  }, [code, isBusy, programName, t]);
+  }, [code, editingSavedProgramName, isBusy, programName, t]);
 
   const handleOpenLoadModal = useCallback(async () => {
     if (isBusy) {
@@ -328,6 +352,7 @@ export default function CodingScreen() {
     async (program: SavedProgram) => {
       reviewCancelRef.current = false;
       setProgramName(program.name);
+      setEditingSavedProgramName(program.name);
       setCode(program.code);
       setExecutingLine(null);
       setElevatorStatus("");
@@ -425,6 +450,8 @@ export default function CodingScreen() {
       reviewCancelRef.current = true;
       shouldContinueRef.current = false;
       setCode("");
+      setProgramName("");
+      setEditingSavedProgramName(null);
       setCursorLine(1);
       setCursorColumn(1);
       setElevatorStatus("");
@@ -467,7 +494,7 @@ export default function CodingScreen() {
           placeholder={t("coding.programName")}
           placeholderTextColor="#999"
           value={programName}
-          onChangeText={setProgramName}
+          onChangeText={handleProgramNameChange}
         />
       </View>
 

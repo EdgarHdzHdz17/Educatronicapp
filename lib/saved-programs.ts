@@ -9,11 +9,15 @@ export type SavedProgram = {
 };
 
 export class SavedProgramError extends Error {
-  constructor(public readonly code: "EMPTY_NAME" | "EMPTY_CODE") {
+  constructor(public readonly code: "EMPTY_NAME" | "EMPTY_CODE" | "DUPLICATE_NAME") {
     super(code);
     this.name = "SavedProgramError";
   }
 }
+
+export type SaveProgramOptions = {
+  replaceName?: string | null;
+};
 
 export async function getSavedPrograms(): Promise<SavedProgram[]> {
   const raw = await AsyncStorage.getItem(STORAGE_KEY);
@@ -31,6 +35,7 @@ export async function getSavedPrograms(): Promise<SavedProgram[]> {
 export async function saveProgram(
   name: string,
   code: string,
+  options: SaveProgramOptions = {},
 ): Promise<SavedProgram> {
   const trimmedName = name.trim();
   if (!trimmedName) {
@@ -41,7 +46,16 @@ export async function saveProgram(
     throw new SavedProgramError("EMPTY_CODE");
   }
 
+  const replaceName = options.replaceName?.trim() ?? null;
   const programs = await getSavedPrograms();
+  const nameAlreadyExists = programs.some(
+    (program) => program.name === trimmedName,
+  );
+
+  if (nameAlreadyExists && trimmedName !== replaceName) {
+    throw new SavedProgramError("DUPLICATE_NAME");
+  }
+
   const withoutCurrent = programs.filter(
     (program) => program.name !== trimmedName,
   );

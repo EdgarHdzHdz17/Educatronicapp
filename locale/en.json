@@ -38,6 +38,7 @@
     "consoleEmpty": "Press Compile or Simulation to see what the elevator does.",
     "saveNeedsName": "Enter a program name before saving.",
     "saveNeedsCode": "Cannot save an empty program.",
+    "saveDuplicateName": "A program with that name already exists. Choose another name or load it to update it.",
     "saveSuccess": "\"{{name}}\" was saved successfully.",
     "saveError": "Could not save the program.",
     "loadTitle": "Saved programs",
