@@ -34,6 +34,7 @@ export type ParseErrorCode =
   | 'UNEXPECTED_AFTER_END'
   | 'INVALID_START_PLACEMENT'
   | 'INVALID_END_PLACEMENT'
+  | 'MISSING_BODY_COMMANDS'
   | 'FLOOR_ABOVE_MAX'
   | 'FLOOR_BELOW_MIN';
 
@@ -682,6 +683,17 @@ function validateStructure(
     for (const command of commands.slice(endIndex + 1)) {
       errors.push(createError('UNEXPECTED_AFTER_END', command.line, input));
     }
+  }
+
+  const startCommand = commands.find((command) => command.action === 'StartElevator');
+  const endCommand = commands.find((command) => command.action === 'EndElevator');
+  const middleCommands = commands.filter(
+    (command) =>
+      command.action !== 'StartElevator' && command.action !== 'EndElevator',
+  );
+
+  if (startCommand && endCommand && middleCommands.length === 0) {
+    errors.push(createError('MISSING_BODY_COMMANDS', endCommand.line, input));
   }
 }
 
