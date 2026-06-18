@@ -17,6 +17,7 @@ import {
   SavedProgramError,
   type SavedProgram,
 } from "@/lib/saved-programs";
+import { EDITOR_COLORS } from "@/styles/editor-colors";
 import {
   CircleHelp,
   Eraser,
@@ -52,28 +53,6 @@ const CODE_PADDING = 12;
 const LINE_NUMBERS_WIDTH_PERCENT = "10%";
 const MIN_VISIBLE_LINES = 24;
 const REVIEW_LINE_DELAY_MS = 180;
-
-const EDITOR_COLORS = {
-  background: "#fafafa",
-  gutter: "#f0f0f0",
-  gutterBorder: "#ddd",
-  tabBar: "#ececec",
-  tabActive: "#fafafa",
-  statusBar: "#007acc",
-  statusBarError: "#c62828",
-  activeLine: "#e8f0fe",
-  executingLine: "#e8f5e9",
-  executingLineCode: "#f1f8e9",
-  reviewingLine: "#fff8e1",
-  reviewingLineCode: "#fffde7",
-  errorLine: "#fde8e8",
-  errorLineCode: "#fff5f5",
-  errorAccent: "#e53935",
-  text: "#24292e",
-  gutterText: "#9ca3af",
-  tabText: "#444",
-  border: "#ccc",
-};
 
 function getCursorPosition(code: string, cursorIndex: number) {
   const beforeCursor = code.slice(0, cursorIndex);
