@@ -400,6 +400,7 @@ export default function CodingScreen() {
                 <TextInput
                   style={styles.codeInput}
                   multiline
+                  editable={!isRunning}
                   placeholder={t("coding.placeholder")}
                   placeholderTextColor="#aaa"
                   value={code}
