@@ -29,6 +29,8 @@
     "console": "Console",
     "running": "Running",
     "floor": "Floor",
+    "referenceFloor": "Reference",
+    "currentFloor": "Current",
     "compileErrors": "Fix errors before compiling",
     "elevatorStatus": "Elevator status",
     "waiting": "Waiting to run...",

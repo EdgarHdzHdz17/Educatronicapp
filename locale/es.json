@@ -29,6 +29,8 @@
     "console": "Consola",
     "running": "Ejecutando",
     "floor": "Piso",
+    "referenceFloor": "Referencia",
+    "currentFloor": "Actual",
     "compileErrors": "Corrige los errores antes de compilar",
     "elevatorStatus": "Estado del elevador",
     "waiting": "Esperando ejecución...",

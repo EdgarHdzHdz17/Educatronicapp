@@ -133,9 +133,7 @@ export default function CodingScreen() {
       setExecutingLine(event.line);
     }
 
-    if (event.targetFloor !== undefined) {
-      setRuntimeFloor(event.targetFloor);
-    } else if (event.floor !== undefined && event.type === "complete") {
+    if (event.floor !== undefined) {
       setRuntimeFloor(event.floor);
     }
 
@@ -255,12 +253,11 @@ export default function CodingScreen() {
             <Text style={styles.levelLabel}>{t("coding.floor")}</Text>
             <View style={styles.pickerWrapper}>
               <Picker
-                selectedValue={level}
+                selectedValue={runtimeFloor}
+                enabled={!isRunning}
                 onValueChange={(itemValue) => {
                   setLevel(itemValue);
-                  if (!isRunning) {
-                    setRuntimeFloor(itemValue);
-                  }
+                  setRuntimeFloor(itemValue);
                 }}
                 style={styles.picker}
                 itemStyle={styles.pickerItem}
@@ -276,9 +273,6 @@ export default function CodingScreen() {
                 ))}
               </Picker>
             </View>
-            <Text style={styles.levelValue}>
-              {isRunning ? runtimeFloor : level}
-            </Text>
           </View>
 
           <View style={styles.buttonsGroup}>
@@ -562,14 +556,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#000",
     textAlign: "center",
-  },
-  levelValue: {
-    width: "100%",
-    textAlign: "center",
-    fontSize: 13,
-    fontWeight: "700",
-    color: "#007AFF",
-    paddingVertical: 4,
   },
   codingButton: {
     backgroundColor: "#007AFF",

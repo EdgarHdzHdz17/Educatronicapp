@@ -37,6 +37,7 @@ export type CompileProgramResult = {
   finalFloor: number;
 };
 
+const MIN_FLOOR = 1;
 const DEFAULT_COMMAND_DELAY_MS = 300;
 const DEFAULT_SOUND_DELAY_MS = 550;
 
@@ -96,19 +97,83 @@ function getStatusMessage(
       return `Iniciando el programa del elevador en el piso ${referenceFloor}.`;
     case 'EndElevator':
       return `Finalizando el programa. El elevador termina en el piso ${currentFloor}.`;
-    case 'UpLevelElevator':
-      return `El elevador está subiendo del piso ${currentFloor} al piso ${command.level}.`;
-    case 'DownLevelElevator':
-      return `El elevador está bajando del piso ${currentFloor} al piso ${command.level}.`;
     case 'StopElevator':
-      return `El elevador se detiene en el piso ${referenceFloor}.`;
+      return `El elevador se detiene en el piso ${currentFloor}.`;
     case 'OpenDoorCloseDoor':
       return doorWillClose
-        ? `Cerrando las puertas en el piso ${referenceFloor}.`
-        : `Abriendo las puertas en el piso ${referenceFloor}.`;
+        ? `Cerrando las puertas en el piso ${currentFloor}.`
+        : `Abriendo las puertas en el piso ${currentFloor}.`;
     default:
       return 'Ejecutando comando...';
   }
+}
+
+function getUpStepMessage(fromFloor: number, toFloor: number): string {
+  return `El elevador está subiendo del piso ${fromFloor} al piso ${toFloor}.`;
+}
+
+function getDownStepMessage(fromFloor: number, toFloor: number): string {
+  return `El elevador está bajando del piso ${fromFloor} al piso ${toFloor}.`;
+}
+
+async function executeVerticalMove(
+  command: ParsedCommand,
+  context: {
+    currentFloor: number;
+    doorOpen: boolean;
+    emit: (event: CompilerEvent) => void;
+    shouldContinue?: () => boolean;
+    soundDelayMs: number;
+  },
+): Promise<{ currentFloor: number; doorOpen: boolean; success: boolean }> {
+  const { emit, shouldContinue, soundDelayMs } = context;
+  let { currentFloor, doorOpen } = context;
+
+  const steps = command.level;
+  if (steps === undefined || steps < 1) {
+    return { currentFloor, doorOpen, success: true };
+  }
+
+  const direction = command.action === 'UpLevelElevator' ? 'up' : 'down';
+  const action: CommandAction =
+    direction === 'up' ? 'UpLevelElevator' : 'DownLevelElevator';
+  const step = direction === 'up' ? 1 : -1;
+  const getStepMessage =
+    direction === 'up' ? getUpStepMessage : getDownStepMessage;
+
+  for (let moveIndex = 0; moveIndex < steps; moveIndex += 1) {
+    const nextFloor = currentFloor + step;
+
+    if (nextFloor < MIN_FLOOR) {
+      emit({
+        type: 'skip',
+        line: command.line,
+        action: command.action,
+        floor: currentFloor,
+        message: `No puede bajar más: el elevador ya está en el piso ${MIN_FLOOR}.`,
+      });
+      break;
+    }
+
+    emit({
+      type: 'status',
+      line: command.line,
+      action,
+      floor: nextFloor,
+      message: getStepMessage(currentFloor, nextFloor),
+    });
+
+    doorOpen = await playActionSound(action, doorOpen);
+
+    const canContinue = await wait(soundDelayMs, shouldContinue);
+    if (!canContinue) {
+      return { currentFloor, doorOpen, success: false };
+    }
+
+    currentFloor = nextFloor;
+  }
+
+  return { currentFloor, doorOpen, success: true };
 }
 
 async function executeCommand(
@@ -140,6 +205,19 @@ async function executeCommand(
     return { currentFloor, doorOpen, success: true };
   }
 
+  if (
+    command.action === 'UpLevelElevator' ||
+    command.action === 'DownLevelElevator'
+  ) {
+    return executeVerticalMove(command, {
+      currentFloor,
+      doorOpen,
+      emit,
+      shouldContinue,
+      soundDelayMs,
+    });
+  }
+
   const doorWillClose =
     command.action === 'OpenDoorCloseDoor' ? doorOpen : doorOpen;
 
@@ -148,17 +226,7 @@ async function executeCommand(
     line: command.line,
     action: command.action,
     floor: currentFloor,
-    targetFloor:
-      command.action === 'UpLevelElevator' ||
-      command.action === 'DownLevelElevator'
-        ? command.level
-        : undefined,
-    message: getStatusMessage(
-      command,
-      currentFloor,
-      referenceFloor,
-      doorWillClose,
-    ),
+    message: getStatusMessage(command, currentFloor, referenceFloor, doorWillClose),
   });
 
   doorOpen = await playActionSound(command.action, doorOpen);
@@ -166,14 +234,6 @@ async function executeCommand(
   const canContinue = await wait(soundDelayMs, shouldContinue);
   if (!canContinue) {
     return { currentFloor, doorOpen, success: false };
-  }
-
-  if (command.action === 'UpLevelElevator' && command.level !== undefined) {
-    currentFloor = command.level;
-  }
-
-  if (command.action === 'DownLevelElevator' && command.level !== undefined) {
-    currentFloor = command.level;
   }
 
   return { currentFloor, doorOpen, success: true };
@@ -233,7 +293,7 @@ export async function compileProgram(
   emit({
     type: 'status',
     floor: referenceFloor,
-    message: `El elevador está en el piso ${referenceFloor}. Preparando ejecución del programa...`,
+    message: `El elevador inicia en el piso ${referenceFloor} (según el picker).`,
   });
 
   for (const command of parseResult.commands) {
