@@ -40,7 +40,7 @@ export default function HomeScreen() {
           activeOpacity={0.8}
         >
           <View style={styles.toggleTrack}>
-            <ThemedText style={styles.flagLeft}>🇪🇸</ThemedText>
+            <ThemedText style={styles.flagLeft}>🇲🇽</ThemedText>
             <ThemedText style={styles.flagRight}>🇺🇸</ThemedText>
           </View>
           <Animated.View
