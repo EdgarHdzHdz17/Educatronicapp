@@ -203,10 +203,6 @@ export default function CodingScreen() {
     }
 
     if (!code.trim()) {
-      handleCompilerEvent({
-        type: "error",
-        message: t("coding.compileEmpty"),
-      });
       return;
     }
 
@@ -216,10 +212,6 @@ export default function CodingScreen() {
       commandLanguage,
     });
     if (!parseResult.success) {
-      handleCompilerEvent({
-        type: "error",
-        message: t("coding.compileErrors"),
-      });
       return;
     }
 
@@ -239,7 +231,7 @@ export default function CodingScreen() {
 
     setIsRunning(false);
     setExecutingLine(null);
-  }, [commandLanguage, handleCompilerEvent, code, isReviewing, isRunning, level, t]);
+  }, [commandLanguage, handleCompilerEvent, code, isReviewing, isRunning, level]);
 
   const highlightsHeight = CODE_PADDING * 2 + lineCount * CODE_LINE_HEIGHT;
 
@@ -741,7 +733,7 @@ export default function CodingScreen() {
               </View>
             </View>
 
-            {(isRunning || elevatorStatus) && (
+            {isRunning && (
               <View style={styles.elevatorStatusBanner}>
                 <Text style={styles.elevatorStatusText}>
                   {elevatorStatus || t("coding.waiting")}
