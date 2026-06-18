@@ -1,4 +1,3 @@
-import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import {
   compileProgram,
@@ -239,6 +238,7 @@ export default function CodingScreen() {
       <View style={styles.codingSection}>
         <View style={styles.buttonsColumn}>
           <View style={styles.levelContainer}>
+            <Text style={styles.levelLabel}>{t("coding.floor")}</Text>
             <View style={styles.pickerWrapper}>
               <Picker
                 selectedValue={level}
@@ -262,28 +262,30 @@ export default function CodingScreen() {
                 ))}
               </Picker>
             </View>
-            <ThemedText>
-              {t("coding.floor")}: {isRunning ? runtimeFloor : level}
-            </ThemedText>
+            <Text style={styles.levelValue}>
+              {isRunning ? runtimeFloor : level}
+            </Text>
           </View>
 
-          {codingButtons.map((button) => (
-            <TouchableOpacity
-              key={button.key}
-              style={[
-                styles.codingButton,
-                button.key === "compile" && isRunning && styles.codingButtonActive,
-              ]}
-              onPress={() => handleButtonPress(button.key)}
-              activeOpacity={0.7}
-            >
-              <ThemedText style={styles.buttonText}>
-                {button.key === "compile" && isRunning
-                  ? t("coding.running")
-                  : t(`coding.${button.key}`)}
-              </ThemedText>
-            </TouchableOpacity>
-          ))}
+          <View style={styles.buttonsGroup}>
+            {codingButtons.map((button) => (
+              <TouchableOpacity
+                key={button.key}
+                style={[
+                  styles.codingButton,
+                  button.key === "compile" && isRunning && styles.codingButtonActive,
+                ]}
+                onPress={() => handleButtonPress(button.key)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.buttonText}>
+                  {button.key === "compile" && isRunning
+                    ? t("coding.running")
+                    : t(`coding.${button.key}`)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         <View style={styles.editorColumn}>
@@ -495,29 +497,55 @@ const styles = StyleSheet.create({
   },
   buttonsColumn: {
     width: 100,
-    justifyContent: "flex-start",
+    alignSelf: "stretch",
+    justifyContent: "space-between",
+  },
+  buttonsGroup: {
+    flex: 1,
+    justifyContent: "space-evenly",
+    paddingTop: 6,
   },
   levelContainer: {
-    marginBottom: 10,
+    alignItems: "center",
     backgroundColor: "#f0f0f0",
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ccc",
     overflow: "hidden",
+    paddingBottom: 4,
+  },
+  levelLabel: {
+    width: "100%",
+    textAlign: "center",
+    fontSize: 11,
+    fontWeight: "700",
+    color: "#444",
+    paddingTop: 6,
+    paddingBottom: 2,
   },
   pickerWrapper: {
+    width: "100%",
     backgroundColor: "#fff",
+    alignItems: "center",
   },
   picker: {
     width: "100%",
-    height: 120,
+    height: 72,
+    color: "#000",
+  },
+  pickerItem: {
+    height: 72,
+    fontSize: 16,
     color: "#000",
     textAlign: "center",
   },
-  pickerItem: {
-    height: 120,
-    fontSize: 18,
-    color: "#000",
+  levelValue: {
+    width: "100%",
+    textAlign: "center",
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#007AFF",
+    paddingVertical: 4,
   },
   codingButton: {
     backgroundColor: "#007AFF",
@@ -526,7 +554,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 4,
   },
   codingButtonActive: {
     backgroundColor: "#c62828",
