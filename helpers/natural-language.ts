@@ -781,9 +781,11 @@ export function parseNaturalLanguage(
       ? uniqueErrors
       : filterRealtimeErrors(input, uniqueErrors, definition);
 
+  const sortedErrors = [...filteredErrors].sort((a, b) => a.line - b.line);
+
   return {
-    success: filteredErrors.length === 0,
+    success: sortedErrors.length === 0,
     commands,
-    errors: filteredErrors,
+    errors: sortedErrors,
   };
 }

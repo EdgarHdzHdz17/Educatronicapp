@@ -52,7 +52,7 @@ const LINE_NUMBER_FONT_SIZE = 10;
 const CODE_PADDING = 12;
 const LINE_NUMBERS_WIDTH_PERCENT = "10%";
 const MIN_VISIBLE_LINES = 24;
-const PROBLEMS_BODY_MAX_HEIGHT = 72;
+const PROBLEMS_BODY_HEIGHT = 120;
 const REVIEW_LINE_DELAY_MS = 180;
 
 function getCursorPosition(code: string, cursorIndex: number) {
@@ -830,9 +830,10 @@ export default function CodingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 10,
   },
   topSection: {
-    paddingVertical: 10,
+    paddingTop: 10,
     paddingBottom: 0,
   },
   programNameInput: {
@@ -851,7 +852,8 @@ const styles = StyleSheet.create({
     minHeight: 0,
     gap: 20,
     overflow: "hidden",
-    paddingVertical: 10,
+    paddingTop: 10,
+    paddingBottom: 0,
   },
   buttonsColumn: {
     width: 80,
@@ -1209,7 +1211,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   errorsContainer: {
-    maxHeight: PROBLEMS_BODY_MAX_HEIGHT,
+    height: PROBLEMS_BODY_HEIGHT,
   },
   noErrorsRow: {
     paddingHorizontal: 10,
