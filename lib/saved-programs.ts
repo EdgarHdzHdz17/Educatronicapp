@@ -58,3 +58,15 @@ export async function saveProgram(
 
   return savedProgram;
 }
+
+export async function deleteProgram(name: string): Promise<void> {
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    return;
+  }
+
+  const programs = await getSavedPrograms();
+  const remaining = programs.filter((program) => program.name !== trimmedName);
+
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(remaining));
+}

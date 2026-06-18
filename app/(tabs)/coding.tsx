@@ -8,6 +8,7 @@ import { parseNaturalLanguage } from "@/helpers/natural-language";
 import {
   getSavedPrograms,
   saveProgram,
+  deleteProgram,
   SavedProgramError,
   type SavedProgram,
 } from "@/lib/saved-programs";
@@ -19,6 +20,7 @@ import {
   Play,
   Save,
   Square,
+  Trash2,
   type LucideIcon,
 } from "lucide-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -275,14 +277,34 @@ export default function CodingScreen() {
     setIsLoadModalVisible(true);
   }, [isRunning]);
 
-  const handleLoadProgram = useCallback((program: SavedProgram) => {
-    setProgramName(program.name);
-    setCode(program.code);
-    setCursorLine(1);
-    setCursorColumn(1);
-    setElevatorStatus("");
-    setExecutingLine(null);
-    setIsLoadModalVisible(false);
+  const handleLoadProgram = useCallback(
+    (program: SavedProgram) => {
+      setProgramName(program.name);
+      setCode(program.code);
+      setExecutingLine(null);
+      setElevatorStatus("");
+      setIsLoadModalVisible(false);
+
+      const loadErrors = parseNaturalLanguage(program.code, {
+        realtime: false,
+        referenceFloor: level,
+      }).errors;
+
+      if (loadErrors.length > 0) {
+        setCursorLine(loadErrors[0].line);
+        setCursorColumn(1);
+        return;
+      }
+
+      setCursorLine(1);
+      setCursorColumn(1);
+    },
+    [level],
+  );
+
+  const handleDeleteProgram = useCallback(async (name: string) => {
+    await deleteProgram(name);
+    setSavedPrograms(await getSavedPrograms());
   }, []);
 
   const handleButtonPress = (key: string) => {
@@ -571,14 +593,23 @@ export default function CodingScreen() {
             ) : (
               <ScrollView style={styles.modalList}>
                 {savedPrograms.map((program) => (
-                  <TouchableOpacity
-                    key={program.name}
-                    style={styles.modalItem}
-                    onPress={() => handleLoadProgram(program)}
-                    activeOpacity={0.7}
-                  >
-                    <Text style={styles.modalItemName}>{program.name}</Text>
-                  </TouchableOpacity>
+                  <View key={program.name} style={styles.modalItem}>
+                    <TouchableOpacity
+                      style={styles.modalItemMain}
+                      onPress={() => handleLoadProgram(program)}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={styles.modalItemName}>{program.name}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.modalDeleteButton}
+                      onPress={() => void handleDeleteProgram(program.name)}
+                      activeOpacity={0.7}
+                      accessibilityLabel={t("coding.deleteProgram")}
+                    >
+                      <Trash2 color="#c62828" size={18} strokeWidth={2.25} />
+                    </TouchableOpacity>
+                  </View>
                 ))}
               </ScrollView>
             )}
@@ -699,18 +730,30 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   modalItem: {
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
     borderColor: "#ddd",
     borderRadius: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
     marginBottom: 8,
     backgroundColor: "#fafafa",
+    overflow: "hidden",
+  },
+  modalItemMain: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
   },
   modalItemName: {
     fontSize: 15,
     fontWeight: "600",
     color: "#222",
+  },
+  modalDeleteButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderLeftWidth: 1,
+    borderLeftColor: "#ddd",
   },
   modalCloseButton: {
     alignSelf: "flex-end",

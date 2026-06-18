@@ -41,6 +41,7 @@
     "saveError": "Could not save the program.",
     "loadTitle": "Saved programs",
     "loadEmpty": "No saved programs yet.",
+    "deleteProgram": "Delete program",
     "close": "Close"
   },
   "simulations": {

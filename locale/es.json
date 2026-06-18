@@ -41,6 +41,7 @@
     "saveError": "No se pudo guardar el programa.",
     "loadTitle": "Programas guardados",
     "loadEmpty": "No hay programas guardados.",
+    "deleteProgram": "Eliminar programa",
     "close": "Cerrar"
   },
   "simulations": {
