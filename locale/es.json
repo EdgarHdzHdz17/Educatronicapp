@@ -18,5 +18,14 @@
     "help": "Ayuda",
     "placeholder": "Escribe tu código aquí...",
     "programName": "Nombre del Programa"
+  },
+  "simulations": {
+    "startElevator": "Inicio Elevador",
+    "endElevator": "Fin Elevador",
+    "upLevelElevator": "Subir Nivel",
+    "downLevelElevator": "Bajar Nivel",
+    "stopElevator": "Parar Elevador",
+    "openDoor": "Abrir Puerta",
+    "closeDoor": "Cerrar Puerta"
   }
 }

@@ -18,5 +18,14 @@
     "help": "Help",
     "placeholder": "Write your code here...",
     "programName": "Program Name"
+  },
+  "simulations": {
+    "startElevator": "Start Elevator",
+    "endElevator": "End Elevator",
+    "upLevelElevator": "Up Level",
+    "downLevelElevator": "Down Level",
+    "stopElevator": "Stop Elevator",
+    "openDoor": "Open Door",
+    "closeDoor": "Close Door"
   }
 }
