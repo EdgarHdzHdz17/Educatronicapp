@@ -372,7 +372,10 @@ function isCompleteCommandLine(
     return true;
   }
 
-  const parameterizedChecks: Array<{ letterClass: string; range: 'level' | 'channel' }> =
+  const parameterizedChecks: {
+    letterClass: string;
+    range: 'level' | 'channel';
+  }[] =
     [
       { letterClass: definition.upClass, range: 'level' },
       { letterClass: definition.downClass, range: 'level' },
