@@ -5,6 +5,16 @@ import {
 } from "@/helpers/compiler-program";
 import { parseNaturalLanguage } from "@/helpers/natural-language";
 import { Picker } from "@react-native-picker/picker";
+import {
+  CircleHelp,
+  Eraser,
+  FolderOpen,
+  Hammer,
+  Play,
+  Save,
+  Square,
+  type LucideIcon,
+} from "lucide-react-native";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -194,13 +204,17 @@ export default function CodingScreen() {
     });
   };
 
-  const codingButtons = [
-    { key: "compile" },
-    { key: "save" },
-    { key: "load" },
-    { key: "clear" },
-    { key: "simulate" },
-    { key: "help" },
+  const codingButtons: {
+    key: string;
+    Icon: LucideIcon;
+    runningIcon?: LucideIcon;
+  }[] = [
+    { key: "compile", Icon: Hammer, runningIcon: Square },
+    { key: "save", Icon: Save },
+    { key: "load", Icon: FolderOpen },
+    { key: "clear", Icon: Eraser },
+    { key: "simulate", Icon: Play },
+    { key: "help", Icon: CircleHelp },
   ];
 
   const handleButtonPress = (key: string) => {
@@ -268,23 +282,33 @@ export default function CodingScreen() {
           </View>
 
           <View style={styles.buttonsGroup}>
-            {codingButtons.map((button) => (
-              <TouchableOpacity
-                key={button.key}
-                style={[
-                  styles.codingButton,
-                  button.key === "compile" && isRunning && styles.codingButtonActive,
-                ]}
-                onPress={() => handleButtonPress(button.key)}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.buttonText}>
-                  {button.key === "compile" && isRunning
-                    ? t("coding.running")
-                    : t(`coding.${button.key}`)}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {codingButtons.map((button) => {
+              const isCompileRunning =
+                button.key === "compile" && isRunning;
+              const IconComponent =
+                isCompileRunning && button.runningIcon
+                  ? button.runningIcon
+                  : button.Icon;
+
+              return (
+                <TouchableOpacity
+                  key={button.key}
+                  style={[
+                    styles.codingButton,
+                    isCompileRunning && styles.codingButtonActive,
+                  ]}
+                  onPress={() => handleButtonPress(button.key)}
+                  activeOpacity={0.7}
+                >
+                  <IconComponent color="#fff" size={16} strokeWidth={2.25} />
+                  <Text style={styles.buttonText}>
+                    {isCompileRunning
+                      ? t("coding.running")
+                      : t(`coding.${button.key}`)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -549,18 +573,19 @@ const styles = StyleSheet.create({
   },
   codingButton: {
     backgroundColor: "#007AFF",
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
+    gap: 4,
   },
   codingButtonActive: {
     backgroundColor: "#c62828",
   },
   buttonText: {
     color: "#fff",
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: "600",
     textAlign: "center",
   },
