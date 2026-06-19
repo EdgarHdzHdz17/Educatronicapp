@@ -21,7 +21,7 @@ const COLORS = {
   yellow: '#F2D024',
   yellowSide: '#D4B820',
   window: '#5A4D4A',
-  sky: '#29A6FF',
+  sky: '#1a2332',
 } as const;
 
 const WINDOW_COLUMNS = 2;
