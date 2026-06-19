@@ -7,7 +7,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
 import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
 
 const FLOOR_COUNT = MAX_FLOOR - MIN_FLOOR + 1;
-const FLOOR_HEIGHT = 1.0;
+const FLOOR_HEIGHT = 1.05;
 const BUILDING_HEIGHT = FLOOR_COUNT * FLOOR_HEIGHT;
 const MAIN_WIDTH = 1.55;
 const MAIN_DEPTH = 1.1;
@@ -45,7 +45,7 @@ function CameraRig() {
   const lookY = BUILDING_HEIGHT * 0.45;
 
   useLayoutEffect(() => {
-    camera.position.set(3.6, BUILDING_HEIGHT * 0.5, 5.2);
+    camera.position.set(3.65, BUILDING_HEIGHT * 0.51, 5.4);
     camera.lookAt(0, lookY, 0);
     if ('updateProjectionMatrix' in camera && typeof camera.updateProjectionMatrix === 'function') {
       camera.updateProjectionMatrix();
@@ -81,7 +81,7 @@ function MainBuilding() {
   );
   const windowColumns = [-0.28, 0.28];
   const windowW = 0.32;
-  const windowH = 0.52;
+  const windowH = 0.5;
 
   return (
     <group position={[0, BUILDING_HEIGHT / 2, 0]}>
@@ -145,10 +145,10 @@ function BuildingSceneSvg() {
   const depthY = 10;
 
   // Alturas alineadas
-  const roofH = 12;
-  const roofTop = 8;
+  const roofH = 10;
+  const roofTop = 16;
   const bodyTop = roofTop + roofH;
-  const bodyBottom = 296;
+  const bodyBottom = 286;
   const bodyH = bodyBottom - bodyTop;
 
   // Anchos del edificio
@@ -159,6 +159,11 @@ function BuildingSceneSvg() {
   const backLeft = left + depthX;
   const backRight = frontRight + depthX;
 
+  const viewMinX = left - 24;
+  const viewWidth = mainW + depthX + 48;
+  const viewMinY = 0;
+  const viewHeight = 300;
+
   const floorH = bodyH / FLOOR_COUNT;
   const floors = Array.from({ length: FLOOR_COUNT }, (_, i) => i);
 
@@ -167,7 +172,12 @@ function BuildingSceneSvg() {
   const windowGap = (mainW - windowW * WINDOW_COLUMNS) / (WINDOW_COLUMNS + 1);
 
   return (
-    <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+    <Svg
+      width="100%"
+      height="100%"
+      viewBox={`${viewMinX} ${viewMinY} ${viewWidth} ${viewHeight}`}
+      preserveAspectRatio="xMidYMid meet"
+    >
       <Rect x={0} y={0} width={W} height={H} fill={COLORS.sky} />
 
       {/* cara lateral derecha */}
@@ -230,7 +240,7 @@ function BuildingCanvas3D() {
       style={styles.canvas}
       frameloop="always"
       flat
-      camera={{ fov: 34, near: 0.1, far: 100, position: [3.6, BUILDING_HEIGHT * 0.5, 5.2] }}
+      camera={{ fov: 34, near: 0.1, far: 100, position: [3.65, BUILDING_HEIGHT * 0.51, 5.4] }}
       onCreated={(state) => {
         patchExpoGlContext(state);
         state.gl.setClearColor(COLORS.sky, 1);
