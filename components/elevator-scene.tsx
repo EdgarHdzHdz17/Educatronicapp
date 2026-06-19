@@ -7,7 +7,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
 import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
 
 const FLOOR_COUNT = MAX_FLOOR - MIN_FLOOR + 1;
-const FLOOR_HEIGHT = 0.62;
+const FLOOR_HEIGHT = 0.78;
 const BUILDING_HEIGHT = FLOOR_COUNT * FLOOR_HEIGHT;
 const MAIN_WIDTH = 1.55;
 const MAIN_DEPTH = 1.1;
@@ -81,7 +81,7 @@ function MainBuilding() {
   );
   const windowColumns = [-0.28, 0.28];
   const windowW = 0.32;
-  const windowH = 0.36;
+  const windowH = 0.44;
 
   return (
     <group position={[0, BUILDING_HEIGHT / 2, 0]}>
@@ -146,9 +146,9 @@ function BuildingSceneSvg() {
 
   // Alturas alineadas
   const roofH = 12;
-  const roofTop = 40;
+  const roofTop = 22;
   const bodyTop = roofTop + roofH;
-  const bodyBottom = 262;
+  const bodyBottom = 282;
   const bodyH = bodyBottom - bodyTop;
 
   // Anchos del edificio
