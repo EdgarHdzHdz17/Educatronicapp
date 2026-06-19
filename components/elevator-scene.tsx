@@ -1,33 +1,32 @@
 import Constants from 'expo-constants';
 import { useLayoutEffect, useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
+import Svg, { Polygon, Rect } from 'react-native-svg';
 import { Canvas, useFrame, useThree } from '@react-three/fiber/native';
 
-import { ThemedText } from '@/components/themed-text';
 import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
 
-const FLOOR_HEIGHT = 1.35;
-const BUILDING_WIDTH = 3.6;
-const BUILDING_DEPTH = 2.4;
-const WALL_THICKNESS = 0.12;
-const SHAFT_WIDTH = 1.1;
+const FLOOR_COUNT = MAX_FLOOR - MIN_FLOOR + 1;
+const FLOOR_HEIGHT = 0.62;
+const BUILDING_HEIGHT = FLOOR_COUNT * FLOOR_HEIGHT;
+const MAIN_WIDTH = 2.1;
+const MAIN_DEPTH = 1.2;
+const ANNEX_WIDTH = 0.48;
 
-type ElevatorSceneProps = {
-  currentFloor?: number;
-  doorOpen?: boolean;
-};
+const COLORS = {
+  wall: '#E8E8E8',
+  wallSide: '#D0D0D0',
+  roof: '#4A6D7C',
+  roofSide: '#3A5866',
+  yellow: '#F2D024',
+  yellowSide: '#D4B820',
+  window: '#5A4D4A',
+  sky: '#29A6FF',
+} as const;
 
-function floorCenterY(floor: number) {
-  return (floor - MIN_FLOOR) * FLOOR_HEIGHT + FLOOR_HEIGHT / 2;
-}
+const WINDOW_COLUMNS = 2;
 
-function buildingHeight() {
-  return (MAX_FLOOR - MIN_FLOOR + 1) * FLOOR_HEIGHT;
-}
-
-function buildingCenterY() {
-  return buildingHeight() / 2;
-}
+const BUILDING_CENTER_X = -ANNEX_WIDTH / 2;
 
 function patchExpoGlContext(state: { gl: { getContext: () => WebGLRenderingContext } }) {
   const context = state.gl.getContext();
@@ -41,303 +40,288 @@ function patchExpoGlContext(state: { gl: { getContext: () => WebGLRenderingConte
   };
 }
 
+function floorLocalY(index: number) {
+  const mid = (FLOOR_COUNT - 1) / 2;
+  return (index - mid) * FLOOR_HEIGHT;
+}
+
 function CameraRig() {
   const { camera } = useThree();
-  const centerY = buildingCenterY();
+  const lookY = BUILDING_HEIGHT * 0.45;
 
   useLayoutEffect(() => {
-    camera.position.set(5.5, centerY + 1.2, 7.5);
-    camera.lookAt(0, centerY, 0);
+    camera.position.set(3.6, BUILDING_HEIGHT * 0.5, 5.2);
+    camera.lookAt(BUILDING_CENTER_X, lookY, 0);
     if ('updateProjectionMatrix' in camera && typeof camera.updateProjectionMatrix === 'function') {
       camera.updateProjectionMatrix();
     }
-  }, [camera, centerY]);
+  }, [camera, lookY]);
 
   useFrame(() => {
-    camera.lookAt(0, centerY, 0);
+    camera.lookAt(BUILDING_CENTER_X, lookY, 0);
   });
 
   return null;
 }
 
-type FloorLevelProps = {
-  floor: number;
-  highlighted: boolean;
+type WindowProps = {
+  position: [number, number, number];
+  size: [number, number];
 };
 
-function FloorLevel({ floor, highlighted }: FloorLevelProps) {
-  const y = floorCenterY(floor);
-  const wallColor = highlighted ? '#6fa8e8' : '#4a6278';
-  const slabColor = highlighted ? '#8ec0ff' : '#5a738a';
-  const windowColor = highlighted ? '#ffe566' : '#a8d4f5';
-
+function Window({ position, size }: WindowProps) {
+  const [w, h] = size;
   return (
-    <group position={[0, y, 0]}>
-      <mesh position={[0, -FLOOR_HEIGHT / 2 + 0.04, 0]}>
-        <boxGeometry args={[BUILDING_WIDTH, 0.08, BUILDING_DEPTH]} />
-        <meshBasicMaterial color={slabColor} />
-      </mesh>
-
-      <mesh position={[0, 0, BUILDING_DEPTH / 2]}>
-        <boxGeometry args={[BUILDING_WIDTH, FLOOR_HEIGHT - 0.1, WALL_THICKNESS]} />
-        <meshBasicMaterial color={wallColor} />
-      </mesh>
-
-      {[-1.05, 0, 1.05].map((x) => (
-        <mesh key={x} position={[x, 0.05, BUILDING_DEPTH / 2 + WALL_THICKNESS / 2 + 0.01]}>
-          <boxGeometry args={[0.55, 0.55, 0.04]} />
-          <meshBasicMaterial color={windowColor} />
-        </mesh>
-      ))}
-
-      <mesh position={[0, 0, -BUILDING_DEPTH / 2]}>
-        <boxGeometry args={[BUILDING_WIDTH, FLOOR_HEIGHT - 0.1, WALL_THICKNESS]} />
-        <meshBasicMaterial color="#3a5060" />
-      </mesh>
-
-      <mesh position={[BUILDING_WIDTH / 2, 0, 0]}>
-        <boxGeometry args={[WALL_THICKNESS, FLOOR_HEIGHT - 0.1, BUILDING_DEPTH]} />
-        <meshBasicMaterial color="#425a6c" />
-      </mesh>
-
-      <mesh position={[BUILDING_WIDTH / 2 + 0.06, 0, BUILDING_DEPTH / 2 - 0.35]}>
-        <boxGeometry args={[0.08, 0.28, 0.18]} />
-        <meshBasicMaterial color={highlighted ? '#ffd166' : '#99aabb'} />
-      </mesh>
-    </group>
+    <mesh position={position}>
+      <boxGeometry args={[w, h, 0.04]} />
+      <meshBasicMaterial color={COLORS.window} />
+    </mesh>
   );
 }
 
-function ElevatorShaft3D() {
-  const height = buildingHeight();
-  const shaftX = -BUILDING_WIDTH / 2 + SHAFT_WIDTH / 2 + 0.15;
-
-  return (
-    <group>
-      <mesh position={[shaftX, buildingCenterY(), 0]}>
-        <boxGeometry args={[SHAFT_WIDTH, height, BUILDING_DEPTH - 0.4]} />
-        <meshBasicMaterial color="#1a2330" />
-      </mesh>
-
-      {Array.from({ length: MAX_FLOOR - MIN_FLOOR + 1 }, (_, index) => {
-        const floor = MIN_FLOOR + index;
-        return (
-          <mesh
-            key={floor}
-            position={[shaftX + SHAFT_WIDTH / 2 + 0.04, floorCenterY(floor), BUILDING_DEPTH / 2 - 0.2]}
-          >
-            <boxGeometry args={[0.05, 0.06, 0.25]} />
-            <meshBasicMaterial color="#ccd6e0" />
-          </mesh>
-        );
-      })}
-    </group>
-  );
-}
-
-function Building3D({ currentFloor = MIN_FLOOR }: ElevatorSceneProps) {
+function MainBuilding() {
   const floors = useMemo(
-    () => Array.from({ length: MAX_FLOOR - MIN_FLOOR + 1 }, (_, index) => MIN_FLOOR + index),
+    () => Array.from({ length: FLOOR_COUNT }, (_, index) => index),
+    [],
+  );
+  const windowColumns = [-0.38, 0.38];
+  const windowW = 0.42;
+  const windowH = 0.36;
+
+  return (
+    <group position={[0, BUILDING_HEIGHT / 2, 0]}>
+      <mesh>
+        <boxGeometry args={[MAIN_WIDTH, BUILDING_HEIGHT, MAIN_DEPTH]} />
+        <meshBasicMaterial color={COLORS.wall} />
+      </mesh>
+      <mesh position={[MAIN_WIDTH / 2, 0, 0]}>
+        <boxGeometry args={[0.04, BUILDING_HEIGHT, MAIN_DEPTH]} />
+        <meshBasicMaterial color={COLORS.wallSide} />
+      </mesh>
+
+      {floors.flatMap((floorIndex) =>
+        windowColumns.map((x, columnIndex) => (
+          <Window
+            key={`${floorIndex}-${columnIndex}`}
+            position={[x, floorLocalY(floorIndex), MAIN_DEPTH / 2 + 0.02]}
+            size={[windowW, windowH]}
+          />
+        )),
+      )}
+    </group>
+  );
+}
+
+function YellowAnnex() {
+  const annexX = -(MAIN_WIDTH / 2 + ANNEX_WIDTH / 2);
+  const floors = useMemo(
+    () => Array.from({ length: FLOOR_COUNT }, (_, index) => index),
     [],
   );
 
   return (
-    <group>
-      {floors.map((floor) => (
-        <FloorLevel key={floor} floor={floor} highlighted={floor === currentFloor} />
-      ))}
-      <ElevatorShaft3D />
-      <mesh position={[0, -0.06, 0]}>
-        <boxGeometry args={[BUILDING_WIDTH + 0.4, 0.12, BUILDING_DEPTH + 0.4]} />
-        <meshBasicMaterial color="#2a3542" />
+    <group position={[annexX, BUILDING_HEIGHT / 2, 0]}>
+      <mesh>
+        <boxGeometry args={[ANNEX_WIDTH, BUILDING_HEIGHT, MAIN_DEPTH]} />
+        <meshBasicMaterial color={COLORS.yellow} />
       </mesh>
-      <mesh position={[0, buildingHeight() + 0.08, 0]}>
-        <boxGeometry args={[BUILDING_WIDTH + 0.2, 0.16, BUILDING_DEPTH + 0.2]} />
-        <meshBasicMaterial color="#2f3d4d" />
+      <mesh position={[ANNEX_WIDTH / 2, 0, 0]}>
+        <boxGeometry args={[0.04, BUILDING_HEIGHT, MAIN_DEPTH]} />
+        <meshBasicMaterial color={COLORS.yellowSide} />
+      </mesh>
+
+      {floors.map((floorIndex) => (
+        <Window
+          key={floorIndex}
+          position={[0, floorLocalY(floorIndex), MAIN_DEPTH / 2 + 0.02]}
+          size={[0.16, 0.38]}
+        />
+      ))}
+    </group>
+  );
+}
+
+function Roof() {
+  const roofWidth = MAIN_WIDTH + ANNEX_WIDTH + 0.2;
+  const roofDepth = MAIN_DEPTH + 0.2;
+
+  return (
+    <group position={[BUILDING_CENTER_X, BUILDING_HEIGHT + 0.08, 0]}>
+      <mesh>
+        <boxGeometry args={[roofWidth, 0.12, roofDepth]} />
+        <meshBasicMaterial color={COLORS.roof} />
+      </mesh>
+      <mesh position={[roofWidth / 2, 0, 0]}>
+        <boxGeometry args={[0.04, 0.12, roofDepth]} />
+        <meshBasicMaterial color={COLORS.roofSide} />
       </mesh>
     </group>
   );
 }
 
-function SceneContent(props: ElevatorSceneProps) {
-  const { scene } = useThree();
-
-  useLayoutEffect(() => {
-    scene.background = null;
-  }, [scene]);
-
+function BuildingScene3D() {
   return (
     <>
       <CameraRig />
       <ambientLight intensity={1.2} />
-      <Building3D {...props} />
+      <MainBuilding />
+      <YellowAnnex />
+      <Roof />
     </>
   );
 }
 
-function BuildingCanvas3D(props: ElevatorSceneProps) {
+function BuildingSceneSvg() {
+  const W = 320;
+  const H = 300;
+
+  const groundY = 252;
+  const buildingTop = 36;
+  const buildingH = groundY - buildingTop - 8;
+
+  const annexW = 54;
+  const mainW = 178;
+  const totalW = annexW + mainW;
+  const startX = (W - totalW - 20) / 2;
+  const depthOffset = 20;
+
+  const mainX = startX + annexW;
+  const rightX = mainX + mainW;
+  const backX = rightX + depthOffset;
+  const backMainX = mainX + depthOffset;
+
+  const roofH = 14;
+  const roofTop = buildingTop - roofH + 4;
+  const floorH = buildingH / FLOOR_COUNT;
+  const floors = Array.from({ length: FLOOR_COUNT }, (_, i) => i);
+
+  const windowW = 48;
+  const windowH = floorH * 0.52;
+  const windowGap = (mainW - windowW * WINDOW_COLUMNS) / (WINDOW_COLUMNS + 1);
+
+  return (
+    <Svg width="100%" height="100%" viewBox={`0 0 ${W} ${H}`}>
+      <Rect x={0} y={0} width={W} height={H} fill={COLORS.sky} />
+
+      {/* cara lateral derecha del edificio */}
+      <Polygon
+        points={`${rightX},${buildingTop} ${backX},${buildingTop - 10} ${backX},${groundY} ${rightX},${groundY}`}
+        fill={COLORS.wallSide}
+      />
+      <Polygon
+        points={`${startX + annexW},${buildingTop} ${backMainX},${buildingTop - 10} ${backMainX},${groundY} ${startX + annexW},${groundY}`}
+        fill={COLORS.yellowSide}
+      />
+
+      {/* cuerpo anexo amarillo */}
+      <Rect x={startX} y={buildingTop} width={annexW} height={buildingH} fill={COLORS.yellow} />
+
+      {/* cuerpo principal blanco */}
+      <Rect x={mainX} y={buildingTop} width={mainW} height={buildingH} fill={COLORS.wall} />
+
+      {/* techo - cara superior */}
+      <Polygon
+        points={`${startX - 6},${buildingTop} ${rightX + 6},${buildingTop} ${backX + 6},${buildingTop - 10} ${backMainX - 6},${buildingTop - 10}`}
+        fill={COLORS.roof}
+      />
+      {/* techo - frente */}
+      <Rect x={startX - 6} y={roofTop} width={totalW + 12} height={roofH} fill={COLORS.roof} rx={1} />
+      {/* techo - lateral */}
+      <Polygon
+        points={`${rightX + 6},${roofTop} ${backX + 6},${roofTop - 10} ${backX + 6},${buildingTop - 10} ${rightX + 6},${buildingTop}`}
+        fill={COLORS.roofSide}
+      />
+
+      {/* ventanas edificio principal - 7 pisos x 2 columnas */}
+      {floors.map((floorIndex) => {
+        const y = buildingTop + floorIndex * floorH + (floorH - windowH) / 2;
+        return [0, 1].map((col) => {
+          const x = mainX + windowGap + col * (windowW + windowGap);
+          return (
+            <Rect
+              key={`w-${floorIndex}-${col}`}
+              x={x}
+              y={y}
+              width={windowW}
+              height={windowH}
+              fill={COLORS.window}
+              rx={1}
+            />
+          );
+        });
+      })}
+
+      {/* ventanas anexo amarillo */}
+      {floors.map((floorIndex) => {
+        const y = buildingTop + floorIndex * floorH + floorH * 0.14;
+        const h = floorH * 0.72;
+        const x = startX + (annexW - 14) / 2;
+        return (
+          <Rect
+            key={`annex-${floorIndex}`}
+            x={x}
+            y={y}
+            width={14}
+            height={h}
+            fill={COLORS.window}
+            rx={1}
+          />
+        );
+      })}
+
+      {/* líneas de piso sutiles en el edificio blanco */}
+      {floors.slice(1).map((floorIndex) => {
+        const y = buildingTop + floorIndex * floorH;
+        return (
+          <Rect
+            key={`line-${floorIndex}`}
+            x={mainX}
+            y={y}
+            width={mainW}
+            height={1}
+            fill="#D8D8D8"
+          />
+        );
+      })}
+    </Svg>
+  );
+}
+
+function BuildingCanvas3D() {
   return (
     <Canvas
       style={styles.canvas}
       frameloop="always"
       flat
-      camera={{ fov: 38, near: 0.1, far: 100, position: [5.5, buildingCenterY() + 1.2, 7.5] }}
+      camera={{ fov: 34, near: 0.1, far: 100, position: [3.6, BUILDING_HEIGHT * 0.5, 5.2] }}
       onCreated={(state) => {
         patchExpoGlContext(state);
-        state.scene.background = null;
-        state.gl.setClearColor('#1a2744', 1);
+        state.gl.setClearColor(COLORS.sky, 1);
       }}
     >
-      <SceneContent {...props} />
+      <BuildingScene3D />
     </Canvas>
   );
 }
 
-function Building2D({ currentFloor = MIN_FLOOR }: ElevatorSceneProps) {
-  const floors = useMemo(
-    () =>
-      Array.from({ length: MAX_FLOOR - MIN_FLOOR + 1 }, (_, index) => MAX_FLOOR - index),
-    [],
-  );
-
+export function ElevatorScene() {
   return (
-    <View style={styles.building2d}>
-      <View style={styles.shaftColumn}>
-        {floors.map((floor) => (
-          <View key={floor} style={styles.shaftFloor}>
-            <View
-              style={[
-                styles.shaftDoor,
-                floor === currentFloor && styles.shaftDoorActive,
-              ]}
-            />
-          </View>
-        ))}
-      </View>
-
-      <View style={styles.floorsColumn}>
-        {floors.map((floor) => {
-          const highlighted = floor === currentFloor;
-          return (
-            <View
-              key={floor}
-              style={[styles.floorRow, highlighted && styles.floorRowActive]}
-            >
-              <ThemedText style={[styles.floorLabel, highlighted && styles.floorLabelActive]}>
-                {floor}
-              </ThemedText>
-              <View style={styles.windowsRow}>
-                {[0, 1, 2].map((windowIndex) => (
-                  <View
-                    key={windowIndex}
-                    style={[styles.window, highlighted && styles.windowActive]}
-                  />
-                ))}
-              </View>
-            </View>
-          );
-        })}
-      </View>
-    </View>
-  );
-}
-
-const useNative3D = Constants.isDevice;
-
-export function ElevatorScene(props: ElevatorSceneProps) {
-  return (
-    <View style={styles.canvasContainer}>
-      {useNative3D ? <BuildingCanvas3D {...props} /> : <Building2D {...props} />}
+    <View style={styles.container}>
+      {Constants.isDevice ? <BuildingCanvas3D /> : <BuildingSceneSvg />}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  canvasContainer: {
+  container: {
     width: '100%',
     height: 320,
     borderRadius: 12,
     overflow: 'hidden',
-    backgroundColor: '#1a2744',
+    backgroundColor: COLORS.sky,
   },
   canvas: {
     flex: 1,
     width: '100%',
-  },
-  building2d: {
-    flex: 1,
-    flexDirection: 'row',
-    padding: 12,
-    gap: 8,
-  },
-  shaftColumn: {
-    width: 52,
-    backgroundColor: '#121a28',
-    borderRadius: 8,
-    paddingVertical: 6,
-    paddingHorizontal: 6,
-    justifyContent: 'space-between',
-  },
-  shaftFloor: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  shaftDoor: {
-    width: 28,
-    height: '70%',
-    borderRadius: 3,
-    backgroundColor: '#2a3548',
-    borderWidth: 1,
-    borderColor: '#3d4f66',
-  },
-  shaftDoorActive: {
-    backgroundColor: '#4a90d9',
-    borderColor: '#7eb8ff',
-  },
-  floorsColumn: {
-    flex: 1,
-    justifyContent: 'space-between',
-    gap: 4,
-  },
-  floorRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    backgroundColor: '#2a3a50',
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#3a5068',
-  },
-  floorRowActive: {
-    backgroundColor: '#3d5f8a',
-    borderColor: '#7eb8ff',
-  },
-  floorLabel: {
-    width: 18,
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#8899aa',
-    textAlign: 'center',
-  },
-  floorLabelActive: {
-    color: '#ffe566',
-  },
-  windowsRow: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
-  },
-  window: {
-    width: 22,
-    height: 18,
-    borderRadius: 2,
-    backgroundColor: '#6a9ec8',
-  },
-  windowActive: {
-    backgroundColor: '#ffe566',
   },
 });

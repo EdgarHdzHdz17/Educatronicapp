@@ -1,11 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { ElevatorScene } from '@/components/elevator-scene';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
 import { commandSounds } from '@/helpers/command-sounds';
 import {
   getCommandLabels,
@@ -14,8 +13,6 @@ import {
 
 export default function SimulationsScreen() {
   const { t, i18n } = useTranslation();
-  const [currentFloor, setCurrentFloor] = useState(MIN_FLOOR);
-  const [doorOpen, setDoorOpen] = useState(false);
   const commandLabels = useMemo(
     () => getCommandLabels(normalizeCommandLanguage(i18n.language)),
     [i18n.language],
@@ -67,22 +64,6 @@ export default function SimulationsScreen() {
     if (!button) return;
 
     void button.play();
-
-    if (key === 'upLevelElevator') {
-      setCurrentFloor((floor) => Math.min(floor + 1, MAX_FLOOR));
-      return;
-    }
-    if (key === 'downLevelElevator') {
-      setCurrentFloor((floor) => Math.max(floor - 1, MIN_FLOOR));
-      return;
-    }
-    if (key === 'openDoor') {
-      setDoorOpen(true);
-      return;
-    }
-    if (key === 'closeDoor') {
-      setDoorOpen(false);
-    }
   };
 
   return (
@@ -91,7 +72,7 @@ export default function SimulationsScreen() {
         {t('tabs.simulations')}
       </ThemedText>
 
-      <ElevatorScene currentFloor={currentFloor} doorOpen={doorOpen} />
+      <ElevatorScene />
 
       <ScrollView
         style={styles.scrollView}
