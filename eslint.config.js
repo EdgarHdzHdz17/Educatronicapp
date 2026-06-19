@@ -7,4 +7,39 @@ module.exports = defineConfig([
   {
     ignores: ['dist/*'],
   },
+  {
+    rules: {
+      'react/no-unknown-property': [
+        'warn',
+        {
+          ignore: [
+            'args',
+            'attach',
+            'castShadow',
+            'color',
+            'dispose',
+            'fog',
+            'geometry',
+            'intensity',
+            'linewidth',
+            'map',
+            'material',
+            'metalness',
+            'object',
+            'opacity',
+            'position',
+            'receiveShadow',
+            'rotation',
+            'roughness',
+            'scale',
+            'side',
+            'toneMapped',
+            'transparent',
+            'visible',
+            'wireframe',
+          ],
+        },
+      ],
+    },
+  },
 ]);
