@@ -7,26 +7,26 @@ import {
   Play,
   Square,
   type LucideIcon,
-} from 'lucide-react-native';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+} from "lucide-react-native";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 
-import { ElevatorScene } from '@/components/elevator-scene';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { commandSounds } from '@/helpers/command-sounds';
+import { ElevatorScene } from "@/components/elevator-scene";
+import { ThemedText } from "@/components/themed-text";
+import { ThemedView } from "@/components/themed-view";
+import { commandSounds } from "@/helpers/command-sounds";
 
 const BUTTONS_AREA_HEIGHT = 56;
 
 type SoundButtonKey =
-  | 'startElevator'
-  | 'endElevator'
-  | 'upLevelElevator'
-  | 'downLevelElevator'
-  | 'stopElevator'
-  | 'openDoor'
-  | 'closeDoor';
+  | "startElevator"
+  | "endElevator"
+  | "upLevelElevator"
+  | "downLevelElevator"
+  | "stopElevator"
+  | "openDoor"
+  | "closeDoor";
 
 type SoundButtonConfig = {
   key: SoundButtonKey;
@@ -35,13 +35,21 @@ type SoundButtonConfig = {
 };
 
 const SOUND_BUTTONS: SoundButtonConfig[] = [
-  { key: 'startElevator', Icon: Play, play: commandSounds.startElevatorSound },
-  { key: 'endElevator', Icon: Square, play: commandSounds.endElevatorSound },
-  { key: 'upLevelElevator', Icon: ArrowUp, play: commandSounds.upLevelElevatorSound },
-  { key: 'downLevelElevator', Icon: ArrowDown, play: commandSounds.downLevelElevatorSound },
-  { key: 'stopElevator', Icon: Octagon, play: commandSounds.stopElevatorSound },
-  { key: 'openDoor', Icon: DoorOpen, play: commandSounds.openDoorSound },
-  { key: 'closeDoor', Icon: DoorClosed, play: commandSounds.closeDoorSound },
+  { key: "startElevator", Icon: Play, play: commandSounds.startElevatorSound },
+  { key: "endElevator", Icon: Square, play: commandSounds.endElevatorSound },
+  {
+    key: "upLevelElevator",
+    Icon: ArrowUp,
+    play: commandSounds.upLevelElevatorSound,
+  },
+  {
+    key: "downLevelElevator",
+    Icon: ArrowDown,
+    play: commandSounds.downLevelElevatorSound,
+  },
+  { key: "stopElevator", Icon: Octagon, play: commandSounds.stopElevatorSound },
+  { key: "openDoor", Icon: DoorOpen, play: commandSounds.openDoorSound },
+  { key: "closeDoor", Icon: DoorClosed, play: commandSounds.closeDoorSound },
 ];
 
 export default function SimulationsScreen() {
@@ -59,7 +67,7 @@ export default function SimulationsScreen() {
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>
-        {t('tabs.simulations')}
+        {t("tabs.simulations")}
       </ThemedText>
 
       <View style={styles.buttonsSection}>
@@ -100,7 +108,7 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   title: {
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 10,
   },
   buttonsSection: {
@@ -111,7 +119,7 @@ const styles = StyleSheet.create({
   },
   buttonsContainer: {
     height: BUTTONS_AREA_HEIGHT,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 8,
     paddingHorizontal: 2,
   },
@@ -123,17 +131,17 @@ const styles = StyleSheet.create({
     height: BUTTONS_AREA_HEIGHT,
     minWidth: 72,
     paddingHorizontal: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#007AFF',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#007AFF",
     borderRadius: 8,
     gap: 3,
   },
   buttonLabel: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 9,
-    fontWeight: '600',
-    textAlign: 'center',
+    fontWeight: "600",
+    textAlign: "center",
     lineHeight: 11,
   },
 });
