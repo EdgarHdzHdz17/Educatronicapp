@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { ElevatorScene } from '@/components/elevator-scene';
@@ -68,31 +68,36 @@ export default function SimulationsScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ThemedText type="title" style={styles.title}>
-        {t('tabs.simulations')}
-      </ThemedText>
+      <View style={styles.buttonsSection}>
+        <ThemedText type="title" style={styles.title}>
+          {t('tabs.simulations')}
+        </ThemedText>
 
-      <ElevatorScene />
+        <ScrollView
+          horizontal
+          style={styles.buttonsScroll}
+          contentContainerStyle={styles.buttonsContainer}
+          showsHorizontalScrollIndicator={false}
+        >
+          {soundButtons.map((button) => (
+            <TouchableOpacity
+              key={button.key}
+              style={styles.soundButton}
+              onPress={() => handleButtonPress(button.key)}
+              activeOpacity={0.7}
+            >
+              <ThemedText style={styles.commandLabel}>{button.command}</ThemedText>
+              <ThemedText style={styles.buttonText}>
+                {t(`simulations.${button.key}`)}
+              </ThemedText>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.buttonsContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {soundButtons.map((button) => (
-          <TouchableOpacity
-            key={button.key}
-            style={styles.soundButton}
-            onPress={() => handleButtonPress(button.key)}
-            activeOpacity={0.7}
-          >
-            <ThemedText style={styles.commandLabel}>{button.command}</ThemedText>
-            <ThemedText style={styles.buttonText}>
-              {t(`simulations.${button.key}`)}
-            </ThemedText>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <View style={styles.sceneSection}>
+        <ElevatorScene />
+      </View>
     </ThemedView>
   );
 }
@@ -101,39 +106,50 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    paddingBottom: 8,
+  },
+  buttonsSection: {
+    flex: 1,
   },
   title: {
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
-  scrollView: {
+  buttonsScroll: {
     flex: 1,
-    marginTop: 16,
   },
   buttonsContainer: {
+    flexGrow: 1,
+    alignItems: 'stretch',
     gap: 10,
-    paddingBottom: 24,
+    paddingHorizontal: 4,
+    paddingBottom: 8,
+  },
+  sceneSection: {
+    flex: 2,
+    marginTop: 8,
   },
   soundButton: {
-    flexDirection: 'row',
+    width: 112,
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#007AFF',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    gap: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    gap: 6,
   },
   commandLabel: {
-    width: 28,
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '700',
     textAlign: 'center',
   },
   buttonText: {
-    flex: 1,
     color: '#fff',
-    fontSize: 15,
+    fontSize: 12,
     fontWeight: '600',
+    textAlign: 'center',
+    lineHeight: 15,
   },
 });

@@ -9,8 +9,8 @@ import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
 const FLOOR_COUNT = MAX_FLOOR - MIN_FLOOR + 1;
 const FLOOR_HEIGHT = 0.62;
 const BUILDING_HEIGHT = FLOOR_COUNT * FLOOR_HEIGHT;
-const MAIN_WIDTH = 2.1;
-const MAIN_DEPTH = 1.2;
+const MAIN_WIDTH = 1.55;
+const MAIN_DEPTH = 1.1;
 
 const COLORS = {
   wall: '#E8E8E8',
@@ -79,8 +79,8 @@ function MainBuilding() {
     () => Array.from({ length: FLOOR_COUNT }, (_, index) => index),
     [],
   );
-  const windowColumns = [-0.38, 0.38];
-  const windowW = 0.42;
+  const windowColumns = [-0.28, 0.28];
+  const windowW = 0.32;
   const windowH = 0.36;
 
   return (
@@ -152,7 +152,7 @@ function BuildingSceneSvg() {
   const bodyH = bodyBottom - bodyTop;
 
   // Anchos del edificio
-  const mainW = 216;
+  const mainW = 148;
   const left = Math.round((W - mainW - depthX * 0.5) / 2);
   const mainX = left;
   const frontRight = mainX + mainW;
@@ -162,7 +162,7 @@ function BuildingSceneSvg() {
   const floorH = bodyH / FLOOR_COUNT;
   const floors = Array.from({ length: FLOOR_COUNT }, (_, i) => i);
 
-  const windowW = 48;
+  const windowW = 36;
   const windowH = floorH * 0.5;
   const windowGap = (mainW - windowW * WINDOW_COLUMNS) / (WINDOW_COLUMNS + 1);
 
@@ -251,8 +251,8 @@ export function ElevatorScene() {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: '100%',
-    height: 320,
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: COLORS.sky,
