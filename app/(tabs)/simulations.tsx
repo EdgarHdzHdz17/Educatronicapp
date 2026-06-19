@@ -1,9 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { ElevatorScene } from '@/components/elevator-scene';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { MAX_FLOOR, MIN_FLOOR } from '@/constants/elevator';
 import { commandSounds } from '@/helpers/command-sounds';
 import {
   getCommandLabels,
@@ -12,6 +14,8 @@ import {
 
 export default function SimulationsScreen() {
   const { t, i18n } = useTranslation();
+  const [currentFloor, setCurrentFloor] = useState(MIN_FLOOR);
+  const [doorOpen, setDoorOpen] = useState(false);
   const commandLabels = useMemo(
     () => getCommandLabels(normalizeCommandLanguage(i18n.language)),
     [i18n.language],
@@ -58,13 +62,39 @@ export default function SimulationsScreen() {
     [commandLabels],
   );
 
+  const handleButtonPress = (key: (typeof soundButtons)[number]['key']) => {
+    const button = soundButtons.find((item) => item.key === key);
+    if (!button) return;
+
+    void button.play();
+
+    if (key === 'upLevelElevator') {
+      setCurrentFloor((floor) => Math.min(floor + 1, MAX_FLOOR));
+      return;
+    }
+    if (key === 'downLevelElevator') {
+      setCurrentFloor((floor) => Math.max(floor - 1, MIN_FLOOR));
+      return;
+    }
+    if (key === 'openDoor') {
+      setDoorOpen(true);
+      return;
+    }
+    if (key === 'closeDoor') {
+      setDoorOpen(false);
+    }
+  };
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.title}>
         {t('tabs.simulations')}
       </ThemedText>
 
+      <ElevatorScene currentFloor={currentFloor} doorOpen={doorOpen} />
+
       <ScrollView
+        style={styles.scrollView}
         contentContainerStyle={styles.buttonsContainer}
         showsVerticalScrollIndicator={false}
       >
@@ -72,7 +102,7 @@ export default function SimulationsScreen() {
           <TouchableOpacity
             key={button.key}
             style={styles.soundButton}
-            onPress={() => void button.play()}
+            onPress={() => handleButtonPress(button.key)}
             activeOpacity={0.7}
           >
             <ThemedText style={styles.commandLabel}>{button.command}</ThemedText>
@@ -93,7 +123,11 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
+  },
+  scrollView: {
+    flex: 1,
+    marginTop: 16,
   },
   buttonsContainer: {
     gap: 10,
