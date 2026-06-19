@@ -42,6 +42,8 @@
     "saveDuplicateName": "A program with that name already exists. Choose another name or load it to update it.",
     "saveSuccess": "\"{{name}}\" was saved successfully.",
     "saveError": "Could not save the program.",
+    "saveTitle": "Save program",
+    "cancel": "Cancel",
     "loadTitle": "Saved programs",
     "loadEmpty": "No saved programs yet.",
     "deleteProgram": "Delete program",

@@ -42,6 +42,8 @@
     "saveDuplicateName": "Ya existe un programa con ese nombre. Usa otro nombre o carga el programa para actualizarlo.",
     "saveSuccess": "Se guardó \"{{name}}\" correctamente.",
     "saveError": "No se pudo guardar el programa.",
+    "saveTitle": "Guardar programa",
+    "cancel": "Cancelar",
     "loadTitle": "Programas guardados",
     "loadEmpty": "No hay programas guardados.",
     "deleteProgram": "Eliminar programa",

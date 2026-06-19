@@ -95,6 +95,8 @@ export default function CodingScreen() {
   const [runtimeFloor, setRuntimeFloor] = useState(1);
   const [elevatorStatus, setElevatorStatus] = useState("");
   const [isLoadModalVisible, setIsLoadModalVisible] = useState(false);
+  const [isSaveModalVisible, setIsSaveModalVisible] = useState(false);
+  const [saveModalName, setSaveModalName] = useState("");
   const [savedPrograms, setSavedPrograms] = useState<SavedProgram[]>([]);
   const [loadedSnapshot, setLoadedSnapshot] = useState<{
     code: string;
@@ -270,27 +272,8 @@ export default function CodingScreen() {
     { key: "help", Icon: CircleHelp },
   ];
 
-  const handleProgramNameChange = useCallback(
-    (value: string) => {
-      setProgramName(value);
-      if (
-        editingSavedProgramName &&
-        value.trim() !== editingSavedProgramName
-      ) {
-        setEditingSavedProgramName(null);
-      }
-    },
-    [editingSavedProgramName],
-  );
-
-  const handleSaveProgram = useCallback(async () => {
+  const handleOpenSaveModal = useCallback(() => {
     if (isBusy) {
-      return;
-    }
-
-    const trimmedName = programName.trim();
-    if (!trimmedName) {
-      Alert.alert(t("coding.save"), t("coding.saveNeedsName"));
       return;
     }
 
@@ -299,11 +282,24 @@ export default function CodingScreen() {
       return;
     }
 
+    setSaveModalName(editingSavedProgramName ?? programName);
+    setIsSaveModalVisible(true);
+  }, [code, editingSavedProgramName, isBusy, programName, t]);
+
+  const handleSaveProgram = useCallback(async () => {
+    const trimmedName = saveModalName.trim();
+    if (!trimmedName) {
+      Alert.alert(t("coding.save"), t("coding.saveNeedsName"));
+      return;
+    }
+
     try {
       await saveProgram(trimmedName, code, {
         replaceName: editingSavedProgramName,
       });
+      setProgramName(trimmedName);
       setEditingSavedProgramName(trimmedName);
+      setIsSaveModalVisible(false);
       Alert.alert(t("coding.save"), t("coding.saveSuccess", { name: trimmedName }));
     } catch (error) {
       if (error instanceof SavedProgramError) {
@@ -325,7 +321,7 @@ export default function CodingScreen() {
 
       Alert.alert(t("coding.save"), t("coding.saveError"));
     }
-  }, [code, editingSavedProgramName, isBusy, programName, t]);
+  }, [code, editingSavedProgramName, saveModalName, t]);
 
   const handleOpenLoadModal = useCallback(async () => {
     if (isBusy) {
@@ -460,7 +456,7 @@ export default function CodingScreen() {
     }
 
     if (key === "save") {
-      void handleSaveProgram();
+      handleOpenSaveModal();
       return;
     }
 
@@ -478,16 +474,6 @@ export default function CodingScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <View style={styles.topSection}>
-        <TextInput
-          style={styles.programNameInput}
-          placeholder={t("coding.programName")}
-          placeholderTextColor="#999"
-          value={programName}
-          onChangeText={handleProgramNameChange}
-        />
-      </View>
-
       <View style={styles.codingSection}>
         <View style={styles.buttonsColumn}>
           <View style={styles.levelContainer}>
@@ -815,6 +801,48 @@ export default function CodingScreen() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      <Modal
+        visible={isSaveModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setIsSaveModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => setIsSaveModalVisible(false)}
+        >
+          <Pressable style={styles.modalCard} onPress={() => undefined}>
+            <Text style={styles.modalTitle}>{t("coding.saveTitle")}</Text>
+            <TextInput
+              style={styles.saveModalInput}
+              placeholder={t("coding.programName")}
+              placeholderTextColor="#999"
+              value={saveModalName}
+              onChangeText={setSaveModalName}
+              autoFocus
+              returnKeyType="done"
+              onSubmitEditing={() => void handleSaveProgram()}
+            />
+            <View style={styles.saveModalActions}>
+              <TouchableOpacity
+                style={styles.modalSecondaryButton}
+                onPress={() => setIsSaveModalVisible(false)}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.modalSecondaryButtonText}>{t("coding.cancel")}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalPrimaryButton}
+                onPress={() => void handleSaveProgram()}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.modalPrimaryButtonText}>{t("coding.save")}</Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ThemedView>
   );
 }
@@ -822,21 +850,8 @@ export default function CodingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 10,
-  },
-  topSection: {
     paddingTop: 10,
-    paddingBottom: 0,
-  },
-  programNameInput: {
-    width: "100%",
-    backgroundColor: "#fff",
-    padding: 15,
-    fontSize: 16,
-    color: "#000",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 10,
+    paddingBottom: 10,
   },
   codingSection: {
     flexDirection: "row",
@@ -962,6 +977,44 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "#007AFF",
+  },
+  saveModalInput: {
+    width: "100%",
+    backgroundColor: "#fff",
+    padding: 12,
+    fontSize: 16,
+    color: "#000",
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  saveModalActions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
+  },
+  modalSecondaryButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    backgroundColor: "#eee",
+  },
+  modalSecondaryButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#444",
+  },
+  modalPrimaryButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    backgroundColor: "#007AFF",
+  },
+  modalPrimaryButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#fff",
   },
   editorColumn: {
     flex: 1,
